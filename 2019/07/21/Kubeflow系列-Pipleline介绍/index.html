@@ -1,23 +1,1451 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
-{% block title %}{{ page.title }} | {{ title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
 
-{% block content %}
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '7.1.2',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="总览Pipeline在Kubeflow里面是一个最重要的能力, 因为需要它来串流整个机器学习任务的组件.因此我们首先介绍一下pipeline的定义: 它是一个工作流平台，能够编译部署机器学习的工作流, 可以定义复杂的数据DAG流程, 并提供可视化的流程展示和结果展示. 核心概念pipelines实现了一个工作流模型。所谓工作流，或者称之为流水线（pipeline），可以将其当做一个有向无环图（DA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Kubeflow系列]Pipleline介绍">
+<meta property="og:url" content="http://yoursite.com/2019/07/21/Kubeflow%E7%B3%BB%E5%88%97-Pipleline%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="Carlmartin&#39; Blog">
+<meta property="og:description" content="总览Pipeline在Kubeflow里面是一个最重要的能力, 因为需要它来串流整个机器学习任务的组件.因此我们首先介绍一下pipeline的定义: 它是一个工作流平台，能够编译部署机器学习的工作流, 可以定义复杂的数据DAG流程, 并提供可视化的流程展示和结果展示. 核心概念pipelines实现了一个工作流模型。所谓工作流，或者称之为流水线（pipeline），可以将其当做一个有向无环图（DA">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/2.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/6.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/3.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/4.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/5.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/7.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/8.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/18.png">
+<meta property="article:published_time" content="2019-07-21T05:13:50.000Z">
+<meta property="article:modified_time" content="2024-03-06T08:19:03.854Z">
+<meta property="article:author" content="Carlmartin">
+<meta property="article:tag" content="Kubeflow系列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/2.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/21/Kubeflow%E7%B3%BB%E5%88%97-Pipleline%E4%BB%8B%E7%BB%8D/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>[Kubeflow系列]Pipleline介绍 | Carlmartin' Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Carlmartin' Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">In me the tiger sniffs the rose.</p>
+      
+    
+    
   </div>
 
-{% endblock %}
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/SaintBacchus" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/21/Kubeflow%E7%B3%BB%E5%88%97-Pipleline%E4%BB%8B%E7%BB%8D/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Carlmartin"/>
+      <meta itemprop="description" content="A place for codeing break."/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Carlmartin' Blog"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[Kubeflow系列]Pipleline介绍
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+		   
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-21 13:13:50" itemprop="dateCreated datePublished" datetime="2019-07-21T13:13:50+08:00">2019-07-21</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2024-03-06 16:19:03" itemprop="dateModified" datetime="2024-03-06T16:19:03+08:00">2024-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon"
+            >
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">6.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">10 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h2><p><code>Pipeline</code>在Kubeflow里面是一个最重要的能力, 因为需要它来串流整个机器学习任务的组件.<br>因此我们首先介绍一下<code>pipeline</code>的定义: 它是一个工作流平台，能够编译部署机器学习的工作流, 可以定义复杂的数据DAG流程, 并提供可视化的流程展示和结果展示.</p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><p><code>pipelines</code>实现了一个工作流模型。所谓工作流，或者称之为流水线（pipeline），可以将其当做一个有向无环图（DAG）。其中的每一个节点，在<code>pipelines</code> 的语义下被称作组件（component）。组件在图中作为一个节点，其会处理真正的逻辑，比如预处理，数据清洗，模型训练等等。每一个组件负责的功能不同，但有一个共同点，即组件都是以 Docker 镜像的方式被打包，以容器的方式被运行的。这也是与 kubeflow 社区的 Run ML on Kubernetes 这一愿景相统一的。</p>
+<p>实验（experiment）是一个工作空间，在其中可以针对流水线尝试不同的配置。运行（run）是流水线的一次执行，用户在执行的过程中可以看到每一步的输出文件，以及日志。步（step）是组件的一次运行，步与组件的关系就像是运行与流水线的关系一样。步输出工件（step output artifacts）是在组件的一次运行结束后输出的，能被系统的前端理解并渲染可视化的文件。</p>
+<p><strong>Kubeflow Pipeline中概念列表</strong>:</p>
+<ol>
+<li>Pipeline: 定义一组操作的流水线，其中每一步都由component组成。 背后是一个Argo的模板配置</li>
+<li>Component: 一个容器操作，可以通过pipeline的sdk 定义。每一个component 可以定义定义输出（output）和产物（artifact）， 输出可以通过设置下一步的环境变量，作为下一步的输入， artifact 是组件运行完成后写入一个约定格式文件，在界面上可以被渲染展示。</li>
+<li>Graph: 就是上面看到流程图, 一个pipeline可以转化为一个DAG图</li>
+<li>Experiment:  可以看做一个工作空间，管理一组运行任务</li>
+<li>Run: 真实任务,  pipeline真正在K8s上实例化的产物, 会启动多个对应的Pod, 开始真正的计算</li>
+<li>Recurring Run: 定时任务, 可以由<code>Run Trigger</code>触发</li>
+<li>Step: Component对应实体, 就是上图之中的方框, 应该是一个Step会真实对应一个K8s的Pod</li>
+</ol>
+<h2 id="官方案例"><a href="#官方案例" class="headerlink" title="官方案例"></a>官方案例</h2><p>官方的<strong>XGBoost - Training with Confusion Matrix</strong>案例:</p>
+<h3 id="流程可视化页面"><a href="#流程可视化页面" class="headerlink" title="流程可视化页面:"></a>流程可视化页面:</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/2.png" alt=""></p>
+<h3 id="提交任务页面"><a href="#提交任务页面" class="headerlink" title="提交任务页面:"></a>提交任务页面:</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/6.png" alt=""></p>
+<h3 id="Artifacts页面"><a href="#Artifacts页面" class="headerlink" title="Artifacts页面"></a>Artifacts页面</h3><p>运行起来的时候, 在Artifacts之中看到一些metric信息(这些信息需要在流程之中自定义)</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/3.png" alt="">  <img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/4.png" alt=""></p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/5.png" alt=""></p>
+<h2 id="Pipeline的流程及架构"><a href="#Pipeline的流程及架构" class="headerlink" title="Pipeline的流程及架构"></a>Pipeline的流程及架构</h2><p>使用Pipeline一般会有以下的步骤:</p>
+<ol>
+<li>使用python代码编写pipeline定义代码</li>
+<li>通过编译脚本编译生成压缩包</li>
+<li>上传压缩文件, 创建pipeline</li>
+<li>使用该pipeline, 创建任务, 并输入指定的参数值</li>
+<li>查看任务完成状态及输出结果</li>
+</ol>
+<p>Python代码定义再放在下一章节介绍, 这个章节介绍2-5步骤后台实现的流程. </p>
+<p>下面先介绍两个基础知识:</p>
+<h3 id="Argo"><a href="#Argo" class="headerlink" title="Argo"></a>Argo</h3><p>我们在Pipeline的页面上可以看到一个<code>Source</code>的子页面, 里面的内容是这个流程yaml格式的定义文件:</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/7.png" alt=""></p>
+<p>可以看到叫做<a href="https://argoproj.github.io/">argo</a>的组件,  它是一个开源的基于容器的工作流引擎，实现了一个K8S的CRD(用户自定义的资源):</p>
+<ul>
+<li>用容器实现工作流的每一个步骤</li>
+<li>用DAG的形式描述多个任务之间的关系的依赖</li>
+<li>支持机器学习和数据处理中的计算密集型任务</li>
+</ul>
+<p>实际上pipeline上传的就是argo的配置文件, 由这个配置文件来定义整个流程任务.</p>
+<p>这个配置文件需要<code>pipeline sdk</code>对用户Python代码进行编译产生.</p>
+<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/8.png" alt=""></p>
+<p>pipeline的架构, 主要由以下模块组成:</p>
+<ol>
+<li>编译模块(SDK), 将Python代码转化为argo配置文件</li>
+<li>页面模块(Web Server), 用于创建job以及监控任务运行结果</li>
+<li>存储模块, 包含历史任务元数据信息, Artifact的数据缓存</li>
+<li>服务模块, 一个由go编写的后端，提供kubernetes ApiServer 风格的Restful API。处理前端以及SDK发起的操作请求。 Pipeline/Experiment 之类的请求会直接存入元数据。和Run 相关的请求除了写入元数据以外还会通过APIServer 同步操作Argo实例。</li>
+<li>控制模块:  Argo模块注册在K8s之中, 将argo的配置文件翻译为真正的K8s执行流程</li>
+</ol>
+<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><ol>
+<li>客户编写python代码, 经过编译之后生产argo配置项</li>
+<li>客户调用上传接口(可以是网页调用), 上传argo配置项到<code>Pipeline Service</code></li>
+<li><code>Pipeline Service</code>将元数据信息存储到<code>Meta Service</code>之中</li>
+<li>客户触发任务执行,  <code>Pipeline Service</code>调用请求到<code>K8s API Service</code></li>
+<li><code>K8s API Service</code>根据资源类型(<code>argo</code>资源), 触发Argo的编排调度框架</li>
+<li>框架完成任务启动之后, 并将部分Artifact写入到<code>Artifact Storage</code>之中</li>
+<li>pipeline时刻监控K8s的任务信息, 并在更新任务状态</li>
+</ol>
+<h2 id="GATK最佳实践案例"><a href="#GATK最佳实践案例" class="headerlink" title="GATK最佳实践案例"></a>GATK最佳实践案例</h2><p>下面以GATK最佳实践为例, 看一下如何实现一个流程</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> kfp <span class="keyword">import</span> dsl</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">align_fastq</span>(<span class="params">fastq1, fastq2</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;aligin_fastq_with_bwa&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/hzw-bwa:1.0&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&quot;/bwa mem -t 4 -R &#x27;@RG\\tID:foo\\tLB:bar\\tPL:illumina\\tPU:illumina\\tSM:NA12878&#x27; /data/ref/hg19.fa $0 $1 &gt; /data/sample/test.sam;echo &#x27;/data/sample/test.sam&#x27; &gt; /output.txt&quot;</span>, fastq1, fastq2],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">conver_sam</span>(<span class="params">samfile</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;convert sam into bam&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/samtools:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;samtools sort -@ 4  -O bam -o /data/sample/test.bam $0; echo &quot;/data/sample/test.bam&quot; &gt; /output.txt&#x27;</span>, samfile],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">markdup</span>(<span class="params">bamfile</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;mark dup&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/gatk:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;gatk MarkDuplicates -I $0 -O /data/sample/test.markup.bam -M /data/sample/test.metrics.txt; echo &quot;/data/sample/test.markup.bam&quot; &gt; /output.txt&#x27;</span>, bamfile],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bqsr</span>(<span class="params">marddup</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;bqsr&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/gatk:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;gatk BaseRecalibrator -I $0 -O /data/sample/test.table -R /data/ref/hg19.fa.gz --known-sites /data/ref/1000g_omni2.5.hg19.sites.vcf.gz;&#x27;</span></span><br><span class="line">                   <span class="string">&#x27;gatk ApplyBQSR -R /data/ref/hg19.fa.gz -I $0 -O /data/sample/test.bqsr.bam --bqsr-recal-file /data/sample/test.table;&#x27;</span></span><br><span class="line">                   <span class="string">&#x27;echo &quot;/data/sample/test.bqsr.bam&quot; &gt; /output.txt&#x27;</span>, marddup],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;data&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">haplotype</span>(<span class="params">bqsr</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;haplotype&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/gatk:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;gatk HaplotypeCaller -I $0 -O /data/sample/test.vcf.gz -R /data/ref/hg19.fa.gz;&#x27;</span></span><br><span class="line">                   <span class="string">&#x27;echo &quot;/data/sample/test.vcf.gz&quot; &gt; /output.txt&#x27;</span>, bqsr],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;data&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@dsl.pipeline(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">    name=<span class="string">&quot;Gatk Basic pipeline&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    description=<span class="string">&quot;A Basic pipeline for gatk.&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta"></span>)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pipeline</span>(<span class="params">fastq1=<span class="string">&#x27;/data/sample/200M_1_NA12878_clean_1.fastq.gz&#x27;</span>, fastq2=<span class="string">&#x27;/data/sample/200M_1_NA12878_clean_2.fastq.gz&#x27;</span></span>):</span><br><span class="line">    samfile = align_fastq(fastq1, fastq2)</span><br><span class="line">    bamfile = conver_sam(samfile.output)</span><br><span class="line">    markfile = markdup(bamfile.output)</span><br><span class="line">    bqsr_file = bqsr(markfile.output)</span><br><span class="line">    haplotype(bqsr_file.output)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> kfp.compiler <span class="keyword">as</span> compiler</span><br><span class="line">    compiler.Compiler().<span class="built_in">compile</span>(pipeline, __file__ + <span class="string">&quot;.tar.gz&quot;</span>)r</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>dsl</code>就是pipeline sdk,  由<code>@dsl.pipeline</code>标识pipeline的定义: 下一个函数即为定义函数, 函数的参数列表翻译为argo的input字段</li>
+<li><code>dsl.ContainerOp</code>定义了镜像操作, 在这个例子之中有5个<code>ContainerOp</code>就会对应五个step, 启动5个pod进行计算.</li>
+<li><code>dsl.PipelineVolume</code>定义了磁盘挂载信息, 作为参数输入到<code>ContainerOp</code>之中, 说明将该名字的PVC挂载到镜像里之中, 挂载目录为<code>/data</code></li>
+<li><code>bamfile = conver_sam(samfile.output)</code>定义了依赖关系, 说明<code>conver_sam</code>依赖<code>align_fastq</code>的输出, 这个例子是个串行任务,  pipeline支持并发支持, 实现如下所示<code>bamfile = conver_sam(samfile1.output, samfile2.output)</code></li>
+</ol>
+<p>最后, 执行<code>main</code>函数, 可以生成一个tar.gz包, 将这个包上传到流程页面上, 就能开始运行任务.</p>
+<h2 id="Pipeline的SDK简要说明"><a href="#Pipeline的SDK简要说明" class="headerlink" title="Pipeline的SDK简要说明"></a>Pipeline的SDK简要说明</h2><p><a href="https://kubeflow-pipelines.readthedocs.io/en/latest/index.html">API文档</a>之中详细写明了SDK目前的功能, 这儿就简单啰嗦一句.</p>
+<p>目前SDK只支持如下几个模块的功能:</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/18.png" alt="img"></p>
+<ol>
+<li>首先是<code>compiler</code>模块, 主要是将python代码转化为<code>argo</code>的yaml配置项</li>
+<li><code>components</code>模型实现如何导入外部模块, 以及如何构建模块</li>
+<li><code>dsl</code>是最重要的模块, 定义了<code>ContainerOp</code>以及<code>VolumeOp</code>等真正和K8s交互的模块</li>
+<li><code>client</code>的模块主要是如何提交任务的模块</li>
+<li><code>notebook</code>目前还是空的</li>
+<li><code>extension</code>主要是云上的扩展模块, 目前主要支持谷歌亚马逊和微软的云</li>
+</ol>
+<p>整个SDK的代码量非常少, 可以直接看<a href="https://github.com/kubeflow/pipelines/tree/master/sdk/python/kfp">源码</a>了解更多的内容.</p>
+<h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2><p>走马观花一样的看了一下<code>Pipleline</code>的能力, 接下来总结一下优点和缺点:</p>
+<ol>
+<li>整体上<code>pipeline</code>有好的编程入口, 比较适合程序员, 但缺乏页面定制能力, 无法面向非程序员群体</li>
+<li>有简单的任务调度能力, 支持定时任务, 但是功能有限</li>
+<li>整体架构简洁明了,  但微服务众多, 运维是个压力</li>
+<li>整体来说, pipeline功能还不完善, 需要深度定制, 但K8s + AI是趋势, 未来肯定会越来越好, 越来越庞大.</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kubeflow%E7%B3%BB%E5%88%97/" rel="tag"># Kubeflow系列</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/14/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" rel="next" title="缓存一致性问题">
+                <i class="fa fa-chevron-left"></i> 缓存一致性问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/28/Kube-Debug%E5%AE%9A%E4%BD%8D%E5%B7%A5%E5%85%B7/" rel="prev" title="Kube-Debug定位工具">
+                Kube-Debug定位工具 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Carlmartin</p>
+              <div class="site-description motion-element" itemprop="description">A place for codeing break.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%20%7C%7C%20archive">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/%20%7C%7C%20th">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/%20%7C%7C%20tags">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/SaintBacchus" title="GitHub &rarr; https:&#x2F;&#x2F;github.com&#x2F;SaintBacchus" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:carlmartinmax@gmail.com" title="E-Mail &rarr; mailto:carlmartinmax@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E6%A1%88%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">官方案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E5%8F%AF%E8%A7%86%E5%8C%96%E9%A1%B5%E9%9D%A2"><span class="nav-number">3.1.</span> <span class="nav-text">流程可视化页面:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E4%BB%BB%E5%8A%A1%E9%A1%B5%E9%9D%A2"><span class="nav-number">3.2.</span> <span class="nav-text">提交任务页面:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Artifacts%E9%A1%B5%E9%9D%A2"><span class="nav-number">3.3.</span> <span class="nav-text">Artifacts页面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pipeline%E7%9A%84%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%9E%B6%E6%9E%84"><span class="nav-number">4.</span> <span class="nav-text">Pipeline的流程及架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Argo"><span class="nav-number">4.1.</span> <span class="nav-text">Argo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">4.2.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">4.3.</span> <span class="nav-text">执行流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GATK%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%A1%88%E4%BE%8B"><span class="nav-number">5.</span> <span class="nav-text">GATK最佳实践案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pipeline%E7%9A%84SDK%E7%AE%80%E8%A6%81%E8%AF%B4%E6%98%8E"><span class="nav-number">6.</span> <span class="nav-text">Pipeline的SDK简要说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E7%BB%93%E6%92%92%E8%8A%B1"><span class="nav-number">7.</span> <span class="nav-text">完结撒花</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carlmartin</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">186k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">4:50</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v7.1.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.2</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

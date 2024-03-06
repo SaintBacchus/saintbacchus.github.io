@@ -1,23 +1,1525 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
-{% block title %}{{ page.title }} | {{ title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
 
-{% block content %}
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '7.1.2',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="什么是Kubeflow对于官网的定义:  The Kubeflow project is dedicated to making deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. Our goal is not to recreate other services,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Kubeflow系列]总览介绍">
+<meta property="og:url" content="http://yoursite.com/2019/07/14/Kubeflow%E7%B3%BB%E5%88%97-%E6%80%BB%E8%A7%88%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="Carlmartin&#39; Blog">
+<meta property="og:description" content="什么是Kubeflow对于官网的定义:  The Kubeflow project is dedicated to making deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. Our goal is not to recreate other services,">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/9.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/10.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.jpg">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/19.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/volcano-intro.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/kube-batch.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/20.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/arch.svg">
+<meta property="article:published_time" content="2019-07-14T04:22:18.000Z">
+<meta property="article:modified_time" content="2024-03-06T08:19:03.855Z">
+<meta property="article:author" content="Carlmartin">
+<meta property="article:tag" content="Kubeflow系列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/14/Kubeflow%E7%B3%BB%E5%88%97-%E6%80%BB%E8%A7%88%E4%BB%8B%E7%BB%8D/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>[Kubeflow系列]总览介绍 | Carlmartin' Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Carlmartin' Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">In me the tiger sniffs the rose.</p>
+      
+    
+    
   </div>
 
-{% endblock %}
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/SaintBacchus" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/14/Kubeflow%E7%B3%BB%E5%88%97-%E6%80%BB%E8%A7%88%E4%BB%8B%E7%BB%8D/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Carlmartin"/>
+      <meta itemprop="description" content="A place for codeing break."/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Carlmartin' Blog"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[Kubeflow系列]总览介绍
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+		   
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-14 12:22:18" itemprop="dateCreated datePublished" datetime="2019-07-14T12:22:18+08:00">2019-07-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2024-03-06 16:19:03" itemprop="dateModified" datetime="2024-03-06T16:19:03+08:00">2024-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon"
+            >
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">7.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">12 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是Kubeflow"><a href="#什么是Kubeflow" class="headerlink" title="什么是Kubeflow"></a>什么是Kubeflow</h2><p>对于<a href="https://www.kubeflow.org/">官网</a>的定义:</p>
+<blockquote>
+<p>The Kubeflow project is dedicated to making deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. Our goal is not to recreate other services, but to provide a straightforward way to deploy best-of-breed open-source systems for ML to diverse infrastructures. </p>
+</blockquote>
+<p>我们可以看出<code>kubeflow</code>是在<code>Kubernetes</code>之上构建<code>Machine Learning</code>的项目,  他本身不会创建任何AI或者Kubernetes的服务,  而是为了<code>Machine Learning</code>项目构建的更加简单, 更加可扩展.</p>
+<p>为了更好的学习Kubeflow, 我们需要有以下的基础知识:</p>
+<ol>
+<li>容器技术, 包含docker使用, 镜像制作, Kubernetes 任务提交等一系列的Paas能力</li>
+<li>AI技术, 包括各种AI框架, 以及分布式AI模型等</li>
+<li>Python语言, kubeflow的代码库大多以Python编写</li>
+</ol>
+<h2 id="Kubeflow有什么"><a href="#Kubeflow有什么" class="headerlink" title="Kubeflow有什么"></a>Kubeflow有什么</h2><p><code>Kubeflow</code>有很多的组件,  可以在官网文档的<a href="https://master.kubeflow.org/docs/components/">Components</a>模块之中找到所有能力组件, 我把这些模块整理了一下, 画出脑图, 如下:</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png" alt=""></p>
+<p><strong>左边的一列</strong>为kubeflow面向机器学习领域提供的能力, 包括模型的训练推理以及自动学习的超参调优组件, Kubeflow已经支持了市面上大多数的训练和推理框架, 其中最完善的就是google自己家的<code>TensorFlow</code>.</p>
+<p>当然也是最重要的一个模块, 毕竟Kubeflow的名字有一般来自于它.</p>
+<p><strong>右边的一列</strong>为Kubeflow的基础能力, 主要为pipeline, notebook, fairing以及一些公共的组件, 例如元数据管理等, 这个部分是围绕AI能力外围的基础组件, 主要关注于工程部分, 例如使用pipeline进行编排, 使用notebook进行开发等.</p>
+<p>下面准备简单介绍一下这几个模块,  某些组件特别大, 我准备单独写个文章介绍, 这里就会一笔带过. </p>
+<h3 id="TFJob-和-TF-Serving"><a href="#TFJob-和-TF-Serving" class="headerlink" title="TFJob 和 TF Serving"></a>TFJob 和 TF Serving</h3><p>模型训练是机器学习最主要的实践场景，尤其以使用机器学习框架TensorFlow进行模型训练最为流行，但是随着机器学习的平台由单机变成集群，这个问题变得复杂了。GPU的调度和绑定，涉及到分布式训练的编排和集群规约属性的配置（cluster spec）也成了数据科学家们巨大的负担。</p>
+<p>为了解决这一问题，一个新的资源类型TFJob，即TensorFlow Job被定义出来了。通过这个资源类型，使用TensorFlow的数据科学家无需编写复杂的配置，只需要关注数据的输入，代码的运行和日志的输入输出。</p>
+<p>下面看一个<strong>官方案例</strong>来看一下<code>TFJob</code>的定义, 除了<code>tfReplicaSpecs</code>定义为<code>PS</code> <code>Worker</code>等概念之外, 其实和没有K8s的POD定位没有太多的区别.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">&quot;kubeflow.org/v1beta1&quot;</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">&quot;TFJob&quot;</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;tf-smoke-gpu&quot;</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">&quot;kubeflow&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">tfReplicaSpecs:</span></span><br><span class="line">    <span class="attr">PS:</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">metadata:</span></span><br><span class="line">          <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">python</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">tf_cnn_benchmarks.py</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--batch_size=32</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--model=resnet50</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--variable_update=parameter_server</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--flush_stdout=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--num_gpus=1</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--local_parameter_device=cpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--device=cpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--data_format=NHWC</span></span><br><span class="line">            <span class="attr">image:</span> <span class="string">swr.cn-north-5.myhuaweicloud.com/kubeflow/tf-benchmarks-cpu:v20171202-bdab599-dirty-284af3</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">tensorflow</span></span><br><span class="line">            <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">2222</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">tfjob-port</span></span><br><span class="line">            <span class="attr">resources:</span></span><br><span class="line">              <span class="attr">limits:</span></span><br><span class="line">                <span class="attr">cpu:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line">            <span class="attr">workingDir:</span> <span class="string">/opt/tf-benchmarks/scripts/tf_cnn_benchmarks</span></span><br><span class="line">          <span class="attr">restartPolicy:</span> <span class="string">OnFailure</span></span><br><span class="line">    <span class="attr">Worker:</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">metadata:</span></span><br><span class="line">          <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">python</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">tf_cnn_benchmarks.py</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--batch_size=32</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--model=resnet50</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--variable_update=parameter_server</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--flush_stdout=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--num_gpus=1</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--local_parameter_device=cpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--device=gpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--data_format=NHWC</span></span><br><span class="line">            <span class="attr">image:</span> <span class="string">swr.cn-north-5.myhuaweicloud.com/kubeflow/tf-benchmarks-gpu:v20171202-bdab599-dirty-284af3</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">tensorflow</span></span><br><span class="line">            <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">2222</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">tfjob-port</span></span><br><span class="line">            <span class="attr">resources:</span></span><br><span class="line">              <span class="attr">limits:</span></span><br><span class="line">                <span class="attr">nvidia.com/gpu:</span> <span class="number">1</span></span><br><span class="line">            <span class="attr">workingDir:</span> <span class="string">/opt/tf-benchmarks/scripts/tf_cnn_benchmarks</span></span><br><span class="line">          <span class="attr">restartPolicy:</span> <span class="string">OnFailure</span></span><br></pre></td></tr></table></figure>
+<p><strong>TensorFlow Serving</strong>是Google开源的一个灵活的、高性能的机器学习模型服务系统，能够简化并加速从模型到生产应用的过程。它除了原生支持TensorFlow模型，还可以扩展支持其他类型的机器学习模型。</p>
+<p>部署完成之后, 可以通过API访问TF Serving或者GRpc的方式来进行推理服务.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc mnist-service</span><br><span class="line">curl -X POST -d @input.json http://EXTERNAL_IP:8500/v1/models/mnist:predict</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这个部分可以参考<a href="https://yq.aliyun.com/articles/601779?utm_content=m_1000003286">阿里云的文章</a>, 后续再写详细介绍的文章</p>
+</blockquote>
+<p>其中有一点需要的注意的是: <strong>TFJob是Kubeflow在K8s上的CRD, 而TF-Serving是TensorFlow的内容, Kubeflow只不过在K8s上启动一个镜像实例而已</strong>, 所以你也可以来完成TF-Serving功能</p>
+<h3 id="Katib超参数训练系统"><a href="#Katib超参数训练系统" class="headerlink" title="Katib超参数训练系统"></a>Katib超参数训练系统</h3><blockquote>
+<p>Katib is a Kubernetes Native System for <a href="https://en.wikipedia.org/wiki/Hyperparameter_optimization">Hyperparameter Tuning</a> and <a href="https://en.wikipedia.org/wiki/Neural_architecture_search">Neural Architecture Search</a>. The system is inspired by <a href="https://static.googleusercontent.com/media/research.google.com/ja//pubs/archive/bcb15507f4b52991a0783013df4222240e942381.pdf">Google vizier</a> and supports multiple ML/DL frameworks (e.g. TensorFlow, MXNet, and PyTorch).</p>
+</blockquote>
+<p>Katib 也是对 Google Vizier 的开源实现，因此也遵循其中对问题的抽象模型：Study，Trial 和 Suggestion.<br>Trial 代表着一个由超参数的取值组成的列表，每个 Trial 都需要一次运行来得到这些超参数取值对应的结果。这里提到的运行就是一次训练的过程。Study 代表着在可行空间上运行的单个优化。每个 Study 都有一个配置，来描述可能取值的空间，超参数推荐算法等。此外，Study 包含一组 Trial，代表着算法在超参数集合中选取推荐值的多次尝试。如图所示，是创建一次 Study 并且进行 Trial 的验证的过程。</p>
+<blockquote>
+<p>Currently Katib supports the following exploration algorithms in v1alpha1:</p>
+<ul>
+<li>random search</li>
+<li>grid search</li>
+<li><a href="https://arxiv.org/pdf/1603.06560.pdf">hyperband</a></li>
+<li><a href="https://arxiv.org/pdf/1012.2599.pdf">bayesian optimization</a></li>
+<li><a href="https://github.com/kubeflow/katib/tree/master/pkg/suggestion/v1alpha1/NAS_Reinforcement_Learning">NAS based on reinforcement learning</a></li>
+<li><a href="https://github.com/kubeflow/katib/tree/master/pkg/suggestion/v1alpha1/NAS_Envelopenet">NAS based on EnvelopeNets</a><br>And Katib supports the following exploration algorithms in v1alpha2:</li>
+<li>random search</li>
+</ul>
+<p>这块非常不懂唉, 后续等恶补一下知识了.  现在摘要了这篇<a href="http://gaocegege.com/Blog/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/katib">博客文章</a>的内容</p>
+</blockquote>
+<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>这块的目的就是为了编排Kubeflow任务用的, 在<a href="https://saintbacchus.github.io/2019/07/21/Kubeflow-pipleline%E4%BB%8B%E7%BB%8D/">这篇文章</a>之中介绍.</p>
+<h3 id="Jupiter-Notebook"><a href="#Jupiter-Notebook" class="headerlink" title="Jupiter Notebook"></a>Jupiter Notebook</h3><p>Notebook是数据科学家比较喜欢的编程工具, kubeflow已经集成:</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/9.png" alt=""></p>
+<p>上图是notebook的创建页面,  可以看出来kubeflow的notebook有以下能力:</p>
+<ol>
+<li>自定义镜像</li>
+<li>支持资源定义</li>
+<li>支持各种数据盘挂载</li>
+<li>支持GPU调度</li>
+</ol>
+<p><strong> 使用notebook提交pipeline</strong></p>
+<p>以官方的<strong>Lightweight Python components - basics</strong>为例子</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/10.png" alt=""></p>
+<ul>
+<li>上边的cell定了流程算子</li>
+<li>中间的cell编译流程算子, 生成<code>argo</code>的配置文件<code>pipeline.zip</code></li>
+<li>下面的cell创建了<code>Pipeline Service</code>的客户端, 创建了<code>experiment</code>和<code>run</code>执行了任务</li>
+</ul>
+<h3 id="Fairing-SDK"><a href="#Fairing-SDK" class="headerlink" title="Fairing SDK"></a>Fairing SDK</h3><p>Kubeflow Fairing is <strong>a Python package</strong> that makes it easy to train and deploy ML models on <a href="https://www.kubeflow.org/docs/about/kubeflow/">Kubeflow</a>. Kubeflow Fairing can also been extended to train or deploy on other platforms. Currently, Kubeflow Fairing has been extended to train on <a href="https://cloud.google.com/ml-engine/docs/">Google AI Platform</a>.</p>
+<p>Kubeflow Fairing <strong>packages your Jupyter notebook, Python function, or Python file as a Docker image</strong>, then <strong>deploys and runs the training job</strong> on Kubeflow or AI Platform. After your training job is complete, you can use Kubeflow Fairing to <strong>deploy your trained model as a prediction endpoint</strong> on Kubeflow.</p>
+<p>官网上介绍Fairing的文字, fairing的定位就是机器学习的SDK, 但他最大的一个好处就是简化构建镜像的麻烦, 它能自动帮你构建镜像, 并将镜像部署在k8s上运行, 因为之前的开发模式是这样子的:</p>
+ <div id="flowchart-0" class="flow-chart"></div>
+
+<p>引入Kubeflow变成这样了:</p>
+<div id="flowchart-1" class="flow-chart"></div>
+
+<p>平白多了几部做镜像的步骤, 而且做镜像对数据科学家来说是个难活, 因此引入Fairing工程是十分必要的</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>上面已经把kubeflow最重要的内容将完, 但是k8s还有很多其他子项目, 虽然不然之前的模块那么重要, 但是也是必不可少的内容. 这些组件很多都不在k8s之中, 在k8s的其他项目里面.</p>
+<h4 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h4><p>元数据模块主要是为了用户能更好的管理和追踪kubeflow的流程,  它后台使用的是Google的<a href="https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md">ML-Metadata</a>来管理, 而且暴露了<a href="https://github.com/kubeflow/metadata/blob/master/api/service.swagger.json">REST API</a>来跟用户调用, 同时也有<a href="https://github.com/kubeflow/metadata/tree/master/sdk/python#python-client">Python SDK</a>远程调用</p>
+<h4 id="kustomize"><a href="#kustomize" class="headerlink" title="kustomize"></a>kustomize</h4><p><code>kustomize</code>并不是kubeflow的一个项目, 而是<a href="https://github.com/kubernetes-sigs/kustomize">kubernetes-sigs</a>的一个子项目, 主要简化部署K8s服务的麻烦.</p>
+<p>他的idea的是这样的: 之前部署k8s需要定义很多的YAML文件, 这些文件都要自己管理, 而kustomize可以将这些文件管理起来, 貌似还有版本管理的能力</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.jpg" alt=""></p>
+<p>看一下这个图片示意, 基本上就了解.</p>
+<p><a href="https://github.com/kubernetes-sigs/kustomize">官网地址</a></p>
+<h4 id="Nuclio-functions"><a href="#Nuclio-functions" class="headerlink" title="Nuclio functions"></a>Nuclio functions</h4><p>Nuclio 是开源的一个实时无服务器平台, 支持可插拔的事件源和数据源, 下面是它的整体架构.</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/19.png" alt=""></p>
+<blockquote>
+<p>目前没看出来这个Serverless的框架和Kubeflow有太多的联系, 而且FaaS战场上Nuclio也不是真正的主流, <code>knative</code>是google推的Serverless解决方案, 所以这个部分不多介绍了.  </p>
+</blockquote>
+<h4 id="ksonnet"><a href="#ksonnet" class="headerlink" title="ksonnet"></a>ksonnet</h4><p>ksonnet 是一个基于jsonnet的快速简化kubernetes yaml 配置的工具，可以实现配置的复用 </p>
+<p>同时也包含一个registry 的概念，可以实现可复用组件的分发，同时支持helm</p>
+<p>Kubeflow里面主要使用<code>ksonnet</code>完成安装的时候参数的配置.</p>
+<p>具体内容可以看<a href="https://ksonnet.io/">官网文档</a></p>
+<h4 id="Microk8s"><a href="#Microk8s" class="headerlink" title="Microk8s"></a>Microk8s</h4><p>单机K8s测试环境的库,  这个安装起来比<code>Minikube</code>和<code>MiniKF</code>更加方便</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/canonical-labs/kubernetes-tools</span><br><span class="line">sudo kubernetes-tools/setup-microk8s.sh</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/canonical-labs/kubeflow-tools</span><br><span class="line">kubeflow-tools/install-kubeflow.sh</span><br></pre></td></tr></table></figure>
+<h4 id="Volcano’s-scheduler"><a href="#Volcano’s-scheduler" class="headerlink" title="Volcano’s scheduler"></a>Volcano’s scheduler</h4><p>Volcano调度是华为公司贡献给社区的批处理调度器,  支持AI和大数据计算</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/volcano-intro.png" alt=""></p>
+<p>给K8s提供以下能力:</p>
+<ol>
+<li>Job management extensions and improvements, e.g:<ol>
+<li>Multi-pod jobs</li>
+<li>Lifecycle management extensions including suspend/resume and restart.</li>
+<li>Improved error handling</li>
+<li>Indexed jobs</li>
+<li>Task dependencies</li>
+</ol>
+</li>
+<li>Scheduling extensions, e.g:<ol>
+<li>Co-scheduling</li>
+<li>Fair-share scheduling</li>
+<li>Queue scheduling</li>
+<li>Preemption and reclaims</li>
+<li>Reservations and backfills</li>
+<li>Topology-based scheduling</li>
+</ol>
+</li>
+<li>Runtime extensions, e.g:<ol>
+<li>Support for specialized container runtimes like Singularity, with GPU accelerator extensions and enhanced security features.</li>
+</ol>
+</li>
+<li>Other<ol>
+<li>Data locality awareness and intelligent scheduling</li>
+<li>Optimizations for data throughput, round-trip latency, etc.</li>
+</ol>
+</li>
+</ol>
+<h5 id="Kube-Batch"><a href="#Kube-Batch" class="headerlink" title="Kube-Batch"></a>Kube-Batch</h5><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/kube-batch.png" alt=""></p>
+<p><code>kube-batch</code>是一个为kubernetes实现批量任务调度的一个调度器，主要用于<code>机器学习</code>，<code>大数据</code>，<code>HPC</code>等场景.</p>
+<p>而Volcano正是构建在Kube-Batch之上的.</p>
+<h5 id="Gang-Scheduler"><a href="#Gang-Scheduler" class="headerlink" title="Gang Scheduler"></a>Gang Scheduler</h5><p><code>gang-schedule</code>是什么概念? 用用户提交一个 batch job, 这个batch job 包含100个任务，要不这100个任务全部调度成功，要么一个都调度不成功。这种<code>all or nothing</code>调度场景，就被称作:<code>gang-schedule</code>，通常用于集群资源不足的场景，比如 AI 场景下调用GPU资源</p>
+<p>Gang Scheduler特别适合机器学习场景, 引入Vocalno和Kube-bath最终目的就是为了引入Gang-Scheduler</p>
+<blockquote>
+<p><a href="https://xigang.github.io/2019/02/17/gang-scheduler/">参考文章</a></p>
+</blockquote>
+<h4 id="Dex"><a href="#Dex" class="headerlink" title="Dex"></a>Dex</h4><p><a href="https://github.com/coreos/dex">dex</a> 是一个统一认证的服务，支持各种认证协议如Ouath2 ldap等，自己可以作为一个identity provider,也可以连到别的id provider(如github)上,dex作为一个中间代理.</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/20.png" alt=""></p>
+<p>安装官网给出的推荐案例, 使用dex进行租户认证</p>
+<blockquote>
+<p><a href="https://github.com/dexidp/dex">Github首页</a></p>
+</blockquote>
+<h4 id="Istio"><a href="#Istio" class="headerlink" title="Istio"></a>Istio</h4><p>Istio是钟Service Mesh的实现, Service Mesh这个术语通常用于描述构成这些应用程序的微服务网络以及应用之间的交互。随着规模和复杂性的增长，服务网格越来越难以理解和管理。它的需求包括服务发现、负载均衡、故障恢复、指标收集和监控以及通常更加复杂的运维需求，例如 A/B 测试、金丝雀发布、限流、访问控制和端到端认证等。</p>
+<p>Istio 提供了一个完整的解决方案，通过为整个服务网格提供行为洞察和操作控制来满足微服务应用程序的多样化需求.</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/arch.svg" alt=""></p>
+<blockquote>
+<p><a href="https://istio.io/">官网首页</a>以及<a href="https://istio.io/zh/docs/concepts/what-is-istio/">中文官网</a></p>
+</blockquote>
+<h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2><p>今天把kubeflow的一些概念都整理了一下, 除了AI那块不是特别懂, 所以介绍内容比较少,  后面需要再调研一下, 再写介绍文章, 至于工程方面的都基本上算调研好了, 后续深入使用的时候再写文章介绍</p>
+<p>后续至少需要隆重写文章介绍的有:</p>
+<ol>
+<li>Pipeline的文章</li>
+<li>TFJob的文章</li>
+<li>TF-Serving的文章</li>
+<li>Katib的文章</li>
+<li>Istio的文章<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: 写机器学习代码
+op=>operation: 执行训练过程, 并调试
+e=>end: 模型训练完毕, 进行部署
+st->op->e</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><textarea id="flowchart-1-code" style="display: none">st=>start: 写机器学习代码
+op1=>operation: 做镜像
+op2=>operation: 训练并调试
+op3=>operation: 继续做镜像
+e=>end: 进行部署
+st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-1-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-1", options);</script></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Kubeflow%E7%B3%BB%E5%88%97/" rel="tag"># Kubeflow系列</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/13/Docker-in-docker/" rel="next" title="Docker in docker">
+                <i class="fa fa-chevron-left"></i> Docker in docker
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/14/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/" rel="prev" title="缓存一致性问题">
+                缓存一致性问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Carlmartin</p>
+              <div class="site-description motion-element" itemprop="description">A place for codeing break.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%20%7C%7C%20archive">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/%20%7C%7C%20th">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/%20%7C%7C%20tags">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/SaintBacchus" title="GitHub &rarr; https:&#x2F;&#x2F;github.com&#x2F;SaintBacchus" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:carlmartinmax@gmail.com" title="E-Mail &rarr; mailto:carlmartinmax@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFKubeflow"><span class="nav-number">1.</span> <span class="nav-text">什么是Kubeflow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubeflow%E6%9C%89%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">Kubeflow有什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TFJob-%E5%92%8C-TF-Serving"><span class="nav-number">2.1.</span> <span class="nav-text">TFJob 和 TF Serving</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Katib%E8%B6%85%E5%8F%82%E6%95%B0%E8%AE%AD%E7%BB%83%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.2.</span> <span class="nav-text">Katib超参数训练系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pipeline"><span class="nav-number">2.3.</span> <span class="nav-text">Pipeline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jupiter-Notebook"><span class="nav-number">2.4.</span> <span class="nav-text">Jupiter Notebook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fairing-SDK"><span class="nav-number">2.5.</span> <span class="nav-text">Fairing SDK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Metadata"><span class="nav-number">2.6.1.</span> <span class="nav-text">Metadata</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kustomize"><span class="nav-number">2.6.2.</span> <span class="nav-text">kustomize</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Nuclio-functions"><span class="nav-number">2.6.3.</span> <span class="nav-text">Nuclio functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ksonnet"><span class="nav-number">2.6.4.</span> <span class="nav-text">ksonnet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Microk8s"><span class="nav-number">2.6.5.</span> <span class="nav-text">Microk8s</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Volcano%E2%80%99s-scheduler"><span class="nav-number">2.6.6.</span> <span class="nav-text">Volcano’s scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Kube-Batch"><span class="nav-number">2.6.6.1.</span> <span class="nav-text">Kube-Batch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Gang-Scheduler"><span class="nav-number">2.6.6.2.</span> <span class="nav-text">Gang Scheduler</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dex"><span class="nav-number">2.6.7.</span> <span class="nav-text">Dex</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Istio"><span class="nav-number">2.6.8.</span> <span class="nav-text">Istio</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E7%BB%93%E6%92%92%E8%8A%B1"><span class="nav-number">3.</span> <span class="nav-text">完结撒花</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carlmartin</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">186k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">4:50</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v7.1.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.2</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

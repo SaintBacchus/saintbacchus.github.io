@@ -1,23 +1,1384 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
-{% block title %}{{ page.title }} | {{ title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
 
-{% block content %}
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '7.1.2',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Clickhouse的WAL功能设计目的解决小批量数据写入时, 频繁写入dataPart, 导致磁盘繁忙的问题或者出现DB::Exception: Too many parts 具体可以参考这篇文档  并非binlog的模式, 数据flush后, 会清理wal文件  源码分析首先看写逻辑的入口, 在MergeTreeDataWriter::writeTempPart创建了一个MergeTreeDa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Clickhouse研究]: Clickhouse的WAL功能">
+<meta property="og:url" content="http://yoursite.com/2022/02/28/Clickhouse%E7%A0%94%E7%A9%B6-Clickhouse%E7%9A%84WAL%E5%8A%9F%E8%83%BD/index.html">
+<meta property="og:site_name" content="Carlmartin&#39; Blog">
+<meta property="og:description" content="Clickhouse的WAL功能设计目的解决小批量数据写入时, 频繁写入dataPart, 导致磁盘繁忙的问题或者出现DB::Exception: Too many parts 具体可以参考这篇文档  并非binlog的模式, 数据flush后, 会清理wal文件  源码分析首先看写逻辑的入口, 在MergeTreeDataWriter::writeTempPart创建了一个MergeTreeDa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-28T07:07:16.000Z">
+<meta property="article:modified_time" content="2024-03-06T08:19:03.849Z">
+<meta property="article:author" content="Carlmartin">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2022/02/28/Clickhouse%E7%A0%94%E7%A9%B6-Clickhouse%E7%9A%84WAL%E5%8A%9F%E8%83%BD/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>[Clickhouse研究]: Clickhouse的WAL功能 | Carlmartin' Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Carlmartin' Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">In me the tiger sniffs the rose.</p>
+      
+    
+    
   </div>
 
-{% endblock %}
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/SaintBacchus" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/02/28/Clickhouse%E7%A0%94%E7%A9%B6-Clickhouse%E7%9A%84WAL%E5%8A%9F%E8%83%BD/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Carlmartin"/>
+      <meta itemprop="description" content="A place for codeing break."/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Carlmartin' Blog"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[Clickhouse研究]: Clickhouse的WAL功能
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+		   
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2022-02-28 15:07:16" itemprop="dateCreated datePublished" datetime="2022-02-28T15:07:16+08:00">2022-02-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2024-03-06 16:19:03" itemprop="dateModified" datetime="2024-03-06T16:19:03+08:00">2024-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon"
+            >
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">6.9k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">11 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Clickhouse的WAL功能"><a href="#Clickhouse的WAL功能" class="headerlink" title="Clickhouse的WAL功能"></a>Clickhouse的WAL功能</h1><h2 id="设计目的"><a href="#设计目的" class="headerlink" title="设计目的"></a>设计目的</h2><p>解决小批量数据写入时, 频繁写入dataPart, 导致磁盘繁忙的问题或者出现<code>DB::Exception: Too many parts</code></p>
+<p>具体可以参考这篇<a href="https://bohutang.me/2020/08/18/clickhouse-and-friends-merge-tree-wal/">文档</a></p>
+<blockquote>
+<p>并非binlog的模式, 数据flush后, 会清理wal文件</p>
+</blockquote>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>首先看写逻辑的入口, 在<code>MergeTreeDataWriter::writeTempPart</code>创建了一个<code>MergeTreeData::MutableDataPartPtr</code>的类型<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MergeTreeData::MutableDataPartPtr <span class="title">MergeTreeDataWriter::writeTempPart</span><span class="params">(BlockWithPartition &amp; block_with_partition, <span class="type">const</span> StorageMetadataPtr &amp; metadata_snapshot)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">auto</span> new_data_part = data.<span class="built_in">createPart</span>(</span><br><span class="line">        part_name,</span><br><span class="line">        data.<span class="built_in">choosePartType</span>(expected_size, block.<span class="built_in">rows</span>()),</span><br><span class="line">        new_part_info,</span><br><span class="line">        <span class="built_in">createVolumeFromReservation</span>(reservation, volume),</span><br><span class="line">        TMP_PREFIX + part_name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><code>MergeTreeData::MutableDataPartPtr</code>有三种实现, <code>IN_MEMORY</code>是写入到内存中, 由于内存是易失的, 所以需要WAL功能的辅助.<code>COMPACT</code>和<code>WIDE</code>都是文件存储, 但文件编码和压缩方式不同.<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MergeTreeData::MutableDataPartPtr <span class="title">MergeTreeData::createPart</span><span class="params">(<span class="type">const</span> String &amp; name,</span></span></span><br><span class="line"><span class="params"><span class="function">    MergeTreeDataPartType type, <span class="type">const</span> MergeTreePartInfo &amp; part_info,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> VolumePtr &amp; volume, <span class="type">const</span> String &amp; relative_path)</span> <span class="type">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (type == MergeTreeDataPartType::COMPACT)</span><br><span class="line">        <span class="keyword">return</span> std::<span class="built_in">make_shared</span>&lt;MergeTreeDataPartCompact&gt;(*<span class="keyword">this</span>, name, part_info, volume, relative_path);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (type == MergeTreeDataPartType::WIDE)</span><br><span class="line">        <span class="keyword">return</span> std::<span class="built_in">make_shared</span>&lt;MergeTreeDataPartWide&gt;(*<span class="keyword">this</span>, name, part_info, volume, relative_path);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (type == MergeTreeDataPartType::IN_MEMORY)</span><br><span class="line">        <span class="keyword">return</span> std::<span class="built_in">make_shared</span>&lt;MergeTreeDataPartInMemory&gt;(*<span class="keyword">this</span>, name, part_info, volume, relative_path);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="built_in">Exception</span>(<span class="string">&quot;Unknown type of part &quot;</span> + relative_path, ErrorCodes::UNKNOWN_PART_TYPE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>上面的逻辑, 主要是根据<code>MergeTreeDataPartType</code>的类型选择, 那么我们看一下, 上面什么时候会选择该类型: 当part的文件小于<code>min_bytes_for_compact_part</code>或者行数小于<code>min_rows_for_compact_part</code>, 只要满足一种一项即可.<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MergeTreeDataPartType <span class="title">MergeTreeData::choosePartType</span><span class="params">(<span class="type">size_t</span> bytes_uncompressed, <span class="type">size_t</span> rows_count)</span> <span class="type">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">const</span> <span class="keyword">auto</span> settings = <span class="built_in">getSettings</span>();</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">canUsePolymorphicParts</span>(*settings))</span><br><span class="line">        <span class="keyword">return</span> MergeTreeDataPartType::WIDE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bytes_uncompressed &lt; settings-&gt;min_bytes_for_compact_part || rows_count &lt; settings-&gt;min_rows_for_compact_part)</span><br><span class="line">        <span class="keyword">return</span> MergeTreeDataPartType::IN_MEMORY;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bytes_uncompressed &lt; settings-&gt;min_bytes_for_wide_part || rows_count &lt; settings-&gt;min_rows_for_wide_part)</span><br><span class="line">        <span class="keyword">return</span> MergeTreeDataPartType::COMPACT;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> MergeTreeDataPartType::WIDE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>那么回过头来看<code>MergeTreeDataPartInMemory</code>的实现</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MergeTreeDataPartInMemory</span> : <span class="keyword">public</span> IMergeTreeDataPart</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 忽略部分函数</span></span><br><span class="line">  <span class="keyword">mutable</span> Block block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从源码上看, <code>MergeTreeDataPartInMemory</code>就是原本Block写入本地磁盘, 而它则放入到内存中. </p>
+<p>那么如果进程重启, 内存中数据丢失后, 该如何处理呢?</p>
+<p>答案在于<code>MergeTreeWriteAheadLog</code>的功能中, 将用户数据写入到WAL.</p>
+<p>当进程启动的时候, 会调用<code>restore</code>从WAL的文件中, 将数据恢复到内存中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MergeTreeData::MutableDataPartsVector <span class="title">MergeTreeWriteAheadLog::restore</span><span class="params">(<span class="type">const</span> StorageMetadataPtr &amp; metadata_snapshot)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> </span><br><span class="line">            <span class="keyword">if</span> (action_type == ActionType::ADD_PART)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">auto</span> part_disk = storage.<span class="built_in">reserveSpace</span>(<span class="number">0</span>)-&gt;<span class="built_in">getDisk</span>();</span><br><span class="line">                <span class="keyword">auto</span> single_disk_volume = std::<span class="built_in">make_shared</span>&lt;SingleDiskVolume&gt;(<span class="string">&quot;volume_&quot;</span> + part_name, disk);</span><br><span class="line"></span><br><span class="line">                part = storage.<span class="built_in">createPart</span>(</span><br><span class="line">                    part_name,</span><br><span class="line">                    MergeTreeDataPartType::IN_MEMORY,</span><br><span class="line">                    MergeTreePartInfo::<span class="built_in">fromPartName</span>(part_name, storage.format_version),</span><br><span class="line">                    single_disk_volume,</span><br><span class="line">                    part_name);</span><br><span class="line"></span><br><span class="line">                block = block_in.<span class="built_in">read</span>();</span><br><span class="line">            &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么wal文件会越写越多, 什么时候会开始清理部分数据呢?</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">MergeTreeWriteAheadLog::addPart</span><span class="params">(<span class="type">const</span> Block &amp; block, <span class="type">const</span> String &amp; part_name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 写数据到WAL</span></span><br><span class="line">    block_out-&gt;<span class="built_in">write</span>(block);</span><br><span class="line">    block_out-&gt;<span class="built_in">flush</span>();</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">auto</span> max_wal_bytes = storage.<span class="built_in">getSettings</span>()-&gt;write_ahead_log_max_bytes;</span><br><span class="line">    <span class="keyword">if</span> (out-&gt;<span class="built_in">count</span>() &gt; max_wal_bytes)</span><br><span class="line">        <span class="built_in">rotate</span>(lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>addPart</code>的逻辑之中, 会检查WAL文件的大小, 当文件大于<code>write_ahead_log_max_bytes</code>(默认为1GB)时, 开始清理WAL文件</p>
+<p>另外一个问题, <strong>WAL的内存部分数据存放在哪儿</strong>, 在insert的时候(<code>renameTempPartAndReplace</code>), 数据会放到<code>data_parts_indexes.insert</code>之中, read时候从这里读取数据</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">MergeTreeData::renameTempPartAndReplace</span><br><span class="line">&#123;</span><br><span class="line">    part-&gt;name = part_name;</span><br><span class="line">    part-&gt;info = part_info;</span><br><span class="line">    part-&gt;is_temp = <span class="literal">false</span>;</span><br><span class="line">    part-&gt;state = DataPartState::PreCommitted;</span><br><span class="line">    part-&gt;<span class="built_in">renameTo</span>(part_name, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> part_it = data_parts_indexes.<span class="built_in">insert</span>(part).first;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>数据恢复的时候, <code>loadDataParts</code>的时候, 数据被读取出来, 然后插入到<code>data_parts_indexes</code>之中, 通过<code>getActiveContainingPart</code>过滤重复的数据<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">MergeTreeData::loadDataParts</span><br><span class="line">&#123;</span><br><span class="line">    for (auto &amp; part : parts_from_wal)</span><br><span class="line">   &#123;</span><br><span class="line">       if (getActiveContainingPart(part-&gt;info, DataPartState::Committed, part_lock))</span><br><span class="line">           continue;</span><br><span class="line"></span><br><span class="line">       part-&gt;modification_time = time(nullptr);</span><br><span class="line">       /// Assume that all parts are Committed, covered parts will be detected and marked as Outdated later</span><br><span class="line">       part-&gt;state = DataPartState::Committed;</span><br><span class="line"></span><br><span class="line">       if (!data_parts_indexes.insert(part).second)</span><br><span class="line">           throw Exception(&quot;Part &quot; + part-&gt;name + &quot; already exists&quot;, ErrorCodes::DUPLICATE_DATA_PART);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到Clickhouse的WAL机制, 并没有RocksDB的那种MemTable, 因此两个批次的数据, 并不会在内存中合并. </p>
+<p>所有的合并操作, 依然由后台线程来处理,  支持在合并的流程中, 抽象为2个DataPart的合并, 但实际上可以是一个InMem的DP和一个OnDisk的DP做合并.</p>
+<p>Clickhouse的合并后的数据都写入到磁盘中.</p>
+<p>另外一个点, 在复制表中, InMem的DP依然会做同步.</p>
+<p>在<code>DataPartsExchange</code>有两个函数<code>sendPartFromMemory</code>和<code>downloadPartToMemory</code>, 前者用于发送数据, 后者用户下载数据, 同步后, 数据依然是InMem格式.</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>创建一张表, 指定<code>min_rows_for_compact_part</code>为200,write_ahead_log_max_bytes为8192(8K)<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> default.lineorder_local1</span><br><span class="line">(</span><br><span class="line">    `LO_ORDERKEY` UInt32,</span><br><span class="line">    `LO_LINENUMBER` UInt8,</span><br><span class="line">    `LO_CUSTKEY` UInt32,</span><br><span class="line">    `LO_PARTKEY` UInt32,</span><br><span class="line">    `LO_SUPPKEY` UInt32,</span><br><span class="line">    `LO_ORDERDATE` <span class="type">Date</span>,</span><br><span class="line">    `LO_ORDERPRIORITY` LowCardinality(String),</span><br><span class="line">    `LO_SHIPPRIORITY` UInt8,</span><br><span class="line">    `LO_QUANTITY` UInt8,</span><br><span class="line">    `LO_EXTENDEDPRICE` UInt32,</span><br><span class="line">    `LO_ORDTOTALPRICE` UInt32,</span><br><span class="line">    `LO_DISCOUNT` UInt8,</span><br><span class="line">    `LO_REVENUE` UInt32,</span><br><span class="line">    `LO_SUPPLYCOST` UInt32,</span><br><span class="line">    `LO_TAX` UInt8,</span><br><span class="line">    `LO_COMMITDATE` <span class="type">Date</span>,</span><br><span class="line">    `LO_SHIPMODE` LowCardinality(String)</span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> MergeTree</span><br><span class="line"><span class="keyword">PARTITION</span> <span class="keyword">BY</span> toYear(LO_ORDERDATE)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> (LO_ORDERDATE, LO_ORDERKEY)</span><br><span class="line">SETTINGS index_granularity <span class="operator">=</span> <span class="number">8192</span>, min_rows_for_compact_part <span class="operator">=</span> <span class="number">200</span>,write_ahead_log_max_bytes<span class="operator">=</span><span class="number">8192</span>;</span><br></pre></td></tr></table></figure></p>
+<p>插入100条数据<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">table</span> lineorder_local1 <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> lineorder_local limit <span class="number">100</span>;</span><br></pre></td></tr></table></figure></p>
+<p>查看数据目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata-nmg-client01.nmg01 /var/lib/clickhouse/data/default/lineorder_local1]$ ll</span><br><span class="line">total 12</span><br><span class="line">drwxr-x--- 2 clickhouse clickhouse    6 Apr 12 14:53 detached</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse    1 Apr 12 14:53 format_version.txt</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse 4766 Apr 12 14:54 wal.bin</span><br></pre></td></tr></table></figure><br>出现了一个<code>wal.bin</code>的文件<br>再插入一次, 发现又出现了一个bin文件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata-nmg-client01.nmg01 /var/lib/clickhouse/data/default/lineorder_local1]$ ll</span><br><span class="line">total 16</span><br><span class="line">drwxr-x--- 2 clickhouse clickhouse   10 Apr 12 15:18 detached</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse    1 Apr 12 15:18 format_version.txt</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse 9532 Apr 12 15:18 wal_1_2.bin</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse    0 Apr 12 15:18 wal.bin</span><br></pre></td></tr></table></figure></p>
+<p>多了一个<code>wal_1_2.bin</code>的文件, 我们在多插入几次, 到第5次插入的时候, 会生成一个datapart<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata-nmg-client01.nmg01 /var/lib/clickhouse/data/default/lineorder_local1]$ ll</span><br><span class="line">total 40</span><br><span class="line">drwxr-x--- 2 clickhouse clickhouse 4096 Apr 12 15:39 1992_1_5_1</span><br><span class="line">drwxr-x--- 2 clickhouse clickhouse   10 Apr 12 15:18 detached</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse    1 Apr 12 15:18 format_version.txt</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse 9532 Apr 12 15:18 wal_1_2.bin</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse 9532 Apr 12 15:26 wal_3_4.bin</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse 4766 Apr 12 15:39 wal.bin</span><br></pre></td></tr></table></figure><br>再过一段时间观察, 发现<code>wal_*_*.bin</code>文件已经被删除了, 原因在于data_part已经commit的了<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@bigdata-nmg-client01.nmg01 /var/lib/clickhouse/data/default/lineorder_local1]$ ll</span><br><span class="line">total 16</span><br><span class="line">drwxr-x--- 2 clickhouse clickhouse 4096 Apr 12 15:39 1992_1_5_1</span><br><span class="line">drwxr-x--- 2 clickhouse clickhouse   10 Apr 12 15:18 detached</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse    1 Apr 12 15:18 format_version.txt</span><br><span class="line">-rw-r----- 1 clickhouse clickhouse 4766 Apr 12 15:39 wal.bin</span><br><span class="line">[root@bigdata-nmg-client01.nmg01 /var/lib/clickhouse/data/default/lineorder_local1]$</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"># 技术</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/02/27/Clickhouse%E9%97%AE%E9%A2%98-%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/" rel="next" title="[Clickhouse问题]: 物化视图初始化数据丢失与重复问题">
+                <i class="fa fa-chevron-left"></i> [Clickhouse问题]: 物化视图初始化数据丢失与重复问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/02/28/Clickhouse%E7%A0%94%E7%A9%B6-Clickhouse%E7%9A%84%E5%90%8C%E6%AD%A5%E9%94%81/" rel="prev" title="[Clickhouse研究]: Clickhouse的同步锁">
+                [Clickhouse研究]: Clickhouse的同步锁 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Carlmartin</p>
+              <div class="site-description motion-element" itemprop="description">A place for codeing break.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%20%7C%7C%20archive">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/%20%7C%7C%20th">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/%20%7C%7C%20tags">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/SaintBacchus" title="GitHub &rarr; https:&#x2F;&#x2F;github.com&#x2F;SaintBacchus" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:carlmartinmax@gmail.com" title="E-Mail &rarr; mailto:carlmartinmax@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Clickhouse%E7%9A%84WAL%E5%8A%9F%E8%83%BD"><span class="nav-number">1.</span> <span class="nav-text">Clickhouse的WAL功能</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%9B%AE%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">设计目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">1.3.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carlmartin</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">186k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">4:50</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v7.1.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.2</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

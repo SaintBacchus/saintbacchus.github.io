@@ -1,23 +1,1501 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
-{% block title %}{{ page.title }} | {{ title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
 
-{% block content %}
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '7.1.2',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="众所周知, Clickhouse是没有事务能力的, 对写入数据也不承诺原子性保护,  但在业务使用过程中, 用户往往需要数据量尽量一致, 现在在使用CK时, 用户经常在校对离线和实时数据时, 发现数据行数都不一致. 因此, 我们需要给力CK加上一个原子性写入的保护, 但基于OLAP系统的吞吐量, 给CK加强一致事务保护是不现实的, 所以我们的目标并不是100%的原子性, 而是一个折中. 有个要注意">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Clickhouse分享:原子写入">
+<meta property="og:url" content="http://yoursite.com/2021/08/24/Clickhouse%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E5%8E%9F%E5%AD%90%E5%86%99%E5%85%A5/index.html">
+<meta property="og:site_name" content="Carlmartin&#39; Blog">
+<meta property="og:description" content="众所周知, Clickhouse是没有事务能力的, 对写入数据也不承诺原子性保护,  但在业务使用过程中, 用户往往需要数据量尽量一致, 现在在使用CK时, 用户经常在校对离线和实时数据时, 发现数据行数都不一致. 因此, 我们需要给力CK加上一个原子性写入的保护, 但基于OLAP系统的吞吐量, 给CK加强一致事务保护是不现实的, 所以我们的目标并不是100%的原子性, 而是一个折中. 有个要注意">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824150229371.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KNR.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KOc.png">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-16e2dc211fae60c8df956546ae465ce6_720w.jpg">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-3d7059f46f5b1557742cf866e10a7e20_720w.jpg">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-e5933278ad5c34eb94e7a712fd61ae90_720w.jpg">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824191907998.png">
+<meta property="article:published_time" content="2021-08-24T06:28:33.000Z">
+<meta property="article:modified_time" content="2024-03-06T08:19:03.849Z">
+<meta property="article:author" content="Carlmartin">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824150229371.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2021/08/24/Clickhouse%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E5%8E%9F%E5%AD%90%E5%86%99%E5%85%A5/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Clickhouse分享:原子写入 | Carlmartin' Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Carlmartin' Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">In me the tiger sniffs the rose.</p>
+      
+    
+    
   </div>
 
-{% endblock %}
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/SaintBacchus" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/24/Clickhouse%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E5%8E%9F%E5%AD%90%E5%86%99%E5%85%A5/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Carlmartin"/>
+      <meta itemprop="description" content="A place for codeing break."/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Carlmartin' Blog"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Clickhouse分享:原子写入
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+		   
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2021-08-24 14:28:33" itemprop="dateCreated datePublished" datetime="2021-08-24T14:28:33+08:00">2021-08-24</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2024-03-06 16:19:03" itemprop="dateModified" datetime="2024-03-06T16:19:03+08:00">2024-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">技术文章</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon"
+            >
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">5.3k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">8 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>众所周知, Clickhouse是没有事务能力的, 对写入数据也不承诺原子性保护,  但在业务使用过程中, 用户往往需要数据量尽量一致, 现在在使用CK时, 用户经常在校对离线和实时数据时, 发现数据行数都不一致.</p>
+<p>因此, 我们需要给力CK加上一个原子性写入的保护, 但基于OLAP系统的吞吐量, 给CK加强一致事务保护是不现实的, 所以我们的目标并不是100%的原子性, 而是一个折中.</p>
+<p>有个要注意的点, 这篇文章讨论的是写入的<code>原子性</code>, 它只能保证写入要么全部成功, 那么全部失败; 它能保证<code>最终一致性</code>, 但无法保证强一致性; 也<code>无法承诺任何隔离性</code>; 但可以保证持久性.</p>
+<blockquote>
+<p>实际上用ACID来评价这个原子性, 并不是很恰当, 例如<code>最终一致性</code>是分布式复制协议里面的概念; 这里只是用数据库的ACID做为评价的指标.</p>
+</blockquote>
+<h2 id="实时数据写入流程"><a href="#实时数据写入流程" class="headerlink" title="实时数据写入流程"></a>实时数据写入流程</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824150229371.png" alt="image-20210824150229371"></p>
+<p>目前实时数据导入的流程大致入上图所示:</p>
+<ol>
+<li><p>数据存储在Kafka中,  数据从Kafka读取, 并流向Flink程序. 由于Flink有比较完善的Checkpoint机制, 只要Source能够<strong>回放</strong>, 就能保证数据是一致的. 因此这个步骤不会丢失数据</p>
+</li>
+<li><p>数据在Flink中做完转化后, 会写入到CHProxy中. CHProxy是一个Clickhouse的代理, 负责鉴权或者流程控制等功能. 这个步骤比较容易丢数据,  因为Flink要求Sink算子能够<strong>幂等写入</strong>, 但CHProxy和Clickhouse现有功能都无法保证.</p>
+</li>
+<li><p>CHProxy接受到写入请求后, 会随机选择一个Clickhouse后端执行写入SQL. 由于随机选择, Flink重试后有可能导致数据写入到不同shard节点, 导致<strong>重复</strong></p>
+<blockquote>
+<ol>
+<li>Flink选CHProxy也是随机的</li>
+<li>写入时, 直接写入本地表, 数据没有做hash</li>
+</ol>
+</blockquote>
+</li>
+<li><p>Clickhouse节点接收到SQL请求后, 会将数据按照分区切分数据, 写入临时文件, 再分批提交.  提交过程失败, 会导致任务重试后<strong>数据重复</strong>(部分提交成功的情况)</p>
+</li>
+<li><p>多replica集群,  数据写入到主节点后, 会<strong>异步的同步</strong>到从节点, 此时主节点下线会导致<strong>数据丢失</strong> (节点重启后, 还能恢复)</p>
+</li>
+</ol>
+<p>从上面的分析可知, 2,3,4,5都存在着数据重复或者丢失的风险,  其中2和3是机制问题, 一旦触发Flink重试(重启应用必然触发)/CHProxy随机路由(重试写入时就触发), 数据就会出现大概率重复. 而4和5是小概率实践, 4是一个磁盘写入操作, 即使顺序执行多个DP操作时, 出现异常的概率都是相对较小的;5的情况, 只要节点能够重启, 就能够保证最终一致性.</p>
+<p>综上所示, 原子写入的目标是修改2和3的逻辑, 保证数据丢失重复的概率不高于4和5.</p>
+<h2 id="两阶段提交"><a href="#两阶段提交" class="headerlink" title="两阶段提交"></a>两阶段提交</h2><p> 二阶段提交(Two-phaseCommit)是指，在计算机网络以及数据库领域内，为了使基于分布式系统架构下的所有节点在进行事务提交时<strong>保持一致性</strong>而设计的一种算法(Algorithm)。通常，二阶段提交也被称为是一种协议(Protocol))。</p>
+<p> 在分布式系统中，每个节点虽然可以知晓自己的操作时成功或者失败，却无法知道其他节点的操作的成功或失败。</p>
+<p> <strong>当一个事务跨越多个节点时</strong>，<strong>为了保持事务的ACID特性</strong>，需要<strong>引入一个作为协调者的组件</strong>来统一掌控所有节点(称作参与者)的操作结果并最终指示这些节点是否要把操作结果进行真正的提交(比如将更新后的数据写入磁盘等等)。</p>
+<p> 因此，<strong>二阶段提交的算法思路可以概括为：</strong> <strong>参与者将操作成败通知协调者，再由协调者根据所有参与者的反馈情报决定各参与者是否要提交操作还是中止操作。</strong></p>
+<p>所谓的两个阶段是指：</p>
+<ul>
+<li><p><strong>第一阶段：投票</strong></p>
+<p>该阶段的主要目的在于打探数据库集群中的各个参与者是否能够正常的执行事务，具体步骤如下：</p>
+<ol>
+<li>协调者向所有的参与者发送事务执行请求，并等待参与者反馈事务执行结果；</li>
+<li>事务参与者收到请求之后，执行事务但不提交，并记录事务日志；</li>
+<li>参与者将自己事务执行情况反馈给协调者，同时阻塞等待协调者的后续指令。</li>
+</ol>
+</li>
+<li><p><strong>第二阶段：事务提交</strong></p>
+<p>在经过第一阶段协调者的询盘之后，各个参与者会回复自己事务的执行情况，这时候存在 3 种可能性：</p>
+<ol>
+<li>所有的参与者都回复能够正常执行事务。</li>
+<li>一个或多个参与者回复事务执行失败。</li>
+<li>协调者等待超时。</li>
+</ol>
+</li>
+</ul>
+<p>对于第 1 种情况，协调者将向所有的参与者发出提交事务的通知，具体步骤如下：</p>
+<ol>
+<li>协调者向各个参与者发送 commit 通知，请求提交事务；</li>
+<li>参与者收到事务提交通知之后执行 commit 操作，然后释放占有的资源；</li>
+<li>参与者向协调者返回事务 commit 结果信息。</li>
+</ol>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KNR.png" alt="2pc-success"></p>
+<p>对于第 2 和第 3 种情况，协调者均认为参与者无法成功执行事务，为了整个集群数据的一致性，所以要向各个参与者发送事务回滚通知，具体步骤如下：</p>
+<ol>
+<li>协调者向各个参与者发送事务 rollback 通知，请求回滚事务；</li>
+<li>参与者收到事务回滚通知之后执行 rollback 操作，然后释放占有的资源；</li>
+<li>参与者向协调者返回事务 rollback 结果信息。</li>
+</ol>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KOc.png" alt="2pc-failed"></p>
+<p>两阶段提交协议原理简单、易于实现，但是缺点也是显而易见的，包含如下：</p>
+<ul>
+<li><strong>单点问题</strong>: 协调者在整个两阶段提交过程中扮演着举足轻重的作用，一旦协调者所在服务器宕机，就会影响整个数据库集群的正常运行。比如在第二阶段中，如果协调者因为故障不能正常发送事务提交或回滚通知，那么参与者们将一直处于阻塞状态，整个数据库集群将无法提供服务。 <strong>极端情况下, 协调者发出Commmit消息之后宕机</strong>,  整体系统将存储不确定的状态.</li>
+<li><strong>同步阻塞</strong>: 两阶段提交执行过程中，所有的参与者都需要听从协调者的统一调度，期间处于阻塞状态而不能从事其他操作，这样效率极其低下。</li>
+<li><p><strong>数据不一致性</strong>: 两阶段提交协议虽然是分布式数据强一致性所设计，但仍然存在数据不一致性的可能性。比如在第二阶段中，假设协调者发出了事务 commit 通知，但是因为网络问题该通知仅被一部分参与者所收到并执行了commit 操作，其余的参与者则因为没有收到通知一直处于阻塞状态，这时候就产生了数据的不一致性。</p>
+<p>针对上述问题可以引入 <strong>超时机制</strong> 和 <strong>互询机制</strong> 在很大程度上予以解决。</p>
+</li>
+</ul>
+<p>对于协调者来说如果在指定时间内没有收到所有参与者的应答，则可以自动退出 WAIT 状态，并向所有参与者发送 rollback 通知。对于参与者来说如果位于 READY 状态，但是在指定时间内没有收到协调者的第二阶段通知，则不能武断地执行 rollback 操作，因为协调者可能发送的是 commit 通知，这个时候执行 rollback 就会导致数据不一致。</p>
+<p>此时，我们可以介入互询机制，让参与者 A 去询问其他参与者 B 的执行情况。如果 B 执行了 rollback 或 commit 操作，则 A 可以大胆的与 B 执行相同的操作；如果 B 此时还没有到达 READY 状态，则可以推断出协调者发出的肯定是 rollback 通知；如果 B 同样位于 READY 状态，则 A 可以继续询问另外的参与者。只有当所有的参与者都位于 READY 状态时，此时两阶段提交协议无法处理，将陷入长时间的阻塞状态。</p>
+<blockquote>
+<p>上文的介绍摘抄自<a href="https://segmentfault.com/a/1190000012534071">参考文档</a></p>
+</blockquote>
+<h2 id="Flink中的两阶段提交"><a href="#Flink中的两阶段提交" class="headerlink" title="Flink中的两阶段提交"></a>Flink中的两阶段提交</h2><p>Flink提供了基于2PC的SinkFunction，名为TwoPhaseCommitSinkFunction，帮助我们做了一些基础的工作。它的第一层类继承关系如下：</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-16e2dc211fae60c8df956546ae465ce6_720w.jpg" alt="img"></p>
+<p>但是TwoPhaseCommitSinkFunction仍然留了以下四个抽象方法待子类来实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">abstract</span> TXN <span class="title function_">beginTransaction</span><span class="params">()</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"> <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">preCommit</span><span class="params">(TXN transaction)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"> <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">commit</span><span class="params">(TXN transaction)</span>;</span><br><span class="line"> <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">abort</span><span class="params">(TXN transaction)</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>beginTransaction()：开始一个事务，返回事务信息的句柄。</p>
+</li>
+<li><p>preCommit()：预提交（即提交请求）阶段的逻辑, 在snapshotState()方法被调用</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-3d7059f46f5b1557742cf866e10a7e20_720w.jpg" alt="img"></p>
+<p>每当需要做checkpoint时，JobManager就在数据流中打入一个屏障（barrier），作为检查点的界限。屏障随着算子链向下游传递，每到达一个算子都会触发将状态快照写入状态后端(state BackEnd)的动作。当屏障到达Kafka sink后，触发preCommit(实际上是KafkaProducer.flush())方法刷写消息数据，但还未真正提交。接下来还是需要通过检查点来触发提交阶段。</p>
+</li>
+<li><p>commit()：正式提交阶段的逻辑, 该方法的调用点位于TwoPhaseCommitSinkFunction.notifyCheckpointComplete()方法中</p>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-e5933278ad5c34eb94e7a712fd61ae90_720w.jpg" alt="img"></p>
+<p>可见，只有在所有检查点都成功完成这个前提下，写入才会成功。这符合前文所述2PC的流程，其中JobManager为协调者，各个算子为参与者（不过只有sink一个参与者会执行提交）。一旦有检查点失败，notifyCheckpointComplete()方法就不会执行。如果重试也不成功的话，最终会调用abort()方法回滚事务。</p>
+</li>
+<li><p>abort()：取消事务, 在这里执行Rollback操作</p>
+</li>
+</ul>
+<p>从Flink的实现, 再回看两阶段提交的问题:</p>
+<ol>
+<li><p>单点问题, 依然存在, Flink只会重启再重试, 但当代码未触发Rollback而异常退出时, Flink实际上对此没有能力</p>
+</li>
+<li><p>同步阻塞, Clickhouse并没有写入锁, 因此本身就没有这类问题. <strong>事务超时处理可以由应用层完成</strong></p>
+</li>
+<li><p>数据不一致, Flink有Rollback的接口, 再正常情况下能够保证数据最终一致, 但无法保证强一致性. 在单点问题发生时, Flink连最终一致性也无法保证. 而且数据不一致时, 并没有<strong>互询机制</strong>对账.</p>
+</li>
+</ol>
+<h2 id="Clickhouse两阶段写入"><a href="#Clickhouse两阶段写入" class="headerlink" title="Clickhouse两阶段写入"></a>Clickhouse两阶段写入</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824191907998.png" alt="image-20210824191907998" style="zoom:50%;" /></p>
+<h3 id="Prepare"><a href="#Prepare" class="headerlink" title="Prepare"></a>Prepare</h3><p>跟现在写tmp文件夹一样, 让DP写入的地方写入到一个叫做<code>draft</code>的文件夹. 类似<code>detach</code>目录, 查询时这些数据不可见, 同时也不会触发<code>Merge</code>以及<code>Mutation</code>操作.</p>
+<p>Prepare过程会设置两个Label标志, 第一个标志Flink的CP编号, 第二个标志插入数据的标志. Label可以由客户端设置, 也可以让系统自动生成.</p>
+<p>Insert语句会包含返回值, 返回的内容为: Host节点名 + Lable_CP名称 + Lable_name名称 </p>
+<h3 id="Commit"><a href="#Commit" class="headerlink" title="Commit"></a>Commit</h3><p>Commit过程类似于Attach,  Commit需要提供对应的Lable_name列表, 只会Commit对应Label的DataPart.</p>
+<p>另外由于Commit可能会处于Unknown状态,  那么需要能够实现多次commit, 用于第一次失败后的重试.</p>
+<h3 id="Rollback"><a href="#Rollback" class="headerlink" title="Rollback"></a>Rollback</h3><p>触发回滚时, DataPart可能会处于Draft或者Visible状态,  对于Draft状态的DataPart只需要删除文件即可.</p>
+<p>但是对于Visible状态的DataPart, 需要防止数据被Merge, 导致无法回滚, 此时要求</p>
+<ol>
+<li>只能Merge相同Label_CP的DataPart, 不同Label_CP的DP不会merge, Mutation后依然保留Label_CP标志</li>
+<li>超过Flink Checkpoint间隔后, 可以解除Merge限制, 该时间限制由commit命令的配置项传递 </li>
+</ol>
+<p>这样既能保证Rollup正确执行, 也保证DP个数不会太多, 导致节点负载高.</p>
+<blockquote>
+<p>Draft或者Visible状态只是一种描述, 并非CK内部的DP状态类型.</p>
+</blockquote>
+<h3 id="数据清理"><a href="#数据清理" class="headerlink" title="数据清理"></a>数据清理</h3><p>Flink重启后, 不一定能够下发Rollback命令, 因此需要有一个定时的线程来删除Draft的数据.</p>
+<p>默认清理1天前的数据, Clickhouse的插入语句, 不允许执行一天.</p>
+<h3 id="物化视图"><a href="#物化视图" class="headerlink" title="物化视图"></a>物化视图</h3><p>CK的物化视图的更新发生在插入过程中, 因此在插入的时候, 需要对物化视图产生的DP, 打上相同的Label标签. </p>
+<p>由于物化视图是分布式写入, 因此每个节点都可能有对应的数据块, 因此插入物化视图时, 返回的数据行数会很多.</p>
+<h3 id="DDL变更"><a href="#DDL变更" class="headerlink" title="DDL变更"></a>DDL变更</h3><p>Prepare过程中, 按照老的元数据写入数据, 但是commit阶段, 元数据已经改变.</p>
+<p>此时Commit DP时, 需要执行Mutation, 这可能导致Commit时间过长, 导致超时, 但如果是异步处理的话, 可能无法完成.</p>
+<h3 id="集群扩缩容"><a href="#集群扩缩容" class="headerlink" title="集群扩缩容"></a>集群扩缩容</h3><p>集群扩容的时候, 比较简单, 主要按照原有的流程处理即可.</p>
+<p>但缩容的过程, 由于节点下线, 导致对于该shard的commit,永远都不会成功, 这样就必然会触发Flink的重试, 而整个集群上所有Flink任务的重试, 对业务来说是无法接受的. </p>
+<p>因此需要实现下线时,  流量转发的能力, 将commit的请求, 随着数据的迁移而转发, 服务进程依然会提供服务, 知道flink上依赖的任务全部解除依赖(新的一轮snapshot过程即可解除, 删除对应链接通路即可.)</p>
+<h2 id="对比Doris"><a href="#对比Doris" class="headerlink" title="对比Doris"></a>对比Doris</h2><p>对于原子插入, Doris处理方式基本一致, 但是Doris的方案能够保证一致性和隔离性, 原因在于<strong>Doris有统一的元数据</strong></p>
+<p>Doris在查询时,  FE会指明那些数据是可见的,  因此Doris的可见性(实际上就是隔离性)可以在FE上通过原子的更新改变.</p>
+<p>而CK没有统一的元数据, 因此需要向每个节点发送commit, 单个节点commit后无法了解全局的Commit,  因此一旦出现全局回滚, 就会出现不一致的问题.</p>
+<blockquote>
+<p><a href="https://www.bilibili.com/video/BV1Dq4y1S7Ws">Doris分享视频</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"># 技术</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/20/Clickhouse%E8%BF%90%E7%BB%B4%E5%A2%9E%E5%BC%BA-%E7%BB%9F%E4%B8%80%E5%85%83%E6%95%B0%E6%8D%AE/" rel="next" title="Clickhouse运维增强:统一元数据">
+                <i class="fa fa-chevron-left"></i> Clickhouse运维增强:统一元数据
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/11/08/Clickhouse%E5%88%86%E4%BA%AB-%E8%AF%BB%E5%B7%B2%E6%8F%90%E4%BA%A4/" rel="prev" title="Clickhouse分享: 读已提交">
+                Clickhouse分享: 读已提交 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Carlmartin</p>
+              <div class="site-description motion-element" itemprop="description">A place for codeing break.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%20%7C%7C%20archive">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/%20%7C%7C%20th">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/%20%7C%7C%20tags">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/SaintBacchus" title="GitHub &rarr; https:&#x2F;&#x2F;github.com&#x2F;SaintBacchus" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:carlmartinmax@gmail.com" title="E-Mail &rarr; mailto:carlmartinmax@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">实时数据写入流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4"><span class="nav-number">2.</span> <span class="nav-text">两阶段提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flink%E4%B8%AD%E7%9A%84%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4"><span class="nav-number">3.</span> <span class="nav-text">Flink中的两阶段提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Clickhouse%E4%B8%A4%E9%98%B6%E6%AE%B5%E5%86%99%E5%85%A5"><span class="nav-number">4.</span> <span class="nav-text">Clickhouse两阶段写入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prepare"><span class="nav-number">4.1.</span> <span class="nav-text">Prepare</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Commit"><span class="nav-number">4.2.</span> <span class="nav-text">Commit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rollback"><span class="nav-number">4.3.</span> <span class="nav-text">Rollback</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B8%85%E7%90%86"><span class="nav-number">4.4.</span> <span class="nav-text">数据清理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE"><span class="nav-number">4.5.</span> <span class="nav-text">物化视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DDL%E5%8F%98%E6%9B%B4"><span class="nav-number">4.6.</span> <span class="nav-text">DDL变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%89%A9%E7%BC%A9%E5%AE%B9"><span class="nav-number">4.7.</span> <span class="nav-text">集群扩缩容</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94Doris"><span class="nav-number">5.</span> <span class="nav-text">对比Doris</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carlmartin</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">186k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">4:50</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v7.1.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.2</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

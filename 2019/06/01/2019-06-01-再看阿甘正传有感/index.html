@@ -1,23 +1,1428 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
 
-{% block title %}{{ page.title }} | {{ title }}{% endblock %}
 
-{% block page_class %}page-post-detail{% endblock %}
 
-{% block content %}
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    version: '7.1.2',
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="缘由前几天的时候, 看了&lt;阿甘正传&gt;的视频节目, 昨天晚上抽空又重温了一遍.   说起来我已经有看过4遍的&lt;阿甘正传&gt;了:  第一遍在高中时候看的, 那个时候觉得这个片子特别的爽, 毕竟是一个逆袭的故事嘛, 和大多数的网络小说的套路实际上类型.  第二遍是在大学的时候看的, 那个时候思绪关心政治历史哲学等内容, 特别关注于电影里面的历史进程, 觉得阿甘真的是历史见证者, 这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[2019-06-01]再看阿甘正传有感">
+<meta property="og:url" content="http://yoursite.com/2019/06/01/2019-06-01-%E5%86%8D%E7%9C%8B%E9%98%BF%E7%94%98%E6%AD%A3%E4%BC%A0%E6%9C%89%E6%84%9F/index.html">
+<meta property="og:site_name" content="Carlmartin&#39; Blog">
+<meta property="og:description" content="缘由前几天的时候, 看了&lt;阿甘正传&gt;的视频节目, 昨天晚上抽空又重温了一遍.   说起来我已经有看过4遍的&lt;阿甘正传&gt;了:  第一遍在高中时候看的, 那个时候觉得这个片子特别的爽, 毕竟是一个逆袭的故事嘛, 和大多数的网络小说的套路实际上类型.  第二遍是在大学的时候看的, 那个时候思绪关心政治历史哲学等内容, 特别关注于电影里面的历史进程, 觉得阿甘真的是历史见证者, 这">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gum/Selection_018.png">
+<meta property="article:published_time" content="2019-06-01T04:34:36.000Z">
+<meta property="article:modified_time" content="2024-03-06T08:19:03.847Z">
+<meta property="article:author" content="Carlmartin">
+<meta property="article:tag" content="电影">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gum/Selection_018.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/06/01/2019-06-01-%E5%86%8D%E7%9C%8B%E9%98%BF%E7%94%98%E6%AD%A3%E4%BC%A0%E6%9C%89%E6%84%9F/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>[2019-06-01]再看阿甘正传有感 | Carlmartin' Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Carlmartin' Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">In me the tiger sniffs the rose.</p>
+      
+    
+    
   </div>
 
-{% endblock %}
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <a href="https://github.com/SaintBacchus" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/01/2019-06-01-%E5%86%8D%E7%9C%8B%E9%98%BF%E7%94%98%E6%AD%A3%E4%BC%A0%E6%9C%89%E6%84%9F/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Carlmartin"/>
+      <meta itemprop="description" content="A place for codeing break."/>
+      <meta itemprop="image" content="/images/avatar.gif"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Carlmartin' Blog"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[2019-06-01]再看阿甘正传有感
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+		   
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-01 12:34:36" itemprop="dateCreated datePublished" datetime="2019-06-01T12:34:36+08:00">2019-06-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2024-03-06 16:19:03" itemprop="dateModified" datetime="2024-03-06T16:19:03+08:00">2024-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon"
+            >
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">3.4k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">5 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="缘由"><a href="#缘由" class="headerlink" title="缘由"></a>缘由</h2><p>前几天的时候, 看了&lt;阿甘正传&gt;的视频节目, 昨天晚上抽空又重温了一遍.  </p>
+<p>说起来我已经有看过4遍的&lt;阿甘正传&gt;了:</p>
+<ul>
+<li>第一遍在高中时候看的, 那个时候觉得这个片子特别的爽, 毕竟是一个逆袭的故事嘛, 和大多数的网络小说的套路实际上类型. </li>
+<li>第二遍是在大学的时候看的, 那个时候思绪关心政治历史哲学等内容, 特别关注于电影里面的历史进程, 觉得阿甘真的是历史见证者, 这也是另外一种意淫, 和大多数的穿越小说也类似.  </li>
+<li>第三遍是在毕业之后看的, 那个时候关注电影的构建, 开始注意电影之中的人物塑造, 渐渐去了解了阿甘/珍妮/丹中尉/母亲等角色的性格</li>
+<li>第四遍是昨天的看的, 发现了其中一个之前我一直没关注到的点: <strong>关于命运的思考</strong>. 在珍妮死去之后, 阿甘在墓前的那场戏, 实际上看着整部电影的文眼, 他让我思绪万千, 所以我就打算写个影评记录一下.</li>
+</ul>
+<h2 id="人物剖析"><a href="#人物剖析" class="headerlink" title="人物剖析"></a>人物剖析</h2><p>&lt;阿甘正传&gt;里面实际上描述的人物非常少,  因为整部电影都是以阿甘的视角展开的, 只有珍妮有一部分闪切的镜头来描述她的人生. 下面就依次描述一下对阿甘来说最重要的认.</p>
+<h3 id="阿甘母亲"><a href="#阿甘母亲" class="headerlink" title="阿甘母亲"></a>阿甘母亲</h3><p>阿甘的口头禅是”妈妈曾经说过”, 说明他大部分的人生思考实际来自他妈妈,  她肯定是阿甘人生最重要的人.  她的形象应该是一个<strong>比较完美的乡下母亲</strong>, 当阿甘出生之后整个人生都围绕在阿甘身边:</p>
+<ol>
+<li><p>为让阿甘能上学而被潜规则</p>
+</li>
+<li><p>阿甘大学毕业之后, 以他为荣</p>
+</li>
+<li><p>尊重阿甘的人生选择, 并没有因为阿甘是低能儿而各种安排阿甘的人生.</p>
+</li>
+<li><p>耐心的教育阿甘, 特别是她死亡的时候那个场景, 能够那么平和的面对人生的结局, 并还在教育阿甘如何面对死亡/面对亲人的离去.  我自己有幻想今后如何教育自己的子女如何面对死亡, 因为这是一个无法逃避的问题, 我想阿甘母亲说的, 可能就是最好的注解了.</p>
+</li>
+</ol>
+<p>阿甘的母亲在电影塑造上是非常 符号话的, 只有人物的形象, 并没有人物的血肉.</p>
+<h3 id="丹中尉"><a href="#丹中尉" class="headerlink" title="丹中尉"></a>丹中尉</h3><p>这角色其实和阿甘母亲一样, 只是一个人物符号, 他是完全服务于电影另一个主题的表达: <strong>越战反思</strong>.<br>丹中尉出生一个电影的军人世家, 以为国牺牲为荣, 但是在越战之中受伤, 失去双腿, 身体残疾了; 国内反战严重, 不以军人为荣, 患上了PTSD, 精神也残疾了.<br>在现实之中, 他最大概率死于自杀, 但是由于&lt;阿甘正传&gt;属于正能量电影, 所以后面他正做起来了, 最后还娶了一个越南籍的老婆, 构成了对越战的反讽.</p>
+<h3 id="珍妮"><a href="#珍妮" class="headerlink" title="珍妮"></a>珍妮</h3><p>珍妮是&lt;阿甘正传&gt;里面唯一有单独场景的人物(<em>其他人物都是和阿甘在一起的场景</em>) , 这个人物主要是为了与阿甘的人生做一个对比的, 象征着美国的两种完全不一样的思维方式.</p>
+<p>阿甘是那种典型美国保守派的思路, 而珍妮是所谓的”垮掉的一代”的典型, 嬉皮士/反战/黑人运动, 哪儿有热闹就往哪儿钻. 她性解放/滥交/吸毒, 基本上所有传统道德反对的事情, 她都做.</p>
+<p>但是最后阿甘和珍妮还是在一起了, 生下来了一个小阿甘, 因为阿甘和珍妮都是美国的一个象征, 一体两面. 最后以传统思维的胜利而结束, 因此珍妮就必须死去了, 但是留下了小阿甘, 代表了两种思潮合并后的现代美国, 继续生活下去了.</p>
+<h3 id="阿甘"><a href="#阿甘" class="headerlink" title="阿甘"></a>阿甘</h3><p>和珍妮不同, 阿甘是所有美国保守派对于美好道德的憧憬: <strong>尽管人有缺陷, 但是道德是完美的</strong></p>
+<p>阿甘在电影虽然戏份太多, 但是人物形象基本上很平, 首先是他是一个低能儿, 因此就不可能展现太多的思考, 其次电影太多的让阿甘的人生轨迹贴近历史了, 实际上对于他自身的心里描述很少. </p>
+<p>前面的三个角色都是阿甘人生里面不可或缺的角色: </p>
+<ol>
+<li>母亲是阿甘人生的导师</li>
+<li>丹中尉是阿甘的经济来源, 阿甘捕虾事业实际上由丹中尉再管理</li>
+<li>珍妮是阿甘人生的追求和比对.</li>
+</ol>
+<h2 id="再论珍妮"><a href="#再论珍妮" class="headerlink" title="再论珍妮"></a>再论珍妮</h2><p>上面介绍珍妮的时候，完全是按照电影角色的角度去思考的，虽然我觉得编剧应该就是这么构想的，因为&lt;阿甘正传&gt;算商业电影，这么设计符合受众的口味．但是我决定还是<strong>过度解读</strong>一下, 以人的角度来描述. 珍妮就是珍妮, 阿甘就是阿甘, 他们是在那个时代阿拉巴马州的两个小镇孩子的缩影.</p>
+<h3 id="少年期"><a href="#少年期" class="headerlink" title="少年期"></a>少年期</h3><p>阿甘是个笨蛋, 腿上又有点残疾, 但有一个非常爱他的母亲, 人虽然傻, 好在对世界的认识都很美好.</p>
+<p>而珍妮是个正常人, 但出生在一个不正常家庭, 父亲小时候性侵她, 她最后报警搬到祖母的房车上居住, 她最大希望是逃离这个乡下, 逃离这个童年.</p>
+<h3 id="青年期"><a href="#青年期" class="headerlink" title="青年期"></a>青年期</h3><p>阿甘凭借打橄榄球读了大学了, 并顺利毕业, 毕业后不知道去哪儿就去当兵, 然后去了越南打战.</p>
+<p>珍妮在大学里开始就解放了天性, 梦想当一个歌手, 站在一个瞩目的位置, 但是命运弄人, 只能靠肉体在杂志里出位.</p>
+<h3 id="越战期间"><a href="#越战期间" class="headerlink" title="越战期间"></a>越战期间</h3><p>阿甘就一路开挂, 而珍妮则在参加嬉皮士运动, 反战等, 这段期间可以珍妮已经放弃了人生, 随波逐流, 跟随那些进步青年的口号, 走上了国内战场.</p>
+<h3 id="越战归来"><a href="#越战归来" class="headerlink" title="越战归来"></a>越战归来</h3><p>阿甘开始当上的捕虾船长, 而这个珍妮就真的堕落了, 开始吸毒当妓女, 生活一片黑暗, 甚至想寻死. 珍妮想跳楼的那场戏是塑造人物最重要的点, 让观众了解珍妮不只是享乐主义的人, 她有她自己痛苦, 而且这场戏也是她人生的一个转折点.</p>
+<h3 id="母亲过世"><a href="#母亲过世" class="headerlink" title="母亲过世"></a>母亲过世</h3><p>阿甘母亲过世之后, 阿甘就又回归到小镇生活了, 而珍妮也厌倦了之前的生活, 回到阿甘身边生活了一段时间. 最后阿甘向珍妮求婚之后, 珍妮再一次离别.</p>
+<h3 id="奔跑吧"><a href="#奔跑吧" class="headerlink" title="奔跑吧"></a>奔跑吧</h3><p>之后, 阿甘就开启了长跑之路, 而珍妮也开始回归正常生活, 当起来了单身母亲</p>
+<h3 id="回归"><a href="#回归" class="headerlink" title="回归"></a>回归</h3><p>最后珍妮得病, 把小阿甘托付之后, 和阿甘结婚, 马上就过世了. 阿甘就独立带孩子, 完成新的一个轮循环.</p>
+<h3 id="三次离别"><a href="#三次离别" class="headerlink" title="三次离别"></a>三次离别</h3><p>珍妮有三次和阿甘分道扬镳, 一次在越战之前, 一次在越战之后, 最后一次在小镇生活过一段时间之后.</p>
+<p>第一次的时候, 两个人的追求不同, 珍妮希望当明星, 而阿甘没有追求</p>
+<p>第二次的时候, 两个人的人生不同, 珍妮显然看不上阿甘甘于寂寞的人生.</p>
+<p>第三次的时候, 两个人的经历不同, 珍妮有点看不起自己, 另外不想住在greenblow</p>
+<h3 id="为什么要奔跑"><a href="#为什么要奔跑" class="headerlink" title="为什么要奔跑"></a>为什么要奔跑</h3><p>阿甘跑遍美国的时候, 一直解释说自己没有目的, 他确实很没有目的, 但又有目的: 阿甘母亲过世之前, 她一直是阿甘的精神支柱; 她过世之后, 珍妮就成了他人生的唯一意义, 当珍妮来到greenblow的时候, 阿甘觉得是这辈子最幸福的时候, 但当珍妮再次离开的时候, 他觉得整个人生的意义就不存在了. </p>
+<p>其中有一场戏, 阿甘看着空空荡荡的房间, 看见珍妮留在房间的总统勋章, 演技是真的很好: 有一种心死了的感觉. 换一个正常的人, 可能会想着寻死觅活, 而阿甘想到就是珍妮的那句话, 跑.</p>
+<h3 id="珍妮的悲剧"><a href="#珍妮的悲剧" class="headerlink" title="珍妮的悲剧"></a>珍妮的悲剧</h3><p>珍妮和阿甘的悲剧最大的原因在于, 珍妮是比较了解阿甘的, 但是阿甘是完全不了解珍妮的.</p>
+<p>珍妮知道阿甘的痛苦: 当在电视里面看到阿甘在跑的时候, 珍妮就知道阿甘非常痛苦, 她知道阿甘为什么痛苦, 所以准备回到阿甘身边(<em>写信</em>), 也开始关注阿甘的动态(<em>剪报</em>) .</p>
+<p>而阿甘不知道珍妮的痛苦: 珍妮朝老房子扔石头的时候, 阿甘是不知道为什么的, 到最后只知道珍妮讨厌老房子, 就把她推平了</p>
+<h3 id="珍妮的救赎"><a href="#珍妮的救赎" class="headerlink" title="珍妮的救赎"></a>珍妮的救赎</h3><p>珍妮的人生悲剧在于那个悲惨的童年, 她一直想逃离, 但一直都无法逃离. 最后一个离开阿甘的时候, 说道”我没有逃”. 但是我觉得她确实不想逃了, 但是并没有完全放下: 她并不想住在小时候的地方, 而阿甘却一直想住在童年的地方. 所以她第三次的时候, 又逃离了.</p>
+<p>而真正让珍妮放下的是, 她有了下一代, 当人有下一代的时候, 人的责任心就不一样了.</p>
+<p>之前只想着自己的生活, 之后大多数的考虑都围绕在孩子在周围.</p>
+<p><strong>有了下一代的含义, 就是这一代结束了</strong></p>
+<p>当珍妮在剪报的时候, 她已经完成了救赎, 她结束了自己的使命.</p>
+<h2 id="关于命运"><a href="#关于命运" class="headerlink" title="关于命运"></a>关于命运</h2><p>之前说过, 阿甘在珍妮的墓前说:</p>
+<blockquote>
+<p>这一切是命中注定的, 还是命运无常, 他觉得两者都有.</p>
+</blockquote>
+<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gum/Selection_018.png" alt=""></p>
+<p>这里主语不清楚, 我觉得他应该说的是他和珍妮的人生, 命中注定说的是结局, 命运无常说的是过程.</p>
+<p>但我想说的是, 阿甘是命中注定, 而珍妮是命运无常.</p>
+<p>阿甘虽然脑子不太好使, 但是有一个特别能跑的优点, 又有主角光环, 关键还有一个珍妮值得它去爱,  这三个优点无论去掉哪个, 阿甘的人生都暗淡的.</p>
+<p>而珍妮虽然人长得漂亮, 但是出生于一个恶劣的家庭环境, 个人又没有明显的特长, 人生旅途之中又没有一个真正能拯救她的人, 唯一一个爱他的阿甘, 又根本无法了解她的内心, 可以说她一直都是孤独的.</p>
+<p>站在珍妮的角度, 能死在阿甘的怀里, 可能已经是她最幸福的结局了. 她确实是一个可怜的人.</p>
+<p><strong>命运是一种看不见摸不着的东西, 但你想摆脱它, 那又比登天一样难</strong></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>&lt;阿甘正传&gt;并非一部非常经得起分析的电影, 特别是关于人物方面的, 但是我还是推荐你们多去看几遍, 因为我知道大多数人是不会去看这种贴近历史的严肃文学的, 例如我看过的&lt;白鹿原&gt;, 也是以历史为背景介绍一个村子人的变化, 虽然着眼点很小, 但是里面的人物确实觉得是真实的人.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%94%B5%E5%BD%B1/" rel="tag"># 电影</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/08/GATK4-0-Spark%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/" rel="next" title="GATK4.0 Spark性能分析">
+                <i class="fa fa-chevron-left"></i> GATK4.0 Spark性能分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/05/%E5%8A%A0%E8%A7%A3%E5%AF%86%E6%8A%80%E6%9C%AF/" rel="prev" title="加解密技术">
+                加解密技术 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Carlmartin</p>
+              <div class="site-description motion-element" itemprop="description">A place for codeing break.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%20%7C%7C%20archive">
+                
+                    <span class="site-state-item-count">57</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/%20%7C%7C%20th">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/%20%7C%7C%20tags">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/SaintBacchus" title="GitHub &rarr; https:&#x2F;&#x2F;github.com&#x2F;SaintBacchus" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:carlmartinmax@gmail.com" title="E-Mail &rarr; mailto:carlmartinmax@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%98%E7%94%B1"><span class="nav-number">1.</span> <span class="nav-text">缘由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%BA%E7%89%A9%E5%89%96%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">人物剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BF%E7%94%98%E6%AF%8D%E4%BA%B2"><span class="nav-number">2.1.</span> <span class="nav-text">阿甘母亲</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B9%E4%B8%AD%E5%B0%89"><span class="nav-number">2.2.</span> <span class="nav-text">丹中尉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8F%8D%E5%A6%AE"><span class="nav-number">2.3.</span> <span class="nav-text">珍妮</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BF%E7%94%98"><span class="nav-number">2.4.</span> <span class="nav-text">阿甘</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E8%AE%BA%E7%8F%8D%E5%A6%AE"><span class="nav-number">3.</span> <span class="nav-text">再论珍妮</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%91%E5%B9%B4%E6%9C%9F"><span class="nav-number">3.1.</span> <span class="nav-text">少年期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%92%E5%B9%B4%E6%9C%9F"><span class="nav-number">3.2.</span> <span class="nav-text">青年期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%8A%E6%88%98%E6%9C%9F%E9%97%B4"><span class="nav-number">3.3.</span> <span class="nav-text">越战期间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%8A%E6%88%98%E5%BD%92%E6%9D%A5"><span class="nav-number">3.4.</span> <span class="nav-text">越战归来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8D%E4%BA%B2%E8%BF%87%E4%B8%96"><span class="nav-number">3.5.</span> <span class="nav-text">母亲过世</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A5%94%E8%B7%91%E5%90%A7"><span class="nav-number">3.6.</span> <span class="nav-text">奔跑吧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92"><span class="nav-number">3.7.</span> <span class="nav-text">回归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E7%A6%BB%E5%88%AB"><span class="nav-number">3.8.</span> <span class="nav-text">三次离别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%A5%94%E8%B7%91"><span class="nav-number">3.9.</span> <span class="nav-text">为什么要奔跑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8F%8D%E5%A6%AE%E7%9A%84%E6%82%B2%E5%89%A7"><span class="nav-number">3.10.</span> <span class="nav-text">珍妮的悲剧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8F%8D%E5%A6%AE%E7%9A%84%E6%95%91%E8%B5%8E"><span class="nav-number">3.11.</span> <span class="nav-text">珍妮的救赎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%91%BD%E8%BF%90"><span class="nav-number">4.</span> <span class="nav-text">关于命运</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carlmartin</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">186k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">4:50</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v7.1.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.2</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
