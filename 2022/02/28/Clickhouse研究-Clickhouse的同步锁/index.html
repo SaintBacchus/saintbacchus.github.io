@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="Clickhouse的存储锁源码解析代码主要在IStorage之中12345678class IStorage &#123;TableLockHolder lockForShare;TableLockHolder lockForAlter;TableExclusiveLockHolder lockExclusively;mutable RWLock alter_lock;mutable RWLoc">
 <meta property="og:type" content="article">
@@ -84,15 +84,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -244,13 +275,13 @@
     
     <div class="post-body" itemprop="articleBody"><h1 id="Clickhouse的存储锁"><a href="#Clickhouse的存储锁" class="headerlink" title="Clickhouse的存储锁"></a>Clickhouse的存储锁</h1><h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><p>代码主要在<code>IStorage</code>之中<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">IStorage</span> </span><br><span class="line">&#123;</span><br><span class="line">TableLockHolder lockForShare;</span><br><span class="line">TableLockHolder lockForAlter;</span><br><span class="line">TableExclusiveLockHolder lockExclusively;</span><br><span class="line"><span class="keyword">mutable</span> RWLock alter_lock;</span><br><span class="line"><span class="keyword">mutable</span> RWLock drop_lock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>从代码的定义上来,  只有drop和alter相关的才会加锁</p>
 <p>排它锁<code>lockExclusively</code>的锁同时锁住<code>alter_lock</code>和<code>drop_lock</code>, 锁类型为写锁<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">TableExclusiveLockHolder <span class="title">IStorage::lockExclusively</span><span class="params">(<span class="type">const</span> String &amp; query_id, <span class="type">const</span> std::chrono::milliseconds &amp; acquire_timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TableExclusiveLockHolder result;</span><br><span class="line">    result.alter_lock = <span class="built_in">tryLockTimed</span>(alter_lock, RWLockImpl::Write, query_id, acquire_timeout);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_dropped)</span><br><span class="line">        <span class="keyword">throw</span> <span class="built_in">Exception</span>(<span class="string">&quot;Table is dropped&quot;</span>, ErrorCodes::TABLE_IS_DROPPED);</span><br><span class="line"></span><br><span class="line">    result.drop_lock = <span class="built_in">tryLockTimed</span>(drop_lock, RWLockImpl::Write, query_id, acquire_timeout);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>排它锁只有很少的地方用到<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228152910967.png" alt="image-20220228152910967"></p>
+<p>排它锁只有很少的地方用到<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228152910967.png" alt="image-20220228152910967"></p>
 <ol>
 <li>在renameTable时候用到</li>
 <li>在DropTable的时候用到</li>
 <li>在restartReplica时候用到</li>
 </ol>
-<p>修改锁<code>lockForAlter</code>只锁了<code>alter</code>, 锁类型为写锁<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">TableLockHolder <span class="title">IStorage::lockForAlter</span><span class="params">(<span class="type">const</span> String &amp; query_id, <span class="type">const</span> std::chrono::milliseconds &amp; acquire_timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TableLockHolder result = <span class="built_in">tryLockTimed</span>(alter_lock, RWLockImpl::Write, query_id, acquire_timeout);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_dropped)</span><br><span class="line">        <span class="keyword">throw</span> <span class="built_in">Exception</span>(<span class="string">&quot;Table is dropped&quot;</span>, ErrorCodes::TABLE_IS_DROPPED);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>都只在修改DDL时候用到: DDL语句执行和复制表的同步DDL时<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228152931062.png" alt="image-20220228152931062"></p>
+<p>修改锁<code>lockForAlter</code>只锁了<code>alter</code>, 锁类型为写锁<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">TableLockHolder <span class="title">IStorage::lockForAlter</span><span class="params">(<span class="type">const</span> String &amp; query_id, <span class="type">const</span> std::chrono::milliseconds &amp; acquire_timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TableLockHolder result = <span class="built_in">tryLockTimed</span>(alter_lock, RWLockImpl::Write, query_id, acquire_timeout);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_dropped)</span><br><span class="line">        <span class="keyword">throw</span> <span class="built_in">Exception</span>(<span class="string">&quot;Table is dropped&quot;</span>, ErrorCodes::TABLE_IS_DROPPED);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>都只在修改DDL时候用到: DDL语句执行和复制表的同步DDL时<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228152931062.png" alt="image-20220228152931062"></p>
 <p>共享锁<code>lockForShare</code>的锁加入在<code>drop_lock</code>之中, 锁类型为读锁<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">TableLockHolder <span class="title">IStorage::lockForShare</span><span class="params">(<span class="type">const</span> String &amp; query_id, <span class="type">const</span> std::chrono::milliseconds &amp; acquire_timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    TableLockHolder result = <span class="built_in">tryLockTimed</span>(drop_lock, RWLockImpl::Read, query_id, acquire_timeout);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_dropped)</span><br><span class="line">        <span class="keyword">throw</span> <span class="built_in">Exception</span>(<span class="string">&quot;Table is dropped&quot;</span>, ErrorCodes::TABLE_IS_DROPPED);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>共享锁调用的地方非常多, 常见的Insert语句也是排它锁.</p>
 <p>根据代码推论:</p>
 <ol>
@@ -260,10 +291,10 @@
 </ol>
 <h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><h3 id="建表语句"><a href="#建表语句" class="headerlink" title="建表语句"></a>建表语句</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `lineorder_local`</span><br><span class="line">(</span><br><span class="line">    LO_ORDERKEY             UInt32,</span><br><span class="line">    LO_LINENUMBER           UInt8,</span><br><span class="line">    LO_CUSTKEY              UInt32,</span><br><span class="line">    LO_PARTKEY              UInt32,</span><br><span class="line">    LO_SUPPKEY              UInt32,</span><br><span class="line">    LO_ORDERDATE            <span class="type">Date</span>,</span><br><span class="line">    LO_ORDERPRIORITY        LowCardinality(String),</span><br><span class="line">    LO_SHIPPRIORITY         UInt8,</span><br><span class="line">    LO_QUANTITY             UInt8,</span><br><span class="line">    LO_EXTENDEDPRICE        UInt32,</span><br><span class="line">    LO_ORDTOTALPRICE        UInt32,</span><br><span class="line">    LO_DISCOUNT             UInt8,</span><br><span class="line">    LO_REVENUE              UInt32,</span><br><span class="line">    LO_SUPPLYCOST           UInt32,</span><br><span class="line">    LO_TAX                  UInt8,</span><br><span class="line">    LO_COMMITDATE           <span class="type">Date</span>,</span><br><span class="line">    LO_SHIPMODE             LowCardinality(String)</span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> MergeTree</span><br><span class="line"><span class="keyword">PARTITION</span> <span class="keyword">BY</span> toYear(LO_ORDERDATE) </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> (LO_ORDERDATE, LO_ORDERKEY);</span><br></pre></td></tr></table></figure>
 <h3 id="插入语句"><a href="#插入语句" class="headerlink" title="插入语句"></a>插入语句</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.<span class="operator">/</span>clickhouse<span class="operator">-</span>client  <span class="comment">--query &quot;INSERT INTO hzw.lineorder_local FORMAT CSV&quot; &lt; lineorder.tbl</span></span><br></pre></td></tr></table></figure>
-<h3 id="插入过程之中删除插入表"><a href="#插入过程之中删除插入表" class="headerlink" title="插入过程之中删除插入表"></a>插入过程之中删除插入表</h3><p>删除表语句<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> lineorder_local;</span><br></pre></td></tr></table></figure><br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228152954941.png" alt="image-20220228152954941"></p>
+<h3 id="插入过程之中删除插入表"><a href="#插入过程之中删除插入表" class="headerlink" title="插入过程之中删除插入表"></a>插入过程之中删除插入表</h3><p>删除表语句<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> lineorder_local;</span><br></pre></td></tr></table></figure><br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228152954941.png" alt="image-20220228152954941"></p>
 <p>出现无法获取锁的问题</p>
-<h3 id="插入过程之中修改插入表"><a href="#插入过程之中修改插入表" class="headerlink" title="插入过程之中修改插入表"></a>插入过程之中修改插入表</h3><p> 修改表语句<br> <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> lineorder_local <span class="keyword">drop</span> <span class="keyword">column</span> LO_QUANTITY;</span><br></pre></td></tr></table></figure><br> 执行后, 会立马成功<br> <img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228153018786.png" alt="image-20220228153018786"></p>
-<p>由于乱序执行, 测试一个更加夸张的例子<br> <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> lineorder_local <span class="keyword">delete</span> <span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>;</span><br></pre></td></tr></table></figure><br> <img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228153033588.png" alt="image-20220228153033588"><br> 这里alter立马会成功, 数据会删除, 但是insert还在继续.</p>
+<h3 id="插入过程之中修改插入表"><a href="#插入过程之中修改插入表" class="headerlink" title="插入过程之中修改插入表"></a>插入过程之中修改插入表</h3><p> 修改表语句<br> <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> lineorder_local <span class="keyword">drop</span> <span class="keyword">column</span> LO_QUANTITY;</span><br></pre></td></tr></table></figure><br> 执行后, 会立马成功<br> <img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228153018786.png" alt="image-20220228153018786"></p>
+<p>由于乱序执行, 测试一个更加夸张的例子<br> <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> lineorder_local <span class="keyword">delete</span> <span class="keyword">where</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span>;</span><br></pre></td></tr></table></figure><br> <img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228153033588.png" alt="image-20220228153033588"><br> 这里alter立马会成功, 数据会删除, 但是insert还在继续.</p>
 
     </div>
 
@@ -345,19 +376,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -370,9 +395,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

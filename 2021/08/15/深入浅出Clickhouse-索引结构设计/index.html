@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="数据目录当Clickhouse创建一个表,  会在配置文件path指定的路径下对应数据目录. 数据目录的路径为:  &#123;path&#125;&#x2F;data&#x2F;&#123;database&#125;&#x2F;&#123;table&#125; 123456789101112131415create table src (id Int32,year String,num Int64,index a num">
 <meta property="og:type" content="article">
@@ -85,15 +85,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -249,7 +280,7 @@
 <p>例如上面的例子, 在<code>default</code>数据库上创建一个<code>src</code>的表, 如果<code>path</code>是在<code>~/clickhouse/data</code>目录, 那么整个目录为</p>
 <p><code>~/clickhouse/data/data/default/src</code> </p>
 <p>当插入3次数据后, Clickhouse会再数据目录下,  每次都新建一个目录, 如下图所示, 这种目录在Clickhouse称之为<code>DataPart</code></p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828175325388.png" alt="image-20210828175325388"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828175325388.png" alt="image-20210828175325388"></p>
 <p>目录的格式为: <code>partition</code>_<code>min_block</code>_<code>max_block</code>_<code>level</code></p>
 <ul>
 <li><code>partition</code>是分区的值, 根据建表的分区表示计算得来, 是一个规定的值; Clickhouse的目录并非按照分区规整的, 在数据目录下, 只有DataPart这层数据了,  也就是说, 通一个分区可能在多个DataPart上, 如上面的<code>1_1_1_0</code>和<code>1_2_2_0</code></li>
@@ -257,12 +288,12 @@
 <li><code>level</code>表示DataPart生命年龄, 当出现merge或者mutation操作时, level就会加1</li>
 </ul>
 <p>举上面例子, 如果执行<code>OPTIMIZE TABLE src</code> , 强制表进行合并, 此时<code>1_1_1_0</code>和<code>1_2_2_0</code>两个DP会强制合并, 合并为<code>1_1_2_1</code>, 新DP的<code>level</code>变成了2, 而<code>min_max_block</code>由合并的DP的值确定.  另外合并只发送在同一个Partition内</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828180126364.png" alt="image-20210828180126364"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828180126364.png" alt="image-20210828180126364"></p>
 <blockquote>
 <p>合并操作, 并不会马上删除老的DP, 而是将其设置为<code>inactive</code>, 读操作只会读取新的DP, 因此上图总共有4个DP, 过一段只会剩下两个DP</p>
 </blockquote>
 <p>DataPart是存储数据的地方,  以上面的一个DataPart为例:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828175418382.png" alt="image-20210828175418382"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828175418382.png" alt="image-20210828175418382"></p>
 <ul>
 <li><code>checksums.txt</code>是整个DP的检验和</li>
 <li><code>columns.txt</code>表示DP的列结构,  Clickhouse将列字段放在DP级别的原因是,  DP在做mutation的时候, 列可能会出现不一样</li>
@@ -275,10 +306,10 @@
 <li><code>skp_idx_a.idx2</code>和<code>skp_idx_a.mrk3</code> 跳数索引, 或者叫做二级索引.</li>
 </ul>
 <p>当一个DataPart内数据量比较大的时候, <code>data.bin</code>会按照各自的列拆分为<code>id.bin</code> <code>num.bin</code> <code>year.bin</code>, 同理的还有<code>data.mrk3</code></p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828183605821.png" alt="image-20210828183605821"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828183605821.png" alt="image-20210828183605821"></p>
 <p>Clickhouse有两层索引, 一层为基于分区的索引, 这个在另外的文章中已经讲过,  它的目的是选择到具体的DP; 另外一层是基于数据排序的索引,  描述的是在一个DP内, 数据时如何组织以及被索引的.</p>
 <h2 id="数据索引"><a href="#数据索引" class="headerlink" title="数据索引"></a>数据索引</h2><p>废话不多说, 直接上图, 依然以上面的建表语句为例, 与其中相关的是<code>order by</code> 和 <code>partition by</code>的语法.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828183928398.png" alt="image-20210828183928398"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210828183928398.png" alt="image-20210828183928398"></p>
 <p>在Clickhouse的一个DataPart中, 数据的逻辑分布可以想象成一个矩阵, 如图中的<code>表示例数据</code>方式陈列.</p>
 <p><strong>首先</strong>, 行与行之间的排序并非是固定的, 而是根据<code>order by</code><strong>定义的方式排序</strong>, 例如案例中按照<code>id</code>和<code>year</code>排序, 那么<code>num</code>字段的位置也随着前面字段改变. 另外值得说的一点, 这个排序只是在DP内的, DP之间并没有顺序关系.</p>
 <p><strong>其次</strong>, 在物理上Clickhouse将按照每8192行数据切分整个矩阵, 将大矩阵切分为一个一个子矩阵, 在图中用<code>编号</code>来表示. <code>8192</code>的数值由配置项<code>index_granularity</code>决定, 该配置为索引结构中最核心的配置.</p>
@@ -302,7 +333,7 @@
 </ul>
 <p><strong>与Hadoop列存结构的相比</strong></p>
 <p>以Parquet的为例, Parquet也会按照行列方式切分整个矩阵, 用<code>Page</code>或者<code>RowGroup</code>的概念实现, 这点跟Clickhouse一样</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/FileLayout.gif" alt="File Layout"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/FileLayout.gif" alt="File Layout"></p>
 <p>Parquet也有部分索引元数据, 能够实现<code>谓词下推(Predicate PushDown)</code>的能力, 因为元数据中包含整个块中的最大最小值, 因此能够方便的过滤数据块. 但是这个索引更像是CK中的<code>跳数索引</code></p>
 <p>但是由于Parquet是一个通用的存储格式, 因此它不能像Clickhouse一样定义排序字段, 因此也无法享受折半查找带来的查询优势. </p>
 
@@ -386,19 +417,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -411,9 +436,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

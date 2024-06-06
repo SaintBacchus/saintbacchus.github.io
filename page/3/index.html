@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="A place for codeing break.">
 <meta property="og:type" content="website">
@@ -75,15 +75,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -230,55 +261,19 @@
 </blockquote>
 <h2 id="DataPart存储"><a href="#DataPart存储" class="headerlink" title="DataPart存储"></a>DataPart存储</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> default.lineorder_local</span><br><span class="line">(</span><br><span class="line">    `LO_ORDERKEY` UInt32,</span><br><span class="line">    `LO_LINENUMBER` UInt8,</span><br><span class="line">    `LO_CUSTKEY` UInt32,</span><br><span class="line">    `LO_PARTKEY` UInt32,</span><br><span class="line">    `LO_SUPPKEY` UInt32,</span><br><span class="line">    `LO_ORDERDATE` <span class="type">Date</span>,</span><br><span class="line">    `LO_ORDERPRIORITY` LowCardinality(String),</span><br><span class="line">    `LO_SHIPPRIORITY` UInt8,</span><br><span class="line">    `LO_QUANTITY` UInt8,</span><br><span class="line">    `LO_EXTENDEDPRICE` UInt32,</span><br><span class="line">    `LO_ORDTOTALPRICE` UInt32,</span><br><span class="line">    `LO_DISCOUNT` UInt8,</span><br><span class="line">    `LO_REVENUE` UInt32,</span><br><span class="line">    `LO_SUPPLYCOST` UInt32,</span><br><span class="line">    `LO_TAX` UInt8,</span><br><span class="line">    `LO_COMMITDATE` <span class="type">Date</span>,</span><br><span class="line">    `LO_SHIPMODE` LowCardinality(String)</span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> MergeTree</span><br><span class="line"><span class="keyword">PARTITION</span> <span class="keyword">BY</span> toYear(LO_ORDERDATE)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> (LO_ORDERDATE, LO_ORDERKEY)</span><br><span class="line">SETTINGS index_granularity <span class="operator">=</span> <span class="number">8192</span>;</span><br></pre></td></tr></table></figure>
 <p>选了Clickhouse社区官方的<a href="https://clickhouse.tech/docs/en/getting-started/example-datasets/star-schema/">SSB测试套</a>的<code>lineorder</code>表为例, 他以<code>toYear(LO_ORDERDATE)</code>为分区键, 此时插入一些数据, 在Clickhouse DataPart级别的目录下, 会出现以下文件</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719104902873.png" alt="image-20210719104902873"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719104902873.png" alt="image-20210719104902873"></p>
 <p>其中跟分区相关的有两个:  <code>partition.dat</code>和<code>minmax_LO_ORDERDATE.idx</code></p>
 <p><code>partition.dat</code>存储的是Partition的具体数值,  对应Clickhouse的源码</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MergeTreePartition</span></span><br><span class="line">&#123;</span><br><span class="line">    Row value;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">load</span><span class="params">(<span class="type">const</span> MergeTreeData &amp; storage, <span class="type">const</span> DiskPtr &amp; disk, <span class="type">const</span> String &amp; part_path)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">store</span><span class="params">(<span class="type">const</span> MergeTreeData &amp; storage, <span class="type">const</span> DiskPtr &amp; disk, <span class="type">const</span> String &amp; part_path, MergeTreeDataPartChecksums &amp; checksums)</span> <span class="type">const</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>就是我们在<code>system.parts</code>表中看到的<code>partition</code>数值, 其中<code>value</code>的类型是<code>Row</code>, 对应表达式计算后的结果.</p>
-<p>其中<code>load</code>函数是读取<code>dat</code>文件的数值到<code>row</code>中, <code>store</code>是存储<code>row</code>数据写入到文件里.</p>
-<p><code>minmax_LO_ORDERDATE.idx</code>存储的是对应字段<code>LO_ORDERDATE</code>的最大值和最小值范围</p>
-<blockquote>
-<p>注意是<code>LO_ORDERDATE</code>的值, 而非<code>toYear(LO_ORDERDATE)</code>的值</p>
-</blockquote>
-<p>对的代码在<code>IMergeTreeDataPart</code>的内部<code>struct</code></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">MinMaxIndex</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/// A direct product of ranges for each key column. See Storages/MergeTree/KeyCondition.cpp for details.</span></span><br><span class="line">    std::vector&lt;Range&gt; hyperrectangle;</span><br><span class="line">    <span class="type">bool</span> initialized = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">MinMaxIndex</span>() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// For month-based partitioning.</span></span><br><span class="line">    <span class="built_in">MinMaxIndex</span>(DayNum min_date, DayNum max_date)</span><br><span class="line">        : <span class="built_in">hyperrectangle</span>(<span class="number">1</span>, <span class="built_in">Range</span>(min_date, <span class="literal">true</span>, max_date, <span class="literal">true</span>))</span><br><span class="line">        , <span class="built_in">initialized</span>(<span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">load</span><span class="params">(<span class="type">const</span> MergeTreeData &amp; data, <span class="type">const</span> DiskPtr &amp; disk_, <span class="type">const</span> String &amp; part_path)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">store</span><span class="params">(<span class="type">const</span> MergeTreeData &amp; data, <span class="type">const</span> DiskPtr &amp; disk_, <span class="type">const</span> String &amp; part_path, Checksums &amp; checksums)</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">store</span><span class="params">(<span class="type">const</span> Names &amp; column_names, <span class="type">const</span> DataTypes &amp; data_types, <span class="type">const</span> DiskPtr &amp; disk_, <span class="type">const</span> String &amp; part_path, Checksums &amp; checksums)</span> <span class="type">const</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">update</span><span class="params">(<span class="type">const</span> Block &amp; block, <span class="type">const</span> Names &amp; column_names)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">merge</span><span class="params">(<span class="type">const</span> MinMaxIndex &amp; other)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>与<code>partition.dat</code>类似, 他们都有<code>load</code>和<code>store</code>方法,  但是<code>MinMaxIndex</code>额外有<code>update</code>和<code>merge</code>, 因为DDL的SQL并不会改变<code>partition</code>, 但一个<code>Delete where</code>的语句有可能改变了上下界.</p>
-<h3 id="举例总结"><a href="#举例总结" class="headerlink" title="举例总结"></a>举例总结</h3><p>举个例子来说, 如果一组数据, 只有3个值, 其中 <code>LO_ORDERDATE</code>列为: <code>1992-01-01</code>,<code>1992-06-02</code>和 <code>1992-12-01</code>, 那么<code>partition.dat</code>存储的值就是<code>toYear(LO_ORDERDATE)</code>的数值, 也就是<code>1992</code>; 而<code>minmax_LO_ORDERDATE.idx</code>存储的是<code>1992-01-01</code>和<code>1992-12-01</code>, 表示这个区间的上下确界.</p>
-<h2 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h2><h3 id="单调函数"><a href="#单调函数" class="headerlink" title="单调函数"></a>单调函数</h3><p>下图是一个比较典型的单调递增函数:  </p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715164527310.png" alt="image-20210715164527310"></p>
-<script type="math/tex; mode=display">
-y=2/x^2-2</script><p>下图是一个典型的非单调递增函数</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715164955108.png" alt="image-20210715164955108"></p>
-<script type="math/tex; mode=display">
-y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必然是y的最大最小值(单调递增).</p>
-<p>所以很容易想到, 如果Clickhouse某个函数是单调的, 那么能通过DataPart上的minmax索引, 来过滤整个DataPart. </p>
-<p><strong>CK的整个分区裁剪实际上是在分区column上的minmax索引, 而非字面理解的分区裁剪</strong></p>
-<h3 id="Clickhouse函数"><a href="#Clickhouse函数" class="headerlink" title="Clickhouse函数"></a>Clickhouse函数</h3><p> 在Clickhouse的<code>IFunction.h</code>文件里面, 有两个关于单调性的CK函数接口: <code>hasInformationAboutMonotonicity</code>和<code>getMonotonicityForRange</code></p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719141057728.png" alt="image-20210719141057728"></p>
-<p>其中实现这些函数的, <strong>基本上</strong>都可以实现分区裁剪功能, 没实现的不能实现分区裁剪.</p>
-<blockquote>
-<p>Clickhouse Function接口在21年经过重构, 有一部分函数实现新的接口, 一部分实现老接口</p>
-</blockquote>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719141707904.png" alt="image-20210719141707904"></p>
-<p>实现IFunctionBase的函数</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719141638424.png" alt="image-20210719141638424"></p>
-<p>实现IFunction的函数</p>
-<h3 id="DataPart筛选"><a href="#DataPart筛选" class="headerlink" title="DataPart筛选"></a>DataPart筛选</h3><p><code>MergeTree</code>引擎的数据筛选的代码封装在<code>MergeTreeDataSelectExecutor</code>类中</p>
-<p>首先, 根据分区键和查询语句, 构造<code>KeyCondition</code></p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719143828417.png" alt="image-20210719143828417"></p>
-<p>然后, 遍历每个DataPart过滤不符合条件的, 保留能够命中<code>minmax</code>索引的DP</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719144211941.png" alt="image-20210719144211941"></p>
-<p>在方法<code>checkInHyperrectangle</code>判断函数链是不是都是单调, 例如<code>toYear(toDate(&#39;2010-10-10&#39;))</code>这类两个函数复合的表达式, 两个都是单调函数, 因此单调链是有效的.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719145332621.png" alt="image-20210719145332621"></p>
-<h3 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h3><p>上文提到实现<code>hasInformationAboutMonotonicity</code>基本上能够分区裁剪, 之所以说<strong>基本上</strong>, 原因在于还有一些例外.</p>
-<p>回到上面的<code>KeyCondition</code>, 在整个构造过程中, 有一个非常重要的函数<code>isKeyPossiblyWrappedByMonotonicFunctionsImpl</code>来判断是否单调.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210719150454648.png" alt="image-20210719150454648"></p>
-<p>从代码上看到, 只有<strong>参数个数是1或者2个</strong>才能命中; 有<strong>2个参数的, 其中一个需要是常量表达式.</strong></p>
-<p>因此类似<code>date_trunc(unit, value[, timezone])</code>这函数也是单调的, 但是因为有3个参数, 因此也是无法命中索引.</p>
-<blockquote>
-<p>这个是代码实现问题, 只是3个参数的函数非常少, 没啥动力去实现.</p>
-</blockquote>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/07/15/Clickhouse%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB-%E5%88%86%E5%8C%BA%E8%A3%81%E5%89%AA/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -396,147 +391,14 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 </ol>
 <p>上面4个设计点, 1和2比较好解决, 例如<strong>Spark + HDFS构成的OLAP服务</strong>是一个典型的存算分离架构,  Spark和HDFS可以分布在不同的集群上, 计算和存储的扩缩容都可以分开处理.</p>
 <p>但第3点在传统公司是难以解决的,  因为机房的带宽非常有限, 一旦跨机房, 性能将直线下降. 所以会将这两个服务部署在一起, 导致<strong>部署上依然是存算不分离</strong>的. </p>
-<p>因此存算分离的一个最大的难点实际上被<strong>硬件解决</strong>了</p>
-<p>所以云服务大多数的设计点在解决第4个问题, 而采用的方案就是<strong>缓存</strong>.</p>
-<p>学过计算机的都知道<strong>介质的访问速度</strong>:</p>
-<p>内存 &gt; SSD &gt; HHD &gt;  远程HDD</p>
-<p>在云服务世界里就是:</p>
-<p>服务器内存 &gt; 本地高速盘 &gt; 本地普通盘 &gt; S3服务</p>
-<p>S3服务作为云服务里面, 最按需, 最弹性, 最Serverless接口的存储服务, 毫无疑问的被大多数服务选中作为最终的数据存储地方.</p>
-<p>因此针对S3的访问加速, 也分为前面三种介质模式, 我分别举一个例子来介绍一下.</p>
-<blockquote>
-<p>基于之前的经验, 最新版不一定正确</p>
-</blockquote>
-<h2 id="缓存加速"><a href="#缓存加速" class="headerlink" title="缓存加速"></a>缓存加速</h2><h3 id="HDD类型"><a href="#HDD类型" class="headerlink" title="HDD类型"></a>HDD类型</h3><p>这种类型比较少见, 因为HDD的性能已经很差了, 相对于S3提升能力不多, 唯一优势是放在同一网络域中, 网络带宽会略会好.  </p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/2020%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%B8%8A%E4%BA%91cn-06.svg" alt="img"></p>
-<p>例如MRS服务, 就是云上的HDFS+Spark/Hive这套大数据组件,  用户结构数据有一些部分会上传到S3上, 这时使用Spark直接分析OBS数据的性能会非常差,  这时MRS服务做了一个数据导入的功能, 将S3的数据导入到MRS集群的HDFS上, 这样用Spark查询时,性能会提升一部分. 但是由于HDD糟糕的性能, 提升效果有限, 因此会加入<code>CarbonData</code>等有索引的数据结构查询.</p>
-<p>另外随着S3Query的能力开放, 直接在S3上查询的能力也开始发力, 后续通过HDD的加速大概率会消失.</p>
-<p>云上的HDFS最多是为了兼容企业的老接口, 一旦S3能全面兼容HDFS, MRS这种内建HDFS的方案将被取消.</p>
-<p>目前看到快手是直接用<a href="https://www.infoq.cn/article/vGabIOdeUM87hv6X8qlL">基于HDD的HDFS做存算分离方案</a>的</p>
-<h3 id="SSD加速"><a href="#SSD加速" class="headerlink" title="SSD加速"></a>SSD加速</h3><p>SSD是一种永久性的存储介质, 不会丢失数据, 因此经常会用到实时场景做缓存.</p>
-<p>美团就有使用<a href="https://tech.meituan.com/2021/01/14/kafka-ssd.html">SSD加速Kafka</a>案例</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/2482fc361c82e1d35684394f3b34f1e5184835.png" alt="img"></p>
-<p>相比于普通磁盘, SSD的性能有成倍的提升, 且成本增加较小.</p>
-<p>但SSD也有自身的缺点:</p>
-<ul>
-<li>相对于普通, 磁盘容量比较小, 磁盘寿命降低</li>
-<li>相对于内存, 性能查实差了1个数量级</li>
-</ul>
-<h3 id="内存加速"><a href="#内存加速" class="headerlink" title="内存加速"></a>内存加速</h3><p>内存加速的案例太多了, <code>Redis</code>和<code>MemCache</code>就是在业务里经常用到的内存加速. </p>
-<p>源码级别也有各种类型的缓存库, 例如<code>guawa</code>的cache, 具体案例就不介绍了</p>
-<p>内存缓存的缺点是:</p>
-<ul>
-<li>内存相对比较小,  需要小心控制一下内存的换入换出</li>
-<li>内存相对来说比较昂贵, 只能应用局部数据量的查询</li>
-</ul>
-<h3 id="方案比较"><a href="#方案比较" class="headerlink" title="方案比较"></a>方案比较</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">缓存方案</th>
-<th style="text-align:center">优点</th>
-<th style="text-align:center">缺点</th>
-<th style="text-align:center">数据量</th>
-<th style="text-align:center">时延</th>
-<th style="text-align:center">适用场景(OLAP)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">磁盘缓存</td>
-<td style="text-align:center">磁盘容量大</td>
-<td style="text-align:center">性能差</td>
-<td style="text-align:center">10PB</td>
-<td style="text-align:center">分钟级</td>
-<td style="text-align:center">离线加速</td>
-</tr>
-<tr>
-<td style="text-align:center">SSD缓存</td>
-<td style="text-align:center">磁盘存储性价比高</td>
-<td style="text-align:center">存储量相对小</td>
-<td style="text-align:center">100TB</td>
-<td style="text-align:center">&lt;5秒</td>
-<td style="text-align:center">实时查询</td>
-</tr>
-<tr>
-<td style="text-align:center">内存缓存</td>
-<td style="text-align:center">性能快</td>
-<td style="text-align:center">数据易失<br/>成本高</td>
-<td style="text-align:center">&lt;1TB</td>
-<td style="text-align:center">&lt;1秒</td>
-<td style="text-align:center">数据服务</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>从目前Clickhouse的场景来看, SSD的缓存策略也许更加适合我们的要求.</p>
-<h2 id="Clickhouse的存算分离方案"><a href="#Clickhouse的存算分离方案" class="headerlink" title="Clickhouse的存算分离方案"></a>Clickhouse的存算分离方案</h2><h3 id="设计要点"><a href="#设计要点" class="headerlink" title="设计要点"></a>设计要点</h3><p>首先明确一下设计的指标, 对照着之前的设计要点</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">设计点</th>
-<th style="text-align:center">说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">存储</td>
-<td style="text-align:center">存储服务其实就那么几种, 如果在云下, 那么就使用HDFS, 如果在云上就使用S3服务.另外考虑到存储的性能, 可能会购买JuiceFS做存储的性能加速</td>
-</tr>
-<tr>
-<td style="text-align:center">计算</td>
-<td style="text-align:center">不准备支持异构机器, 但集群之间可以异构, 分为存储性和计算型集群; 计算弹性要求扩缩容的能够在5分钟处理完毕</td>
-</tr>
-<tr>
-<td style="text-align:center">网络</td>
-<td style="text-align:center">这个点能做的非常少, 有什么就用什么</td>
-</tr>
-<tr>
-<td style="text-align:center">缓存</td>
-<td style="text-align:center">采用SSD缓存, 将数据文件放置于计算机器的SSD中, 存储只是作为同步方案</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="设计图"><a href="#设计图" class="headerlink" title="设计图"></a>设计图</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715142722756.png" alt="image-20210715142722756"></p>
-<p>跟之前虚拟id的方式基本上一致,  但存储会统一放入S3中, 机器上会有一个同步备份, 另外会有一个manager管理这些数据, S3和HDFS更像一个数据备份和快速恢复的地方.</p>
-<blockquote>
-<p>之前Manager是游离整体架构之外的辅助角色, 现在是强相关组件, 因此写入了架构图</p>
-</blockquote>
-<ul>
-<li><strong>数据写入</strong> <ul>
-<li>实时数据, 会写入Clickhouse节点, 数据同MergeTree引擎同步到S3上</li>
-<li>离线数据, 会直写拷贝到S3上, 由Manager将数据块Attach对对应的数据节点</li>
-</ul>
-</li>
-<li><p><strong>数据读取</strong> </p>
-<ul>
-<li>读取CK节点上, 缓存的数据, 数据以CK上的为准</li>
-<li>CK依然有副本节点, 用于加数读取</li>
-</ul>
-</li>
-<li><p><strong>数据变更</strong></p>
-<ul>
-<li>由CK节点处理请求, 并CK管理HDFS上的DP</li>
-</ul>
-</li>
-<li><p><strong>数据管理</strong></p>
-<ul>
-<li>小文件问题: HDFS上的一个DP文件夹会序列化为单个文件, 数据上传时序列化, 数据下载(attach时)反序列化为文件夹</li>
-<li>元数据: 目前还不打算弄成统一的元数据系统, 由manager来管理员数据, 扩容机器的时候, manager先初始化所有的表, 那么这个时候, 就要<strong>禁止用户DDL操作</strong></li>
-</ul>
-</li>
-</ul>
-<h3 id="节点扩容"><a href="#节点扩容" class="headerlink" title="节点扩容"></a>节点扩容</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715144933939.png" alt="image-20210715144933939"></p>
-<p>依然和虚拟shard的方案很类似, 只是从S3地方完成了拷贝, 具体就不展开了.</p>
-<h2 id="方案评价"><a href="#方案评价" class="headerlink" title="方案评价"></a>方案评价</h2><p>目前看来这个方案是可行的, 整体对Clickhouse引擎内部的改动也不多, 也决绝了运维最大的难题就是扩容的方案.</p>
-<p>但是由于CK的配置和元数据都是单机式的, 更新集群配置需要重启节点, 这就会限制该方案云化的设计.</p>
-<blockquote>
-<p>细节设计还有一定的模糊, 主要是对CK引擎内部还没有那么清晰.</p>
-</blockquote>
-<p>下一步如果能够实现元数据和集群配置的集中化, 那么对自动化会有很大的优势.</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/07/14/Clickhouse%E8%BF%90%E7%BB%B4%E5%A2%9E%E5%BC%BA-%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -642,35 +504,15 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <p>假设value的取值范围是[0,1023), 如果shard的个数为3, 那么表达式<code>jumpConsistentHash(value, 3)</code>, 能够将1024个字符, 均衡的分配到3个桶内.</p>
 <p>而如果此时shard个数升级为4, 我们再次计算表达式<code>jumpConsistentHash(value, 4)</code>,  就按照4个节点分区, 而一致性hash算法能够保证, <strong>只会抽取前面3个节点的某些值, 放入第四个节点, 而不是在前3个节点之间, 搞数据交换.</strong></p>
 <p>就给我们不停服切换提供了能力.</p>
-<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><p>虚拟节点是一致性hash经常使用一个技术, 方便迁移时只移动某些数据.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210713184924276.png" alt="image-20210713184924276"></p>
-<p>如果所示, 整个集群有3个真实的shard, 9个虚拟的shard.</p>
-<p>分布式写入时, 分布式表会将数据按照9份分shard, 但是[0,2,7,8]编号的数据, 实际会发送到第一个节点上.</p>
-<p>在存储层面, DataPart级别有明确的shard编号0, <strong>一个dataPart的数据绝对从属于一个shard</strong></p>
-<p>这样, 迁移的时候, 只需要做到按照DataPart级别迁移就行.</p>
-<h3 id="迁移过程"><a href="#迁移过程" class="headerlink" title="迁移过程"></a>迁移过程</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210713185412980.png" alt="image-20210713185412980"></p>
-<p>按照一致性hash的算法, 我们了解到DP7和DP6会迁移到新的shard之中, 这时整个变更的流程为:</p>
-<ol>
-<li>上线新的shard</li>
-<li>更新老的shard的配置, 配置时注明新加入的shard, 跟之前类似, 写入hash依然按照3处理</li>
-<li>老的shard计算出自己要拷贝的shard编号(也就是6和7), 然后开始给新shard推送老的DP数据</li>
-<li>老shard明确所有DP7数据已经推送到新的shard, 且自己的分布式表无数据积压, 然后将自己的分布式查询路由到新shard, 此时对于该shard来说读写为4节点, 而其他节点有可能为3节点, 因此实际上新加上的shard, 如果有数据写入, 也需要推送到对应的老shard中. 这步骤是为了做到不停写扩容, 如果可以停写的话, 只需要等待无积压即可切换路由.</li>
-<li>当所有节点都是4节点配置时, 关闭数据同步的能力, 然后放开新节点的写入或者查询</li>
-<li>最后再更新一下配置文件即可</li>
-</ol>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210713190606189.png" alt="image-20210713190606189"></p>
-<p>整个方案的难点在于实现<strong>数据同步的能力</strong>, 类似于ReplicaMergeTree的方式.</p>
-<h3 id="方案评估"><a href="#方案评估" class="headerlink" title="方案评估"></a>方案评估</h3><p>这个方案对于之前的提升有:</p>
-<ol>
-<li>数据不需要拷贝了, 只需要迁移一部分数据</li>
-<li>真实切换的时候, 可以做到近乎不停写</li>
-</ol>
-<p>但这个方案也会带来一个比较大的问题: <strong>shard变多, DataPart个数变多, 可能对集群节点的稳定性带来较大的影响</strong></p>
-<ul>
-<li>Shard变多, 主要风险来自于目前分布式表的实现</li>
-<li>DataPart变多, 风险来自于磁盘读取方面的性能</li>
-</ul>
-
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/07/13/Clickhouse%E8%BF%90%E7%BB%B4%E5%A2%9E%E5%BC%BA-%E8%99%9A%E6%8B%9Fshard/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -781,113 +623,16 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <li>第二篇文章, 将探讨一下<code>虚拟shard</code>的实现, 用以解决第一个方案的缺点</li>
 <li>第三篇文章, 将探讨一下<code>存储计算分离</code>的架构, 实现简便的容错式的扩缩容方案.</li>
 </ol>
-<h2 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210712151634570.png" alt="image-20210712151634570"></p>
+<h2 id="数据视图"><a href="#数据视图" class="headerlink" title="数据视图"></a>数据视图</h2><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210712151634570.png" alt="image-20210712151634570"></p>
 <p>Clickhouse目前是按照机器节点进行<strong>物理隔离</strong>的,  一个集群对应一个专属的业务部门, 而非整一个大的集群给所有业务方使用.</p>
-<p>无论离线还是离线的数据, 都会写入<strong>底表数据</strong>, 底表是一张分布式表,  通过<code>rand</code>方式分区到CK的本地表, 由于底表数据是<strong>随机分区</strong>, 数据插入时, 可以直接写入本地表, 而不用写一遍分布式表, 减少了数据传输消耗.</p>
-<p>一部分用户, 就会直接在<strong>底表数据</strong>上做数据查询, 但也有一部分需要用到Clickhouse比较复杂的引擎, 例如<code>ReplacingMergeTree</code>或者<code>AggressivingMergeTree</code>等, 用以实现聚合运算或者去重计算.</p>
-<p>这个时候就会使用<strong>物化视图</strong>, 注意<strong>物化视图</strong>是构建在<strong>底表数据</strong>之上的, 在这里面数据实际上复制了2份, 但正是由于这个重复, 让集群的整体容错能力大大加强, 即使要物化视图有问题, 依然可以通过重建的方式解决. <strong>推荐这么使用</strong></p>
-<blockquote>
-<p>但是这么做, 也有一个问题, 就是异常时数据重复, 直接写底表的, 会让相同的block写入不同的shard, 无法规避底表重复的问题.</p>
-</blockquote>
-<p><strong>物化视图</strong>是底层也是一张分布式表, 视图更像一个触发器, 将insert的数据写入到物化视图的数据表上. 由于物化视图的引擎多为<code>ReplacingMergeTree</code>和<code>AggressivingMergeTree</code>, 因此必须将相同Key的数据, 分布到同一个shard中, 这时就需要做数据分片.</p>
-<p>常规做<strong>数据分片</strong>, 一般采用range分区, 例如HBase或者TiDB, 原因在于Range分区比较方面实现数据的Merge或者Spilt,  但range分区必须要求数据可排序,  对数据的组织形式有着严格的要求, Hash分区实现起来相对简单, 计算效率也高. </p>
-<p>但Hash分区, 一旦遇到扩容, 就需要完成数据的重分区, 成本非常高. </p>
-<p>Clickhouse采用的是实现相对简单的Hash分区, 从而导致扩容非常复杂, 具体有多复杂, 看下面的分析.</p>
-<h2 id="底表扩容"><a href="#底表扩容" class="headerlink" title="底表扩容"></a>底表扩容</h2><p>底表由于是rand分区, 因此几乎不会有任何的成本和风险, 只需要将新的shard配置项, 加入到Clickhouse集群的配置就行.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210713155425389.png" alt="image-20210713155425389"></p>
-<p>具体步骤:</p>
-<ol>
-<li>用4节点配置, 启动节点4, 接入集群</li>
-<li>1~3节点更新4节点的配置</li>
-<li>更新节点配置为4个节点, 开始4节点写入</li>
-</ol>
-<p>以上步骤可以做到不停写不停读</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>步骤</th>
-<th>数据读取</th>
-<th>数据写入</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>步骤1</td>
-<td>如果查询1~3, 读取3节点配置;如果查询节点4, 读取4节点;由于4节点无数据, 则无影响</td>
-<td>3节点写入</td>
-</tr>
-<tr>
-<td>步骤2</td>
-<td>1~4都为4节点配置, 由于4节点无数据, 则无影响</td>
-<td>3节点写入</td>
-</tr>
-<tr>
-<td>步骤3</td>
-<td>1~4都为4节点配置, 由于4节点无数据, 则无影响</td>
-<td>4节点写入</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="数据均衡"><a href="#数据均衡" class="headerlink" title="数据均衡"></a>数据均衡</h3><p>节点4刚上线, 数据的查询, 大部分依然还会走到远1~3的节点, 因此需要做数据均衡的操作.</p>
-<p>如果系统的负载降低, 可以根据数据TTL过期时间, 将老的非均衡的数据淘汰后, 新的数据将是均衡的.</p>
-<p>如果系统负载已经很高了, 那就必须手动实现均衡操作,  可以通过<code>Fetch Partition</code>将数据从老节点拉去过来, 然后再<code>detach partition</code>将老集群的数据, 设置为失效状态. </p>
-<p>不过这种方式会造成, 迁移过程中,<strong>数据查询重复</strong>,  需要放在低峰时期操作均衡.</p>
-<h2 id="物化视图扩容"><a href="#物化视图扩容" class="headerlink" title="物化视图扩容"></a>物化视图扩容</h2><p>上面已经提到了, 物化视图的扩容难度, 主要是因为rehash的需求, 后面就看一下具体的步骤.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210713161038288.png" alt="image-20210713161038288"></p>
-<p>整体的方案, 就是创建一个临时视图, 灌入数据, 然后重命名, 与mysql修改主键的流程类似, 但其中要做到 <strong>尽量少的停读写</strong>和<strong>尽量多的自动化</strong>以及<strong>尽可能的数据正确</strong></p>
-<ol>
-<li>原始状态有3个shard, 物化视图通过Hash键分区, 写入到shard中.</li>
-<li>升级至4节点, 创建一个同结构的MV’, MV’数据hash到4个节点; 而此时MV依然写入到3个节点<ol>
-<li>和<strong>底表扩容</strong>一样, 先4节点配置启动节点4, 然后再更新1~3的节点</li>
-<li>新的shard, 有一个特殊的配置值, 名为status, 值为new;  MV读取到这类配置项, 会自动忽略这类shard, 因此对于MV来说, 尽管已经4节点配置, 但它自己依然是3节点</li>
-<li>创建MV’时, 指定配置项include_state_shard=true, 新MV将hash到4个节点; 另外创建视图指定数据初始化能力, 这样就能需要不停服的回追底表数据了.</li>
-</ol>
-</li>
-<li>MV’消费底表的历史数据, 等历史消费完毕后, 开始将MV’重命名为MV(MV则删除)<ol>
-<li><strong>停止底表写入</strong>, 这个步骤是为了防止在rename阶段, 分布式表上有数据积压, 因此必须停写清空积压数据, 这个停写时间能够控制在分钟级别, 对于业务方的影响还算可控范围</li>
-<li>MV 重命名为MV-Temp, 由于rename操作是一个元数据操作, 因此执行速度比较快<ol>
-<li>删除物化视图转化器</li>
-<li>重命名数据表的本地表和分布式表</li>
-</ol>
-</li>
-<li>MV’ 重命名为MV, <ol>
-<li>删除物化视图转化器</li>
-<li>重命名数据表的本地表和分布式表</li>
-<li>重建物化视图转化器(名字不一样了)</li>
-</ol>
-</li>
-<li>所有MV都切换后, 更新shard配置项, 去除status关键字</li>
-<li>修改MV的配置项, 删除include_state_shard配置项.</li>
-</ol>
-</li>
-</ol>
-<h3 id="方案点评"><a href="#方案点评" class="headerlink" title="方案点评"></a>方案点评</h3><p>这个方案依赖两个实现:</p>
-<ol>
-<li>分布式表根据不同配置项, 识别不同的shard的</li>
-<li>物化视图不停写初始化构建</li>
-</ol>
-<p>方案的优点:</p>
-<ol>
-<li>能够实现扩shard</li>
-<li>基本上可以实现自动化</li>
-</ol>
-<p>方案的缺点为:</p>
-<ol>
-<li>需要停读写, 虽然时间不长</li>
-<li>需要重写一遍底表, 数据浪费严重.</li>
-</ol>
-<h2 id="读写优化"><a href="#读写优化" class="headerlink" title="读写优化"></a>读写优化</h2><p>目前物化视图的写入都是由Flink写入的, 而Flink有非常好的容错能力, 可以人为的让写入失败重试保证数据的正确, 而我们要确保的某一段时间, 数据无法写入到底表.</p>
-<p>可以实现一个<strong>alter table语法</strong>, 在内存的<code>metadata</code>标识某个底表无法被写入, 这样物化视图也就无法更新了.</p>
-<p>该标识是一个内存状态, 不需要持久化. 另外也需要有取消的指令.</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> xxx disable write;</span><br><span class="line"><span class="comment">-- replace table</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> xxx enable write</span><br></pre></td></tr></table></figure>
-<p>写入时, 发现表的状态为<code>disabled_write</code>就直接返回错误状态.</p>
-<blockquote>
-<p>或者直接用权限, 将用户的权限取消, 等rename完成后, 再开放写入; 但公司内部用了大账号的方式, 可能不太好实现.</p>
-</blockquote>
-<p>另外一个需要注意的点, 尽量要将禁写时间控制在Flink Sink算子的重试时间内, 不然会出现APP重启, 出现不量的告警.</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/07/12/Clickhouse%E8%BF%90%E7%BB%B4%E5%A2%9E%E5%BC%BA-ReHash%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -986,39 +731,20 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>系统里面默认是没有安装<code>mpi-operator</code>, 因此需要自行安装.<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/kubeflow/mpi-operator/blob/master/deploy/mpi-operator.yaml</span><br><span class="line"><span class="comment"># 修改镜像地址</span></span><br><span class="line">kubectl create -f mpi-operator.yaml</span><br></pre></td></tr></table></figure></p>
+          <h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>系统里面默认是没有安装<code>mpi-operator</code>, 因此需要自行安装.<br></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/kubeflow/mpi-operator/blob/master/deploy/mpi-operator.yaml</span><br><span class="line"><span class="comment"># 修改镜像地址</span></span><br><span class="line">kubectl create -f mpi-operator.yaml</span><br></pre></td></tr></table></figure><p></p>
 <p>在国内永远有镜像替换的烦恼, 在mpi-operator之中需要自行替换这两个镜像</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mpioperator/mpi-operator:latest</span><br><span class="line">mpioperator/kubectl-delivery:latest</span><br></pre></td></tr></table></figure>
 <p>你可以直接在<a href="https://hub.docker.com/u/mpioperator">DockerHub</a>上找到这两个镜像或者自行编译: <a href="https://github.com/kubeflow/mpi-operator/blob/master/Dockerfile">operator地址</a> <a href="https://github.com/kubeflow/mpi-operator/blob/master/cmd/kubectl-delivery/Dockerfile">delivery地址</a></p>
 <p>根据以下命令查看是否安装成功(crd已经创建 &amp;&amp; pod为running)</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get crd|grep mpi</span></span><br><span class="line">mpijobs.kubeflow.org                   2019-09-18T07:44:48Z</span><br><span class="line"></span><br><span class="line"><span class="comment"># kubectl get pod -n mpi-operator|grep mpi</span></span><br><span class="line">mpi-operator-584466c4f6-frw4x          1/1       Running     1          3d</span><br></pre></td></tr></table></figure>
-<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>根据官网的介绍创建<code>tensorflow-benchmarks</code>的例子.</p>
-<p> <a href="https://github.com/kubeflow/mpi-operator/blob/master/examples/v1alpha2/tensorflow-benchmarks.yaml">文件地址</a></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeflow.org/v1alpha2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">MPIJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">tensorflow-benchmarks</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">slotsPerWorker:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">cleanPodPolicy:</span> <span class="string">Running</span></span><br><span class="line">  <span class="attr">mpiReplicaSpecs:</span></span><br><span class="line">    <span class="attr">Launcher:</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">         <span class="attr">spec:</span></span><br><span class="line">           <span class="attr">containers:</span></span><br><span class="line">           <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">mpioperator/tensorflow-benchmarks:latest</span></span><br><span class="line">             <span class="attr">name:</span> <span class="string">tensorflow-benchmarks</span></span><br><span class="line">             <span class="attr">command:</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">mpirun</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">--allow-run-as-root</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-np</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">&quot;2&quot;</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-bind-to</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">none</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-map-by</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">slot</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-x</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">NCCL_DEBUG=INFO</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-x</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">LD_LIBRARY_PATH</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-x</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">PATH</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-mca</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">pml</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">ob1</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">-mca</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">btl</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">^openib</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">python</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">scripts/tf_cnn_benchmarks/tf_cnn_benchmarks.py</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">--model=resnet101</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">--batch_size=64</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">--variable_update=horovod</span></span><br><span class="line">    <span class="attr">Worker:</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">mpioperator/tensorflow-benchmarks:latest</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">tensorflow-benchmarks</span></span><br><span class="line">            <span class="attr">resources:</span></span><br><span class="line">              <span class="attr">limits:</span></span><br><span class="line">                <span class="attr">nvidia.com/gpu:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
-<p>在这里定义了一个<code>Launcher</code>,2个<code>Worker</code>, Work使用GPU, 因此在<code>Launcher</code>的<code>mpirun</code>参数之中<code>-np</code>必须为2, 说明是使用了两个并发.</p>
-<p>等待两个Worker启动之后, Launcher开始刷日志:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get pod -n mpi-operator</span></span><br><span class="line">NAME                                   READY     STATUS    RESTARTS   AGE</span><br><span class="line">mpi-operator-584466c4f6-frw4x          1/1       Running   1          3d</span><br><span class="line">tensorflow-benchmarks-launcher-vsq8b   1/1       Running   0          40s</span><br><span class="line">tensorflow-benchmarks-worker-0         1/1       Running   0          40s</span><br><span class="line">tensorflow-benchmarks-worker-1         1/1       Running   0          40s</span><br><span class="line"></span><br><span class="line"><span class="comment"># kubectl logs -f tensorflow-benchmarks-launcher-vsq8b -n mpi-operator</span></span><br><span class="line">Done warm up</span><br><span class="line">Step    Img/sec total_loss</span><br><span class="line">Done warm up</span><br><span class="line">Step    Img/sec total_loss</span><br><span class="line">1       images/sec: 109.6 +/- 0.0 (jitter = 0.0)        9.181</span><br><span class="line">1       images/sec: 109.9 +/- 0.0 (jitter = 0.0)        9.110</span><br><span class="line">10      images/sec: 108.1 +/- 0.7 (jitter = 1.3)        8.864</span><br><span class="line">10      images/sec: 108.1 +/- 0.7 (jitter = 1.5)        9.184</span><br><span class="line">20      images/sec: 107.9 +/- 0.8 (jitter = 1.1)        9.246</span><br><span class="line">20      images/sec: 107.9 +/- 0.8 (jitter = 1.2)        9.073</span><br><span class="line">30      images/sec: 107.7 +/- 0.6 (jitter = 1.5)        9.147</span><br><span class="line">30      images/sec: 107.7 +/- 0.6 (jitter = 1.5)        9.096</span><br><span class="line">40      images/sec: 107.9 +/- 0.4 (jitter = 1.8)        9.069</span><br><span class="line">40      images/sec: 107.9 +/- 0.4 (jitter = 1.8)        9.194</span><br><span class="line">50      images/sec: 108.3 +/- 0.4 (jitter = 2.2)        9.206</span><br><span class="line">50      images/sec: 108.3 +/- 0.4 (jitter = 2.0)        9.485</span><br><span class="line">60      images/sec: 108.3 +/- 0.3 (jitter = 2.1)        9.139</span><br><span class="line">60      images/sec: 108.3 +/- 0.3 (jitter = 2.0)        9.237</span><br><span class="line">70      images/sec: 107.8 +/- 0.5 (jitter = 2.2)        9.132</span><br><span class="line">70      images/sec: 107.8 +/- 0.5 (jitter = 2.2)        9.045</span><br><span class="line">80      images/sec: 107.8 +/- 0.4 (jitter = 2.3)        9.092</span><br><span class="line">80      images/sec: 107.8 +/- 0.4 (jitter = 2.2)        9.098</span><br><span class="line">90      images/sec: 107.7 +/- 0.4 (jitter = 2.2)        9.205</span><br><span class="line">90      images/sec: 107.7 +/- 0.4 (jitter = 2.3)        9.145</span><br><span class="line">100     images/sec: 107.7 +/- 0.4 (jitter = 2.1)        9.050</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">total images/sec: 215.33</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">100     images/sec: 107.7 +/- 0.4 (jitter = 2.1)        9.013</span><br><span class="line">----------------------------------------------------------------</span><br><span class="line">total images/sec: 215.32</span><br><span class="line">----------------------------------------------------------------</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这里用到了<a href="https://hub.docker.com/r/mpioperator/tensorflow-benchmarks">mpioperator/tensorflow-benchmarks:latest</a>镜像, 需要说明的是, 最新的latest版本是基于cuda10的, 华为云的K8s环境目前只支持cuda9, 因此使用<code>0.2.0</code>的tag版本, 能够完成任务.</p>
-</blockquote>
-<h2 id="实现简析"><a href="#实现简析" class="headerlink" title="实现简析"></a>实现简析</h2><p>在<code>Launcher</code>的日志上, 首先出现的是分发命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POD_NAME=tensorflow-benchmarks-worker-1</span><br><span class="line"><span class="built_in">shift</span></span><br><span class="line">/opt/kube/kubectl <span class="built_in">exec</span> tensorflow-benchmarks-worker-1 -- /bin/sh -c     PATH=/usr/local/bin:<span class="variable">$PATH</span> ; <span class="built_in">export</span> PATH ; LD_LIBRARY_PATH=/usr/local/lib:<span class="variable">$LD_LIBRARY_PATH</span> ; <span class="built_in">export</span> LD_LIBRARY_PATH ; DYLD_LIBRARY_PATH=/usr/local/lib:<span class="variable">$DYLD_LIBRARY_PATH</span> ; <span class="built_in">export</span> DYLD_LIBRARY_PATH ;   /usr/local/bin/orted -mca ess <span class="string">&quot;env&quot;</span> -mca ess_base_jobid <span class="string">&quot;2828730368&quot;</span> -mca ess_base_vpid 2 -mca ess_base_num_procs <span class="string">&quot;3&quot;</span> -mca orte_node_regex <span class="string">&quot;tensorflow-benchmarks-launcher-[1:5]l8hm,tensorflow-benchmarks-worker-[1:0-1]@0(3)&quot;</span> -mca orte_hnp_uri <span class="string">&quot;2828730368.0;tcp://172.16.0.86:37557&quot;</span> -mca pml <span class="string">&quot;ob1&quot;</span> -mca btl <span class="string">&quot;^openib&quot;</span> -mca plm <span class="string">&quot;rsh&quot;</span> -mca plm_rsh_agent <span class="string">&quot;/etc/mpi/kubexec.sh&quot;</span> -mca orte_default_hostfile <span class="string">&quot;/etc/mpi/hostfile&quot;</span> -mca hwloc_base_binding_policy <span class="string">&quot;none&quot;</span> -mca rmaps_base_mapping_policy <span class="string">&quot;slot&quot;</span> -mca pmix <span class="string">&quot;^s1,s2,cray,isolated&quot;</span></span><br><span class="line">POD_NAME=tensorflow-benchmarks-worker-0</span><br><span class="line"><span class="built_in">shift</span></span><br><span class="line">/opt/kube/kubectl <span class="built_in">exec</span> tensorflow-benchmarks-worker-0 -- /bin/sh -c     PATH=/usr/local/bin:<span class="variable">$PATH</span> ; <span class="built_in">export</span> PATH ; LD_LIBRARY_PATH=/usr/local/lib:<span class="variable">$LD_LIBRARY_PATH</span> ; <span class="built_in">export</span> LD_LIBRARY_PATH ; DYLD_LIBRARY_PATH=/usr/local/lib:<span class="variable">$DYLD_LIBRARY_PATH</span> ; <span class="built_in">export</span> DYLD_LIBRARY_PATH ;   /usr/local/bin/orted -mca ess <span class="string">&quot;env&quot;</span> -mca ess_base_jobid <span class="string">&quot;2828730368&quot;</span> -mca ess_base_vpid 1 -mca ess_base_num_procs <span class="string">&quot;3&quot;</span> -mca orte_node_regex <span class="string">&quot;tensorflow-benchmarks-launcher-[1:5]l8hm,tensorflow-benchmarks-worker-[1:0-1]@0(3)&quot;</span> -mca orte_hnp_uri <span class="string">&quot;2828730368.0;tcp://172.16.0.86:37557&quot;</span> -mca pml <span class="string">&quot;ob1&quot;</span> -mca btl <span class="string">&quot;^openib&quot;</span> -mca plm <span class="string">&quot;rsh&quot;</span> -mca plm_rsh_agent <span class="string">&quot;/etc/mpi/kubexec.sh&quot;</span> -mca orte_default_hostfile <span class="string">&quot;/etc/mpi/hostfile&quot;</span> -mca hwloc_base_binding_policy <span class="string">&quot;none&quot;</span> -mca rmaps_base_mapping_policy <span class="string">&quot;slot&quot;</span> -mca pmix <span class="string">&quot;^s1,s2,cray,isolated&quot;</span></span><br></pre></td></tr></table></figure>
-<p>通过<code>/opt/kube/kubectl exec</code>的命令方式, 将执行的真实命令发送到<code>worker</code>上, 这两个命令唯一的差别为<code>-mca ess_base_vpid</code>的序号.</p>
-<blockquote>
-<p><code>worker</code>的启动命令为<code>sleep 365d</code>, 除了接受<code>Launcher</code>的命令之外, 不做其他任何的东西.</p>
-</blockquote>
-<p>那么<code>Launcher</code>是如何实现命令的封装的呢?</p>
-<p>通过mpi-job启动的时候, 将<code>hostfile</code>和<code>kubexec.sh</code>封装在<code>configmap</code>之中.</p>
-<p><code>hostfile</code>通过<code>name-worker-id</code> 的方式组装, 而<code>kubexec.sh</code>应该每个都一样</p>
-<blockquote>
-<p>因此, 每个mpi-job都会有对应的config</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get configmap tensorflow-benchmarks-config -o yaml -n mpi-operator</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  hostfile: |</span><br><span class="line">    tensorflow-benchmarks-worker-0 slots=1</span><br><span class="line">    tensorflow-benchmarks-worker-1 slots=1</span><br><span class="line">  kubexec.sh: |</span><br><span class="line">    <span class="comment">#!/bin/sh</span></span><br><span class="line">    <span class="built_in">set</span> -x</span><br><span class="line">    POD_NAME=<span class="variable">$1</span></span><br><span class="line">    <span class="built_in">shift</span></span><br><span class="line">    /opt/kube/kubectl <span class="built_in">exec</span> <span class="variable">$&#123;POD_NAME&#125;</span> -- /bin/sh -c <span class="string">&quot;$*&quot;</span></span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: 2019-09-22T04:07:36Z</span><br><span class="line">  labels:</span><br><span class="line">    app: tensorflow-benchmarks</span><br><span class="line">  name: tensorflow-benchmarks-config</span><br><span class="line">  namespace: mpi-operator</span><br><span class="line">  ownerReferences:</span><br><span class="line">  - apiVersion: kubeflow.org/v1alpha2</span><br><span class="line">    blockOwnerDeletion: <span class="literal">true</span></span><br><span class="line">    controller: <span class="literal">true</span></span><br><span class="line">    kind: MPIJob</span><br><span class="line">    name: tensorflow-benchmarks</span><br><span class="line">    uid: 82cd05da-dcee-11e9-ac58-fa163e3a1ebd</span><br><span class="line">  resourceVersion: <span class="string">&quot;39344012&quot;</span></span><br><span class="line">  selfLink: /api/v1/namespaces/mpi-operator/configmaps/tensorflow-benchmarks-config</span><br><span class="line">  uid: 82cef441-dcee-11e9-860a-fa163e132ef9</span><br></pre></td></tr></table></figure>
-<p>那么这两个文件是如何注入到mpi的流程之中呢?</p>
-<p>应该是通过环境变量<code>OMPI_MCA_plm_rsh_agent</code>和<code>OMPI_MCA_orte_default_hostfile</code>, 这两个应该会像回调函数一样, mpirun的过程之中被执行(这部分是猜测的).</p>
-<h2 id="MPI到底是什么"><a href="#MPI到底是什么" class="headerlink" title="MPI到底是什么?"></a>MPI到底是什么?</h2><p>说了这么久的Kubeflow的MPI Operator, 但对于MPI陌生的人, 应该是完全陌生的领域.</p>
-<p>在这里例子之中, 最后有个参数是<code>--variable_update=horovod</code>, <a href="https://github.com/horovod/horovod">Horovod</a>就是一种基于MPI架构实现分布式训练框架, 我准备再开个番外篇专门介绍一下<code>Horovod</code>, 在其中学习一下MPI.</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/09/22/Kubeflow%E7%B3%BB%E5%88%97-MPI-Operator%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1119,36 +845,19 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
     <div class="post-body" itemprop="articleBody">
           <h2 id="Jupyter架构"><a href="#Jupyter架构" class="headerlink" title="Jupyter架构"></a>Jupyter架构</h2><p><a href="https://jupyter.readthedocs.io/en/latest/index.html">文档</a></p>
 <p>交互图:</p>
-<p><img src="https://jupyter.readthedocs.io/en/latest/_images/notebook_components.png" alt=""></p>
+<p><img data-src="https://jupyter.readthedocs.io/en/latest/_images/notebook_components.png" alt></p>
 <p>组件图:</p>
-<p><img src="https://jupyter.readthedocs.io/en/latest/_images/repos_map.png" alt=""></p>
+<p><img data-src="https://jupyter.readthedocs.io/en/latest/_images/repos_map.png" alt></p>
 <h2 id="插件列表"><a href="#插件列表" class="headerlink" title="插件列表"></a>插件列表</h2><p><a href="https://github.com/markusschanta/awesome-jupyter">awesome-jupyter</a></p>
 <p><a href="https://github.com/mauhai/awesome-jupyterlab">awesome-jupyterlab</a></p>
-<h3 id="jupyterlab-toc"><a href="#jupyterlab-toc" class="headerlink" title="jupyterlab-toc)"></a><a href="[jupyterlab-toc](https://github.com/ian-r-rose/jupyterlab-toc">jupyterlab-toc</a>)</h3><p>安装命令:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter labextension install @jupyterlab/toc</span><br></pre></td></tr></table></figure>
-<p>效果图:</p>
-<p><img src="https://github.com/ian-r-rose/jupyterlab-toc/raw/master/toc.gif" alt=""></p>
-<h3 id="jupyterlab-tensorboard"><a href="#jupyterlab-tensorboard" class="headerlink" title="jupyterlab_tensorboard"></a><a href="https://github.com/chaoleili/jupyterlab_tensorboard">jupyterlab_tensorboard</a></h3><p>安装命令:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter labextension install jupyterlab_tensorboard</span><br></pre></td></tr></table></figure>
-<p>效果图:</p>
-<p><img src="https://github.com/chaoleili/jupyterlab_tensorboard/raw/master/image/launcher.png" alt=""></p>
-<p><img src="https://github.com/chaoleili/jupyterlab_tensorboard/raw/master/image/commands-input.png" alt=""></p>
-<h3 id="JupyterLab-drawio"><a href="#JupyterLab-drawio" class="headerlink" title="JupyterLab drawio"></a><a href="https://github.com/QuantStack/jupyterlab-drawio">JupyterLab drawio</a></h3><p>安装命令:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter labextension install jupyterlab-drawio</span><br></pre></td></tr></table></figure>
-<p>效果图:</p>
-<p><img src="https://github.com/QuantStack/jupyterlab-drawio/raw/master/drawio.gif" alt=""></p>
-<h3 id="fasta-extension"><a href="#fasta-extension" class="headerlink" title="fasta-extension"></a><a href="https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/fasta-extension">fasta-extension</a></h3><p>安装命令:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter labextension install @jupyterlab/fasta-extension</span><br></pre></td></tr></table></figure>
-<p><img src="https://camo.githubusercontent.com/6aa00b126595f41bc5bee84a6696234b63036fda/687474703a2f2f672e7265636f726469742e636f2f74656d697a6a616539582e676966" alt=""></p>
-<h3 id="jupyterlab-git"><a href="#jupyterlab-git" class="headerlink" title="jupyterlab-git"></a><a href="https://github.com/jupyterlab/jupyterlab-git">jupyterlab-git</a></h3><p>安装命令:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jupyter labextension install @jupyterlab/git</span><br><span class="line">pip install --upgrade jupyterlab-git</span><br><span class="line">jupyter serverextension <span class="built_in">enable</span> --py jupyterlab_git</span><br></pre></td></tr></table></figure>
-<p>效果图:</p>
-<p><img src="https://camo.githubusercontent.com/8e2f2b6abdaff6b180bf6aee95b288a7af0fde4d/687474703a2f2f672e7265636f726469742e636f2f4e39496b7a62796b38502e676966" alt=""></p>
-<h3 id="jupyterlab-variableInspector"><a href="#jupyterlab-variableInspector" class="headerlink" title="jupyterlab-variableInspector"></a><a href="https://github.com/lckr/jupyterlab-variableInspector">jupyterlab-variableInspector</a></h3><p>安装命令:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter labextension install @lckr/jupyterlab_variableinspector</span><br></pre></td></tr></table></figure>
-<p>效果图:</p>
-<p><img src="https://github.com/lckr/jupyterlab-variableInspector/raw/master/early_demo.gif" alt=""></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/09/05/JupyterLab%E6%8F%92%E4%BB%B6%E6%95%B4%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1264,66 +973,14 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <p>这次随着KFServing依赖KNative组件, 因此安装了一下KNative体验了一下, 就顺便记录一下吧.</p>
 <h2 id="KNative介绍"><a href="#KNative介绍" class="headerlink" title="KNative介绍"></a>KNative介绍</h2><p>KNative是Google在2018年7月份发布的, 定位为基于 Kubernetes 的 Serverless 解决方案，旨在标准化 Serverless，简化其学习成本.</p>
 <p>Serverless 大体上可以分为两种类型：“Backend as a Service” 和 “Functions as a Service”</p>
-<p>BaaS(Backend as a Service) 后端即服务，服务商为客户 (开发者) 提供整合云后端的服务，如提供文件存储、数据存储、推送服务、身份验证服务等功能，以帮助开发者快速开发应用。</p>
-<p>FaaS(Function as a Service) 函数即服务，服务商提供一个平台，允许客户开发、运行和管理应用程序功能，而无需构建和维护基础架构。按照此模型构建应用程序是实现“无服务器”体系结构的一种方式，通常在构建微服务应用程序时使用。</p>
-<p>而现在看KNative算是FAAS的一员,  FAAS必须要解决的三个问题以及KNative对应方案为:</p>
-<ol>
-<li>函数程序如何编译, 因此KNative有对应的Builder模块, 解决代码转化为镜像的问题</li>
-<li>任务如何触发, 对应KNative的Event模块,  使用一些消息中间件来缓存/发送请求, 例如Kafka</li>
-<li>函数如何服务化, 对应的是KNative的Serving模块, 将用户的代码服务化, 并有服务该有的能力, 例如流量控制,自动伸缩等</li>
-</ol>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/knative/three-compomnent.jpg" alt=""></p>
-<p>这个三组件是KNative的核心, 整个流程都按照三个模块来构建, 下面就看一下每个模块之中的架构概念.</p>
-<blockquote>
-<p>目前是0.8版本, 现在Build模块已经被移除, 链接到了另外一个开源库.</p>
-<p>就整个架构而言,  Build应该算是整个框架的接口, 如果这个Build不在自己做的话, 无法完成平台的闭环</p>
-</blockquote>
-<h2 id="KNative架构"><a href="#KNative架构" class="headerlink" title="KNative架构"></a>KNative架构</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/knative/knative-audience.svg" alt=""></p>
-<p>首先看一下KNative的顶层架构:</p>
-<ul>
-<li><p>KNative依赖于Kubernetes, 三大组件的物理实现都是Kubernetes的CRD</p>
-</li>
-<li><p>而对外接口又依赖于Istio,  将一些服务治理网关路由的工作交由Istio完成</p>
-</li>
-<li><p>而KNative自己致力于完成开发者服务开发的工作</p>
-</li>
-</ul>
-<blockquote>
-<p>分工很明确, 比较看好这种方式</p>
-</blockquote>
-<h3 id="KNative-Serving模块"><a href="#KNative-Serving模块" class="headerlink" title="KNative Serving模块"></a>KNative Serving模块</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/knative/serving.png" alt=""></p>
-<p>Serving主要是服务管理的能力, KNative创造了这几个概念:</p>
-<ol>
-<li><p>Service: 工作负载的底层概念, 管理整个生命周期</p>
-</li>
-<li><p>Route: 用于流量控制, 将不同的请求转发到不同的Revision</p>
-</li>
-<li><p>Configuration: 用于维护Service的配置</p>
-</li>
-<li><p>Revision: 每次代码或者配置修改, 都会生成一个Revision, 一个Revision会对应一个K8s的Deployment</p>
-</li>
-</ol>
-<p>KNative的Serving的概念,与Istio有部分的重复, 但是比Istio更好理解.</p>
-<p>下面看一个真实的<a href="https://knative.dev/docs/serving/samples/hello-world/helloworld-go/index.html">例子</a>:</p>
-<p>代码和docker的构建略过, 只看如何部署Service</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">serving.knative.dev/v1alpha1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span> <span class="comment"># KNative的Serving定义</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">helloworld-go</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">docker.io/&#123;username&#125;/helloworld-go</span></span><br><span class="line">          <span class="attr">env:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TARGET</span></span><br><span class="line">              <span class="attr">value:</span> <span class="string">&quot;Go Sample v1&quot;</span></span><br></pre></td></tr></table></figure>
-<p>创建完成这个步骤, 会依次创建Service/Route/Configuration/Revision以及真实的Deployment.</p>
-<p>该Deployment会注入Istio-proxy, 最后访问由Istio路由来决定, 最后访问该Service也是通过Istio的网关</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@gpu-01-client ~]<span class="comment">#kubectl get svc istio-ingressgateway --namespace istio-system</span></span><br><span class="line">NAME                   TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE</span><br><span class="line">istio-ingressgateway   LoadBalancer   10.247.103.192   100.95.144.30   80:31651/TCP,443:30856/TCP   9d</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>获取KNative的serviceURL</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@gpu-01-client ~]<span class="comment">#kubectl get ksvc helloworld-go  --output=custom-columns=NAME:.metadata.name,URL:.status.url</span></span><br><span class="line">NAME            URL</span><br><span class="line">helloworld-go   http://helloworld-go.default.example.com</span><br></pre></td></tr></table></figure>
-<p>测试<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@gpu-01-client ~]<span class="comment"># curl -H &quot;Host:helloworld-go.default.example.com&quot; http://100.95.144.30</span></span><br><span class="line">Hello Go Sample v1!</span><br></pre></td></tr></table></figure></p>
-<blockquote>
-<p>KNative能够Scala-to-Zero, 这样也有一个坏处, 当一个新请求到来的时候, 第一次启动会相对较长的时间(需要启动一个工作的容器)</p>
-</blockquote>
-<h3 id="KNative-Event模块"><a href="#KNative-Event模块" class="headerlink" title="KNative Event模块"></a>KNative Event模块</h3><blockquote>
-<p>这部分待续, 还没有看完</p>
-</blockquote>
-<h2 id="KNative总结"><a href="#KNative总结" class="headerlink" title="KNative总结"></a>KNative总结</h2><p>目前KNative的版本还在0.8版本, 还不算正式release, 后续可能会有不少变动.</p>
-<p>而且Build模块的去除, 感觉已经缺少了一个对于开发者的Interface, 不知道他们未来打算拿什么来弥补.</p>
-<p>而对于Serverless框架来说, 我感觉近2年之内应该无法决出真正的事实标准框架, 所以对KNative来说, 还有时间.</p>
-<p>对我们来说, 在1.0版本release之前, 不要将KNative纳入到系统的构架之中, 后续在持续关注社区后期的动向.</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/24/Kubeflow%E7%B3%BB%E5%88%97-KNative%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1466,18 +1123,15 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <li>如果有嵌入式SQL场景, 使用PG</li>
 <li>如果你想学习一个经典的关系型数据库, 使用PG吧</li>
 </ol>
-<h2 id="MyBatis兼容PG和MySQL"><a href="#MyBatis兼容PG和MySQL" class="headerlink" title="MyBatis兼容PG和MySQL"></a>MyBatis兼容PG和MySQL</h2><p>如果上层使用了MyBatis的话, MyBatis有个叫做<code>DatabaseIdProvider</code>的能力可以支持多个不同的数据库.</p>
-<p>在我们的例子里面, 需要支持MySQL/PG/HSQL三种数据库, 就需要在MyBatis的配置文件, 写在如下配置:</p>
-<blockquote>
-<p> HSQL是本地测试常用的数据库</p>
-</blockquote>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">databaseIdProvider</span> <span class="attr">type</span>=<span class="string">&quot;DB_VENDOR&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;MySQL&quot;</span> <span class="attr">value</span>=<span class="string">&quot;mysql&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;PostgreSQL&quot;</span> <span class="attr">value</span>=<span class="string">&quot;postgresql&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;HSQL&quot;</span> <span class="attr">value</span>=<span class="string">&quot;hsqldb&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">databaseIdProvider</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在具体的查询语句的配置项文件里面, 可以使用如下配置</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">choose</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">when</span> <span class="attr">test</span>=<span class="string">&quot;_databaseId == &#x27;postgresql&#x27;&quot;</span>&gt;</span></span><br><span class="line">    LIMIT #&#123;pageSize&#125; OFFSET #&#123;offset&#125;;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">when</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">when</span> <span class="attr">test</span>=<span class="string">&quot;_databaseId == &#x27;mysql&#x27;&quot;</span>&gt;</span></span><br><span class="line">    LIMIT #&#123;offset&#125;, #&#123;pageSize&#125;;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">when</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">otherwise</span>&gt;</span></span><br><span class="line">    LIMIT #&#123;offset&#125;, #&#123;pageSize&#125;;</span><br><span class="line">  <span class="tag">&lt;/<span class="name">otherwise</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">choose</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>在这个例子里面, PG和MySQL的Limit语法不同, 因此根据不同情况来生成不同的SQL语句.</p>
-<p>在这儿使用的是MyBatis里面的<code>choose-when-otherwise</code>的语法, 这个语法含义和Java中的<code>match</code>含义类似</p>
-<p>在每个<code>when</code>中判断内置的<code>DatabaseIdProvider</code>字段<code>_databaseId</code>是否为PG或者MySQL, 这儿的字符串<code>mysql</code>和<code>postgresql</code>就是在<code>databaseIdProvider</code>定义的那个两个数据库</p>
-
+<h2 id="MyBatis兼容PG和MySQL"><a href="#MyBatis兼容PG和MySQL" class="headerlink" title="MyBatis兼容PG和MySQL"></a>MyBatis兼容PG和MySQL</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/24/%E8%BD%AC-MySQL%E4%B8%8EPostgreSQL%E5%AF%B9%E6%AF%94/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1582,7 +1236,7 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <blockquote>
 <p> 但是, 目前TFServing虽然提交活跃度挺高, 但是还没有挂在官网介绍文章之中,  版本非常新, 目前才v0.2版本, 未来接口可能会有很大变化</p>
 </blockquote>
-<h2 id="KFServing架构"><a href="#KFServing架构" class="headerlink" title="KFServing架构"></a>KFServing架构</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kfserving/kfserving.png" alt=""></p>
+<h2 id="KFServing架构"><a href="#KFServing架构" class="headerlink" title="KFServing架构"></a>KFServing架构</h2><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kfserving/kfserving.png" alt></p>
 <p>从架构图上可以看出, KFServing在非常高的位置之上,  它底层的服务能力依赖于<a href="https://knative.dev/docs/">KNative</a>(<em>主要是KNative的Serving模块</em>), 上层支持的框架有:</p>
 <ol>
 <li>TensorFlow: 镜像由于TensorFlow官网提供</li>
@@ -1591,43 +1245,14 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <li>XGBoost: 同上</li>
 <li>TensorRT: 镜像由NVIDIA提供</li>
 </ol>
-<p><strong>基本上主流的一些机器学习框架都已经支持</strong></p>
-<p>下面看一下KFServing的服务能力,  数据流图如下所以: </p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kfserving/dataplane.jpg" alt=""></p>
-<p>这个是一个典型的灰度发布场景,  一个默认环境, 一个灰度环境, 由KNative的来控制流量.</p>
-<blockquote>
-<p>KFServing似乎目前只支持一个灰度实例</p>
-</blockquote>
-<h2 id="KFServing的使用案例"><a href="#KFServing的使用案例" class="headerlink" title="KFServing的使用案例"></a>KFServing的使用案例</h2><p>看个简单的TensorFlow Serving的例子,  所有的样例在这个<a href="https://github.com/kubeflow/kfserving/tree/master/docs/samples">代码路径</a>之中</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">&quot;serving.kubeflow.org/v1alpha1&quot;</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">&quot;KFService&quot;</span> <span class="comment"># `KFService`是KFServing在K8s上定义的CRD.</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;flowers-sample&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">tensorflow:</span></span><br><span class="line">      <span class="attr">modelUri:</span> <span class="string">&quot;gs://kfserving-samples/models/tensorflow/flowers&quot;</span></span><br></pre></td></tr></table></figure>
-<p>这段YAML的意思为, 创建一个TensorFlow类型的Serving, 模型文件存在<code>Google Cloud</code>的<code>gs://kfserving-samples/models/tensorflow/flowers</code>的路径之中.</p>
-<blockquote>
-<p>TensorFlow Serving并不支持GCS的路径, 这里TF Serving通过一个<a href="https://github.com/kubeflow/kfserving/blob/master/python/model-initializer.Dockerfile">model-initializer</a>的<code>init-container</code>提前下载到容器内部, TF Serving实例上读取是本地路径,  所以模型不能太大, 因为目前还不支持挂载PVC</p>
-</blockquote>
-<p>当然也可以设置一个灰度服务: </p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">&quot;serving.kubeflow.org/v1alpha1&quot;</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">&quot;KFService&quot;</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;flowers-sample&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">   <span class="comment"># 90% of traffic is sent to this model</span></span><br><span class="line">    <span class="attr">tensorflow:</span></span><br><span class="line">      <span class="attr">modelUri:</span> <span class="string">&quot;gs://kfserving-samples/models/tensorflow/flowers&quot;</span></span><br><span class="line">  <span class="attr">canaryTrafficPercent:</span> <span class="number">10</span></span><br><span class="line">  <span class="attr">canary:</span></span><br><span class="line">   <span class="comment"># 10% of traffic is sent to this model</span></span><br><span class="line">    <span class="attr">tensorflow:</span></span><br><span class="line">      <span class="attr">modelUri:</span> <span class="string">&quot;gs://kfserving-samples/models/tensorflow/flowers-2&quot;</span></span><br></pre></td></tr></table></figure>
-<p>这个YAML的含义是, 90%走到default服务, 也就是<code>flowers</code>模型, 而剩下的10%的模型走到<code>canary</code>去, 模型为<code>flowers-2</code></p>
-<blockquote>
-<p>这里会生成KNative的资源有: 1个Service, 1个Route, 2个Configuration, 2个Revision</p>
-</blockquote>
-<p>你可以使用KNative的<a href="https://github.com/kubeflow/kfserving/tree/master/docs/samples/tensorflow#knative-cli">客户端</a>, 来完成两个灰度升级回滚等操作.</p>
-<p>访问流量需要获取<code>istio-ingressgateway</code>的地址, 加上定义的url就能访问了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MODEL_NAME=flowers-sample</span><br><span class="line">INPUT_PATH=@./input.json</span><br><span class="line">CLUSTER_IP=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath=<span class="string">&#x27;&#123;.status.loadBalancer.ingress[0].ip&#125;&#x27;</span>)</span><br><span class="line">SERVICE_HOSTNAME=$(kubectl get kfservice <span class="variable">$&#123;MODEL_NAME&#125;</span> -o jsonpath=<span class="string">&#x27;&#123;.status.url&#125;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">curl -v -H <span class="string">&quot;Host: <span class="variable">$&#123;SERVICE_HOSTNAME&#125;</span>&quot;</span> http://<span class="variable">$CLUSTER_IP</span>/v1/models/<span class="variable">$MODEL_NAME</span>:predict -d <span class="variable">$INPUT_PATH</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>YAML的字段定义在<a href="https://github.com/kubeflow/kfserving/blob/master/docs/control-plane.md">这篇文档</a>之中</p>
-</blockquote>
-<h2 id="KFServing总结"><a href="#KFServing总结" class="headerlink" title="KFServing总结"></a>KFServing总结</h2><p>首先, KFServing目前是一个非常前期的项目, 这就注定了可能很多功能, 它目前都不支持, 但是目前它的目标我们实际上是接受的, 等这个版本再经过几轮迭代之后可以跟进.</p>
-<blockquote>
-<p>模型资产存储在OBS上, Serving获取模型, 自动部署模型推理服务</p>
-</blockquote>
-<p>其次, KFServing的架构依赖实在太多了, 特别依赖是KNative, 目前还不能确定KNative能够在Serverless框架的竞争之中胜出, 而且KNative的版本也比较前期, 问题也挺多, 对于KFServing质量评分造成了不少影响.</p>
-<blockquote>
-<p>实际上灰度发布和流量控制, Istio能力已经完全具备, 不知道为什么必须依赖KNative, 未来能解除KNative的依赖就好了</p>
-</blockquote>
-<p>再次, KFServing有Python的<a href="https://github.com/kubeflow/kfserving/tree/master/python/kfserving">SDK</a>, 可以使用代码直接部署KFServing的Service, 这对工程人员是一个很方便的能力.</p>
-<p>此外, 它由一个叫做<a href="https://github.com/kubeflow/kfserving/tree/master/tools/tf2openapi">TF2OpenAPI</a>的小工具, 能够将TF的模型的API描述自动生成, 又是对工程人员的工具.</p>
-<p>最后, KFServing的<a href="https://github.com/kubeflow/kfserving/blob/master/ROADMAP.md">路标</a>之中提到, KFServing马上会在Kubeflow 0.7版本之中就集成了, 而且9月初就会支持PVC啦,  赶紧迭代起来吧.</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/23/Kubeflow%E7%B3%BB%E5%88%97-KFServing%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1752,6 +1377,14 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 <li><a href="https://zhuanlan.zhihu.com/p/40419090">网易云音乐</a>: 官网链接找不到了, 只有其他的安装文档</li>
 </ol>
 
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/08/18/Ubuntu%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E9%9B%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1819,19 +1452,13 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -1844,9 +1471,12 @@ y=0.2x^3-1.5x^2+2x+4</script><p>单调函数的特点, x的最大最小值, 必�
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

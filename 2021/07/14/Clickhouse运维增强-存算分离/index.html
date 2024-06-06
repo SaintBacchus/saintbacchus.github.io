@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="什么是存算分离从字面意思理解就是, 存储计算是解耦的,  当需要增加存储资源的时候, 不需要对应的增加计算部分的资源. Clickhouse的架构是典型的存储计算在一起的方式, 现在我们公司CK的算力紧缺, 存储却相对较低, 可是要扩容的时候, 存储也对应的增加起来, 形成了一定浪费. 存算分离架构的流行主要得益于云服务的兴起, 按需和弹性的资源推向了企业用户, 目前大多数的云上数据库都开始支持存">
 <meta property="og:type" content="article">
@@ -83,15 +83,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -272,14 +303,14 @@
 <p>基于之前的经验, 最新版不一定正确</p>
 </blockquote>
 <h2 id="缓存加速"><a href="#缓存加速" class="headerlink" title="缓存加速"></a>缓存加速</h2><h3 id="HDD类型"><a href="#HDD类型" class="headerlink" title="HDD类型"></a>HDD类型</h3><p>这种类型比较少见, 因为HDD的性能已经很差了, 相对于S3提升能力不多, 唯一优势是放在同一网络域中, 网络带宽会略会好.  </p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/2020%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%B8%8A%E4%BA%91cn-06.svg" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/2020%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%B8%8A%E4%BA%91cn-06.svg" alt="img"></p>
 <p>例如MRS服务, 就是云上的HDFS+Spark/Hive这套大数据组件,  用户结构数据有一些部分会上传到S3上, 这时使用Spark直接分析OBS数据的性能会非常差,  这时MRS服务做了一个数据导入的功能, 将S3的数据导入到MRS集群的HDFS上, 这样用Spark查询时,性能会提升一部分. 但是由于HDD糟糕的性能, 提升效果有限, 因此会加入<code>CarbonData</code>等有索引的数据结构查询.</p>
 <p>另外随着S3Query的能力开放, 直接在S3上查询的能力也开始发力, 后续通过HDD的加速大概率会消失.</p>
 <p>云上的HDFS最多是为了兼容企业的老接口, 一旦S3能全面兼容HDFS, MRS这种内建HDFS的方案将被取消.</p>
 <p>目前看到快手是直接用<a href="https://www.infoq.cn/article/vGabIOdeUM87hv6X8qlL">基于HDD的HDFS做存算分离方案</a>的</p>
 <h3 id="SSD加速"><a href="#SSD加速" class="headerlink" title="SSD加速"></a>SSD加速</h3><p>SSD是一种永久性的存储介质, 不会丢失数据, 因此经常会用到实时场景做缓存.</p>
 <p>美团就有使用<a href="https://tech.meituan.com/2021/01/14/kafka-ssd.html">SSD加速Kafka</a>案例</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/2482fc361c82e1d35684394f3b34f1e5184835.png" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/2482fc361c82e1d35684394f3b34f1e5184835.png" alt="img"></p>
 <p>相比于普通磁盘, SSD的性能有成倍的提升, 且成本增加较小.</p>
 <p>但SSD也有自身的缺点:</p>
 <ul>
@@ -363,7 +394,7 @@
 </tbody>
 </table>
 </div>
-<h3 id="设计图"><a href="#设计图" class="headerlink" title="设计图"></a>设计图</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715142722756.png" alt="image-20210715142722756"></p>
+<h3 id="设计图"><a href="#设计图" class="headerlink" title="设计图"></a>设计图</h3><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715142722756.png" alt="image-20210715142722756"></p>
 <p>跟之前虚拟id的方式基本上一致,  但存储会统一放入S3中, 机器上会有一个同步备份, 另外会有一个manager管理这些数据, S3和HDFS更像一个数据备份和快速恢复的地方.</p>
 <blockquote>
 <p>之前Manager是游离整体架构之外的辅助角色, 现在是强相关组件, 因此写入了架构图</p>
@@ -392,7 +423,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="节点扩容"><a href="#节点扩容" class="headerlink" title="节点扩容"></a>节点扩容</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715144933939.png" alt="image-20210715144933939"></p>
+<h3 id="节点扩容"><a href="#节点扩容" class="headerlink" title="节点扩容"></a>节点扩容</h3><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210715144933939.png" alt="image-20210715144933939"></p>
 <p>依然和虚拟shard的方案很类似, 只是从S3地方完成了拷贝, 具体就不展开了.</p>
 <h2 id="方案评价"><a href="#方案评价" class="headerlink" title="方案评价"></a>方案评价</h2><p>目前看来这个方案是可行的, 整体对Clickhouse引擎内部的改动也不多, 也决绝了运维最大的难题就是扩容的方案.</p>
 <p>但是由于CK的配置和元数据都是单机式的, 更新集群配置需要重启节点, 这就会限制该方案云化的设计.</p>
@@ -481,19 +512,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -506,9 +531,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

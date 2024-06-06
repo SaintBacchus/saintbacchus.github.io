@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="A place for codeing break.">
 <meta property="og:type" content="website">
@@ -75,15 +75,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -231,7 +262,14 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> TARGET_ID=666666666</span><br><span class="line"><span class="comment"># 加入目标容器的 network, pid 以及 ipc namespace</span></span><br><span class="line">docker run -it --network=container:<span class="variable">$TARGET_ID</span> --pid=container:<span class="variable">$TARGET_ID</span> --ipc=container:<span class="variable">$TARGET_ID</span> busybox</span><br></pre></td></tr></table></figure>
 <p>这个技术点确实很牛逼, 之前都不了解, 后面在<code>kubernete</code>上的实现, 就顺理成章了, 只需要通过API接口将需要的<code>TARGET_ID</code>查询出来, 注入镜像即可</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目前看这个<code>kubectl-debug</code>只是个人项目,  可能会有一些场景支持的并不好, 特别是各个云上的安全系统. 所以有需要可以拿过来改改代码试用一下, 如果偶尔使用的话, 直接在<code>kubernete</code>的节点上使用容器注入会更快和可控一点.</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/28/Kube-Debug%E5%AE%9A%E4%BD%8D%E5%B7%A5%E5%85%B7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -344,78 +382,14 @@
 <li>Step: Component对应实体, 就是上图之中的方框, 应该是一个Step会真实对应一个K8s的Pod</li>
 </ol>
 <h2 id="官方案例"><a href="#官方案例" class="headerlink" title="官方案例"></a>官方案例</h2><p>官方的<strong>XGBoost - Training with Confusion Matrix</strong>案例:</p>
-<h3 id="流程可视化页面"><a href="#流程可视化页面" class="headerlink" title="流程可视化页面:"></a>流程可视化页面:</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/2.png" alt=""></p>
-<h3 id="提交任务页面"><a href="#提交任务页面" class="headerlink" title="提交任务页面:"></a>提交任务页面:</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/6.png" alt=""></p>
-<h3 id="Artifacts页面"><a href="#Artifacts页面" class="headerlink" title="Artifacts页面"></a>Artifacts页面</h3><p>运行起来的时候, 在Artifacts之中看到一些metric信息(这些信息需要在流程之中自定义)</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/3.png" alt="">  <img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/4.png" alt=""></p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/5.png" alt=""></p>
-<h2 id="Pipeline的流程及架构"><a href="#Pipeline的流程及架构" class="headerlink" title="Pipeline的流程及架构"></a>Pipeline的流程及架构</h2><p>使用Pipeline一般会有以下的步骤:</p>
-<ol>
-<li>使用python代码编写pipeline定义代码</li>
-<li>通过编译脚本编译生成压缩包</li>
-<li>上传压缩文件, 创建pipeline</li>
-<li>使用该pipeline, 创建任务, 并输入指定的参数值</li>
-<li>查看任务完成状态及输出结果</li>
-</ol>
-<p>Python代码定义再放在下一章节介绍, 这个章节介绍2-5步骤后台实现的流程. </p>
-<p>下面先介绍两个基础知识:</p>
-<h3 id="Argo"><a href="#Argo" class="headerlink" title="Argo"></a>Argo</h3><p>我们在Pipeline的页面上可以看到一个<code>Source</code>的子页面, 里面的内容是这个流程yaml格式的定义文件:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/7.png" alt=""></p>
-<p>可以看到叫做<a href="https://argoproj.github.io/">argo</a>的组件,  它是一个开源的基于容器的工作流引擎，实现了一个K8S的CRD(用户自定义的资源):</p>
-<ul>
-<li>用容器实现工作流的每一个步骤</li>
-<li>用DAG的形式描述多个任务之间的关系的依赖</li>
-<li>支持机器学习和数据处理中的计算密集型任务</li>
-</ul>
-<p>实际上pipeline上传的就是argo的配置文件, 由这个配置文件来定义整个流程任务.</p>
-<p>这个配置文件需要<code>pipeline sdk</code>对用户Python代码进行编译产生.</p>
-<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/8.png" alt=""></p>
-<p>pipeline的架构, 主要由以下模块组成:</p>
-<ol>
-<li>编译模块(SDK), 将Python代码转化为argo配置文件</li>
-<li>页面模块(Web Server), 用于创建job以及监控任务运行结果</li>
-<li>存储模块, 包含历史任务元数据信息, Artifact的数据缓存</li>
-<li>服务模块, 一个由go编写的后端，提供kubernetes ApiServer 风格的Restful API。处理前端以及SDK发起的操作请求。 Pipeline/Experiment 之类的请求会直接存入元数据。和Run 相关的请求除了写入元数据以外还会通过APIServer 同步操作Argo实例。</li>
-<li>控制模块:  Argo模块注册在K8s之中, 将argo的配置文件翻译为真正的K8s执行流程</li>
-</ol>
-<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><ol>
-<li>客户编写python代码, 经过编译之后生产argo配置项</li>
-<li>客户调用上传接口(可以是网页调用), 上传argo配置项到<code>Pipeline Service</code></li>
-<li><code>Pipeline Service</code>将元数据信息存储到<code>Meta Service</code>之中</li>
-<li>客户触发任务执行,  <code>Pipeline Service</code>调用请求到<code>K8s API Service</code></li>
-<li><code>K8s API Service</code>根据资源类型(<code>argo</code>资源), 触发Argo的编排调度框架</li>
-<li>框架完成任务启动之后, 并将部分Artifact写入到<code>Artifact Storage</code>之中</li>
-<li>pipeline时刻监控K8s的任务信息, 并在更新任务状态</li>
-</ol>
-<h2 id="GATK最佳实践案例"><a href="#GATK最佳实践案例" class="headerlink" title="GATK最佳实践案例"></a>GATK最佳实践案例</h2><p>下面以GATK最佳实践为例, 看一下如何实现一个流程</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> kfp <span class="keyword">import</span> dsl</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">align_fastq</span>(<span class="params">fastq1, fastq2</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;aligin_fastq_with_bwa&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/hzw-bwa:1.0&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&quot;/bwa mem -t 4 -R &#x27;@RG\\tID:foo\\tLB:bar\\tPL:illumina\\tPU:illumina\\tSM:NA12878&#x27; /data/ref/hg19.fa $0 $1 &gt; /data/sample/test.sam;echo &#x27;/data/sample/test.sam&#x27; &gt; /output.txt&quot;</span>, fastq1, fastq2],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">conver_sam</span>(<span class="params">samfile</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;convert sam into bam&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/samtools:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;samtools sort -@ 4  -O bam -o /data/sample/test.bam $0; echo &quot;/data/sample/test.bam&quot; &gt; /output.txt&#x27;</span>, samfile],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">markdup</span>(<span class="params">bamfile</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;mark dup&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/gatk:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;gatk MarkDuplicates -I $0 -O /data/sample/test.markup.bam -M /data/sample/test.metrics.txt; echo &quot;/data/sample/test.markup.bam&quot; &gt; /output.txt&#x27;</span>, bamfile],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;output&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bqsr</span>(<span class="params">marddup</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;bqsr&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/gatk:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;gatk BaseRecalibrator -I $0 -O /data/sample/test.table -R /data/ref/hg19.fa.gz --known-sites /data/ref/1000g_omni2.5.hg19.sites.vcf.gz;&#x27;</span></span><br><span class="line">                   <span class="string">&#x27;gatk ApplyBQSR -R /data/ref/hg19.fa.gz -I $0 -O /data/sample/test.bqsr.bam --bqsr-recal-file /data/sample/test.table;&#x27;</span></span><br><span class="line">                   <span class="string">&#x27;echo &quot;/data/sample/test.bqsr.bam&quot; &gt; /output.txt&#x27;</span>, marddup],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;data&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">haplotype</span>(<span class="params">bqsr</span>):</span><br><span class="line">    <span class="keyword">return</span> dsl.ContainerOp(</span><br><span class="line">        name=<span class="string">&#x27;haplotype&#x27;</span>,</span><br><span class="line">        image=<span class="string">&#x27;swr.cn-north-5.myhuaweicloud.com/kubeflow/gatk:latest&#x27;</span>,</span><br><span class="line">        command=[<span class="string">&#x27;sh&#x27;</span>, <span class="string">&#x27;-c&#x27;</span>],</span><br><span class="line">        arguments=[<span class="string">&#x27;gatk HaplotypeCaller -I $0 -O /data/sample/test.vcf.gz -R /data/ref/hg19.fa.gz;&#x27;</span></span><br><span class="line">                   <span class="string">&#x27;echo &quot;/data/sample/test.vcf.gz&quot; &gt; /output.txt&#x27;</span>, bqsr],</span><br><span class="line">        file_outputs=&#123;</span><br><span class="line">            <span class="string">&#x27;data&#x27;</span>: <span class="string">&#x27;/output.txt&#x27;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        pvolumes=&#123;</span><br><span class="line">            <span class="string">&#x27;/data&#x27;</span>: dsl.PipelineVolume(pvc=<span class="string">&quot;cce-sfs-notebook&quot;</span>, name=<span class="string">&quot;notebook-pvc&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@dsl.pipeline(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">    name=<span class="string">&quot;Gatk Basic pipeline&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    description=<span class="string">&quot;A Basic pipeline for gatk.&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta"></span>)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pipeline</span>(<span class="params">fastq1=<span class="string">&#x27;/data/sample/200M_1_NA12878_clean_1.fastq.gz&#x27;</span>, fastq2=<span class="string">&#x27;/data/sample/200M_1_NA12878_clean_2.fastq.gz&#x27;</span></span>):</span><br><span class="line">    samfile = align_fastq(fastq1, fastq2)</span><br><span class="line">    bamfile = conver_sam(samfile.output)</span><br><span class="line">    markfile = markdup(bamfile.output)</span><br><span class="line">    bqsr_file = bqsr(markfile.output)</span><br><span class="line">    haplotype(bqsr_file.output)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">import</span> kfp.compiler <span class="keyword">as</span> compiler</span><br><span class="line">    compiler.Compiler().<span class="built_in">compile</span>(pipeline, __file__ + <span class="string">&quot;.tar.gz&quot;</span>)r</span><br></pre></td></tr></table></figure>
-<ol>
-<li><code>dsl</code>就是pipeline sdk,  由<code>@dsl.pipeline</code>标识pipeline的定义: 下一个函数即为定义函数, 函数的参数列表翻译为argo的input字段</li>
-<li><code>dsl.ContainerOp</code>定义了镜像操作, 在这个例子之中有5个<code>ContainerOp</code>就会对应五个step, 启动5个pod进行计算.</li>
-<li><code>dsl.PipelineVolume</code>定义了磁盘挂载信息, 作为参数输入到<code>ContainerOp</code>之中, 说明将该名字的PVC挂载到镜像里之中, 挂载目录为<code>/data</code></li>
-<li><code>bamfile = conver_sam(samfile.output)</code>定义了依赖关系, 说明<code>conver_sam</code>依赖<code>align_fastq</code>的输出, 这个例子是个串行任务,  pipeline支持并发支持, 实现如下所示<code>bamfile = conver_sam(samfile1.output, samfile2.output)</code></li>
-</ol>
-<p>最后, 执行<code>main</code>函数, 可以生成一个tar.gz包, 将这个包上传到流程页面上, 就能开始运行任务.</p>
-<h2 id="Pipeline的SDK简要说明"><a href="#Pipeline的SDK简要说明" class="headerlink" title="Pipeline的SDK简要说明"></a>Pipeline的SDK简要说明</h2><p><a href="https://kubeflow-pipelines.readthedocs.io/en/latest/index.html">API文档</a>之中详细写明了SDK目前的功能, 这儿就简单啰嗦一句.</p>
-<p>目前SDK只支持如下几个模块的功能:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/18.png" alt="img"></p>
-<ol>
-<li>首先是<code>compiler</code>模块, 主要是将python代码转化为<code>argo</code>的yaml配置项</li>
-<li><code>components</code>模型实现如何导入外部模块, 以及如何构建模块</li>
-<li><code>dsl</code>是最重要的模块, 定义了<code>ContainerOp</code>以及<code>VolumeOp</code>等真正和K8s交互的模块</li>
-<li><code>client</code>的模块主要是如何提交任务的模块</li>
-<li><code>notebook</code>目前还是空的</li>
-<li><code>extension</code>主要是云上的扩展模块, 目前主要支持谷歌亚马逊和微软的云</li>
-</ol>
-<p>整个SDK的代码量非常少, 可以直接看<a href="https://github.com/kubeflow/pipelines/tree/master/sdk/python/kfp">源码</a>了解更多的内容.</p>
-<h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2><p>走马观花一样的看了一下<code>Pipleline</code>的能力, 接下来总结一下优点和缺点:</p>
-<ol>
-<li>整体上<code>pipeline</code>有好的编程入口, 比较适合程序员, 但缺乏页面定制能力, 无法面向非程序员群体</li>
-<li>有简单的任务调度能力, 支持定时任务, 但是功能有限</li>
-<li>整体架构简洁明了,  但微服务众多, 运维是个压力</li>
-<li>整体来说, pipeline功能还不完善, 需要深度定制, 但K8s + AI是趋势, 未来肯定会越来越好, 越来越庞大.</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/21/Kubeflow%E7%B3%BB%E5%88%97-Pipleline%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -514,9 +488,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="缓存读"><a href="#缓存读" class="headerlink" title="缓存读"></a>缓存读</h2><p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/cache_consistency/1.png" alt=""></p>
-<h2 id="缓存更新"><a href="#缓存更新" class="headerlink" title="缓存更新"></a>缓存更新</h2><p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/cache_consistency/2.png" alt=""></p>
-<h2 id="缓存并发问题"><a href="#缓存并发问题" class="headerlink" title="缓存并发问题"></a>缓存并发问题</h2><p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/cache_consistency/3.png" alt=""></p>
+          <h2 id="缓存读"><a href="#缓存读" class="headerlink" title="缓存读"></a>缓存读</h2><p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/cache_consistency/1.png" alt><p></p>
+<h2 id="缓存更新"><a href="#缓存更新" class="headerlink" title="缓存更新"></a>缓存更新</h2><p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/cache_consistency/2.png" alt><p></p>
+<h2 id="缓存并发问题"><a href="#缓存并发问题" class="headerlink" title="缓存并发问题"></a>缓存并发问题</h2><p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/cache_consistency/3.png" alt><p></p>
 <p>缓存系统存在根本的问题是<strong>缓存的读写和数据库读写不是原子的</strong>, 因此它必然会出现并发的问题.</p>
 <h2 id="缓存并发解决思路"><a href="#缓存并发解决思路" class="headerlink" title="缓存并发解决思路"></a>缓存并发解决思路</h2><h3 id="引入全局锁"><a href="#引入全局锁" class="headerlink" title="引入全局锁"></a>引入全局锁</h3><p>例如<code>Redis</code>就有锁机制, 通过<code>redis</code>实现全局锁(行锁),  更新的时候设置排它锁, 不允许读取操作即可.</p>
 <p>这就和数据库之中的<code>悲观锁</code>是一个性质的, 这种系统最大的问题就是吞吐量限制, 每次必须查询锁的状态</p>
@@ -526,7 +500,15 @@
 <li>可以和流控系统结合, 消息队列可以用于请求的流控, 通过流控系统可以实现缓存读取的分布式化</li>
 </ol>
 <p>缺点就是, 系统架构越来越复杂了, 流控系统的可靠性成为系统的关键.</p>
-
+</div></div></div>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/14/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -637,153 +619,15 @@
 <li>Python语言, kubeflow的代码库大多以Python编写</li>
 </ol>
 <h2 id="Kubeflow有什么"><a href="#Kubeflow有什么" class="headerlink" title="Kubeflow有什么"></a>Kubeflow有什么</h2><p><code>Kubeflow</code>有很多的组件,  可以在官网文档的<a href="https://master.kubeflow.org/docs/components/">Components</a>模块之中找到所有能力组件, 我把这些模块整理了一下, 画出脑图, 如下:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png" alt=""></p>
-<p><strong>左边的一列</strong>为kubeflow面向机器学习领域提供的能力, 包括模型的训练推理以及自动学习的超参调优组件, Kubeflow已经支持了市面上大多数的训练和推理框架, 其中最完善的就是google自己家的<code>TensorFlow</code>.</p>
-<p>当然也是最重要的一个模块, 毕竟Kubeflow的名字有一般来自于它.</p>
-<p><strong>右边的一列</strong>为Kubeflow的基础能力, 主要为pipeline, notebook, fairing以及一些公共的组件, 例如元数据管理等, 这个部分是围绕AI能力外围的基础组件, 主要关注于工程部分, 例如使用pipeline进行编排, 使用notebook进行开发等.</p>
-<p>下面准备简单介绍一下这几个模块,  某些组件特别大, 我准备单独写个文章介绍, 这里就会一笔带过. </p>
-<h3 id="TFJob-和-TF-Serving"><a href="#TFJob-和-TF-Serving" class="headerlink" title="TFJob 和 TF Serving"></a>TFJob 和 TF Serving</h3><p>模型训练是机器学习最主要的实践场景，尤其以使用机器学习框架TensorFlow进行模型训练最为流行，但是随着机器学习的平台由单机变成集群，这个问题变得复杂了。GPU的调度和绑定，涉及到分布式训练的编排和集群规约属性的配置（cluster spec）也成了数据科学家们巨大的负担。</p>
-<p>为了解决这一问题，一个新的资源类型TFJob，即TensorFlow Job被定义出来了。通过这个资源类型，使用TensorFlow的数据科学家无需编写复杂的配置，只需要关注数据的输入，代码的运行和日志的输入输出。</p>
-<p>下面看一个<strong>官方案例</strong>来看一下<code>TFJob</code>的定义, 除了<code>tfReplicaSpecs</code>定义为<code>PS</code> <code>Worker</code>等概念之外, 其实和没有K8s的POD定位没有太多的区别.</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">&quot;kubeflow.org/v1beta1&quot;</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">&quot;TFJob&quot;</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&quot;tf-smoke-gpu&quot;</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">&quot;kubeflow&quot;</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">tfReplicaSpecs:</span></span><br><span class="line">    <span class="attr">PS:</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">metadata:</span></span><br><span class="line">          <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">python</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">tf_cnn_benchmarks.py</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--batch_size=32</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--model=resnet50</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--variable_update=parameter_server</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--flush_stdout=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--num_gpus=1</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--local_parameter_device=cpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--device=cpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--data_format=NHWC</span></span><br><span class="line">            <span class="attr">image:</span> <span class="string">swr.cn-north-5.myhuaweicloud.com/kubeflow/tf-benchmarks-cpu:v20171202-bdab599-dirty-284af3</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">tensorflow</span></span><br><span class="line">            <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">2222</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">tfjob-port</span></span><br><span class="line">            <span class="attr">resources:</span></span><br><span class="line">              <span class="attr">limits:</span></span><br><span class="line">                <span class="attr">cpu:</span> <span class="string">&#x27;1&#x27;</span></span><br><span class="line">            <span class="attr">workingDir:</span> <span class="string">/opt/tf-benchmarks/scripts/tf_cnn_benchmarks</span></span><br><span class="line">          <span class="attr">restartPolicy:</span> <span class="string">OnFailure</span></span><br><span class="line">    <span class="attr">Worker:</span></span><br><span class="line">      <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">template:</span></span><br><span class="line">        <span class="attr">metadata:</span></span><br><span class="line">          <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">        <span class="attr">spec:</span></span><br><span class="line">          <span class="attr">containers:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">python</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">tf_cnn_benchmarks.py</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--batch_size=32</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--model=resnet50</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--variable_update=parameter_server</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--flush_stdout=true</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--num_gpus=1</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--local_parameter_device=cpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--device=gpu</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">--data_format=NHWC</span></span><br><span class="line">            <span class="attr">image:</span> <span class="string">swr.cn-north-5.myhuaweicloud.com/kubeflow/tf-benchmarks-gpu:v20171202-bdab599-dirty-284af3</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">tensorflow</span></span><br><span class="line">            <span class="attr">ports:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">2222</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">tfjob-port</span></span><br><span class="line">            <span class="attr">resources:</span></span><br><span class="line">              <span class="attr">limits:</span></span><br><span class="line">                <span class="attr">nvidia.com/gpu:</span> <span class="number">1</span></span><br><span class="line">            <span class="attr">workingDir:</span> <span class="string">/opt/tf-benchmarks/scripts/tf_cnn_benchmarks</span></span><br><span class="line">          <span class="attr">restartPolicy:</span> <span class="string">OnFailure</span></span><br></pre></td></tr></table></figure>
-<p><strong>TensorFlow Serving</strong>是Google开源的一个灵活的、高性能的机器学习模型服务系统，能够简化并加速从模型到生产应用的过程。它除了原生支持TensorFlow模型，还可以扩展支持其他类型的机器学习模型。</p>
-<p>部署完成之后, 可以通过API访问TF Serving或者GRpc的方式来进行推理服务.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc mnist-service</span><br><span class="line">curl -X POST -d @input.json http://EXTERNAL_IP:8500/v1/models/mnist:predict</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这个部分可以参考<a href="https://yq.aliyun.com/articles/601779?utm_content=m_1000003286">阿里云的文章</a>, 后续再写详细介绍的文章</p>
-</blockquote>
-<p>其中有一点需要的注意的是: <strong>TFJob是Kubeflow在K8s上的CRD, 而TF-Serving是TensorFlow的内容, Kubeflow只不过在K8s上启动一个镜像实例而已</strong>, 所以你也可以来完成TF-Serving功能</p>
-<h3 id="Katib超参数训练系统"><a href="#Katib超参数训练系统" class="headerlink" title="Katib超参数训练系统"></a>Katib超参数训练系统</h3><blockquote>
-<p>Katib is a Kubernetes Native System for <a href="https://en.wikipedia.org/wiki/Hyperparameter_optimization">Hyperparameter Tuning</a> and <a href="https://en.wikipedia.org/wiki/Neural_architecture_search">Neural Architecture Search</a>. The system is inspired by <a href="https://static.googleusercontent.com/media/research.google.com/ja//pubs/archive/bcb15507f4b52991a0783013df4222240e942381.pdf">Google vizier</a> and supports multiple ML/DL frameworks (e.g. TensorFlow, MXNet, and PyTorch).</p>
-</blockquote>
-<p>Katib 也是对 Google Vizier 的开源实现，因此也遵循其中对问题的抽象模型：Study，Trial 和 Suggestion.<br>Trial 代表着一个由超参数的取值组成的列表，每个 Trial 都需要一次运行来得到这些超参数取值对应的结果。这里提到的运行就是一次训练的过程。Study 代表着在可行空间上运行的单个优化。每个 Study 都有一个配置，来描述可能取值的空间，超参数推荐算法等。此外，Study 包含一组 Trial，代表着算法在超参数集合中选取推荐值的多次尝试。如图所示，是创建一次 Study 并且进行 Trial 的验证的过程。</p>
-<blockquote>
-<p>Currently Katib supports the following exploration algorithms in v1alpha1:</p>
-<ul>
-<li>random search</li>
-<li>grid search</li>
-<li><a href="https://arxiv.org/pdf/1603.06560.pdf">hyperband</a></li>
-<li><a href="https://arxiv.org/pdf/1012.2599.pdf">bayesian optimization</a></li>
-<li><a href="https://github.com/kubeflow/katib/tree/master/pkg/suggestion/v1alpha1/NAS_Reinforcement_Learning">NAS based on reinforcement learning</a></li>
-<li><a href="https://github.com/kubeflow/katib/tree/master/pkg/suggestion/v1alpha1/NAS_Envelopenet">NAS based on EnvelopeNets</a><br>And Katib supports the following exploration algorithms in v1alpha2:</li>
-<li>random search</li>
-</ul>
-<p>这块非常不懂唉, 后续等恶补一下知识了.  现在摘要了这篇<a href="http://gaocegege.com/Blog/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/katib">博客文章</a>的内容</p>
-</blockquote>
-<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>这块的目的就是为了编排Kubeflow任务用的, 在<a href="https://saintbacchus.github.io/2019/07/21/Kubeflow-pipleline%E4%BB%8B%E7%BB%8D/">这篇文章</a>之中介绍.</p>
-<h3 id="Jupiter-Notebook"><a href="#Jupiter-Notebook" class="headerlink" title="Jupiter Notebook"></a>Jupiter Notebook</h3><p>Notebook是数据科学家比较喜欢的编程工具, kubeflow已经集成:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/9.png" alt=""></p>
-<p>上图是notebook的创建页面,  可以看出来kubeflow的notebook有以下能力:</p>
-<ol>
-<li>自定义镜像</li>
-<li>支持资源定义</li>
-<li>支持各种数据盘挂载</li>
-<li>支持GPU调度</li>
-</ol>
-<p><strong> 使用notebook提交pipeline</strong></p>
-<p>以官方的<strong>Lightweight Python components - basics</strong>为例子</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/10.png" alt=""></p>
-<ul>
-<li>上边的cell定了流程算子</li>
-<li>中间的cell编译流程算子, 生成<code>argo</code>的配置文件<code>pipeline.zip</code></li>
-<li>下面的cell创建了<code>Pipeline Service</code>的客户端, 创建了<code>experiment</code>和<code>run</code>执行了任务</li>
-</ul>
-<h3 id="Fairing-SDK"><a href="#Fairing-SDK" class="headerlink" title="Fairing SDK"></a>Fairing SDK</h3><p>Kubeflow Fairing is <strong>a Python package</strong> that makes it easy to train and deploy ML models on <a href="https://www.kubeflow.org/docs/about/kubeflow/">Kubeflow</a>. Kubeflow Fairing can also been extended to train or deploy on other platforms. Currently, Kubeflow Fairing has been extended to train on <a href="https://cloud.google.com/ml-engine/docs/">Google AI Platform</a>.</p>
-<p>Kubeflow Fairing <strong>packages your Jupyter notebook, Python function, or Python file as a Docker image</strong>, then <strong>deploys and runs the training job</strong> on Kubeflow or AI Platform. After your training job is complete, you can use Kubeflow Fairing to <strong>deploy your trained model as a prediction endpoint</strong> on Kubeflow.</p>
-<p>官网上介绍Fairing的文字, fairing的定位就是机器学习的SDK, 但他最大的一个好处就是简化构建镜像的麻烦, 它能自动帮你构建镜像, 并将镜像部署在k8s上运行, 因为之前的开发模式是这样子的:</p>
- <div id="flowchart-0" class="flow-chart"></div>
-
-<p>引入Kubeflow变成这样了:</p>
-<div id="flowchart-1" class="flow-chart"></div>
-
-<p>平白多了几部做镜像的步骤, 而且做镜像对数据科学家来说是个难活, 因此引入Fairing工程是十分必要的</p>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>上面已经把kubeflow最重要的内容将完, 但是k8s还有很多其他子项目, 虽然不然之前的模块那么重要, 但是也是必不可少的内容. 这些组件很多都不在k8s之中, 在k8s的其他项目里面.</p>
-<h4 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h4><p>元数据模块主要是为了用户能更好的管理和追踪kubeflow的流程,  它后台使用的是Google的<a href="https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md">ML-Metadata</a>来管理, 而且暴露了<a href="https://github.com/kubeflow/metadata/blob/master/api/service.swagger.json">REST API</a>来跟用户调用, 同时也有<a href="https://github.com/kubeflow/metadata/tree/master/sdk/python#python-client">Python SDK</a>远程调用</p>
-<h4 id="kustomize"><a href="#kustomize" class="headerlink" title="kustomize"></a>kustomize</h4><p><code>kustomize</code>并不是kubeflow的一个项目, 而是<a href="https://github.com/kubernetes-sigs/kustomize">kubernetes-sigs</a>的一个子项目, 主要简化部署K8s服务的麻烦.</p>
-<p>他的idea的是这样的: 之前部署k8s需要定义很多的YAML文件, 这些文件都要自己管理, 而kustomize可以将这些文件管理起来, 貌似还有版本管理的能力</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.jpg" alt=""></p>
-<p>看一下这个图片示意, 基本上就了解.</p>
-<p><a href="https://github.com/kubernetes-sigs/kustomize">官网地址</a></p>
-<h4 id="Nuclio-functions"><a href="#Nuclio-functions" class="headerlink" title="Nuclio functions"></a>Nuclio functions</h4><p>Nuclio 是开源的一个实时无服务器平台, 支持可插拔的事件源和数据源, 下面是它的整体架构.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/19.png" alt=""></p>
-<blockquote>
-<p>目前没看出来这个Serverless的框架和Kubeflow有太多的联系, 而且FaaS战场上Nuclio也不是真正的主流, <code>knative</code>是google推的Serverless解决方案, 所以这个部分不多介绍了.  </p>
-</blockquote>
-<h4 id="ksonnet"><a href="#ksonnet" class="headerlink" title="ksonnet"></a>ksonnet</h4><p>ksonnet 是一个基于jsonnet的快速简化kubernetes yaml 配置的工具，可以实现配置的复用 </p>
-<p>同时也包含一个registry 的概念，可以实现可复用组件的分发，同时支持helm</p>
-<p>Kubeflow里面主要使用<code>ksonnet</code>完成安装的时候参数的配置.</p>
-<p>具体内容可以看<a href="https://ksonnet.io/">官网文档</a></p>
-<h4 id="Microk8s"><a href="#Microk8s" class="headerlink" title="Microk8s"></a>Microk8s</h4><p>单机K8s测试环境的库,  这个安装起来比<code>Minikube</code>和<code>MiniKF</code>更加方便</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/canonical-labs/kubernetes-tools</span><br><span class="line">sudo kubernetes-tools/setup-microk8s.sh</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/canonical-labs/kubeflow-tools</span><br><span class="line">kubeflow-tools/install-kubeflow.sh</span><br></pre></td></tr></table></figure>
-<h4 id="Volcano’s-scheduler"><a href="#Volcano’s-scheduler" class="headerlink" title="Volcano’s scheduler"></a>Volcano’s scheduler</h4><p>Volcano调度是华为公司贡献给社区的批处理调度器,  支持AI和大数据计算</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/volcano-intro.png" alt=""></p>
-<p>给K8s提供以下能力:</p>
-<ol>
-<li>Job management extensions and improvements, e.g:<ol>
-<li>Multi-pod jobs</li>
-<li>Lifecycle management extensions including suspend/resume and restart.</li>
-<li>Improved error handling</li>
-<li>Indexed jobs</li>
-<li>Task dependencies</li>
-</ol>
-</li>
-<li>Scheduling extensions, e.g:<ol>
-<li>Co-scheduling</li>
-<li>Fair-share scheduling</li>
-<li>Queue scheduling</li>
-<li>Preemption and reclaims</li>
-<li>Reservations and backfills</li>
-<li>Topology-based scheduling</li>
-</ol>
-</li>
-<li>Runtime extensions, e.g:<ol>
-<li>Support for specialized container runtimes like Singularity, with GPU accelerator extensions and enhanced security features.</li>
-</ol>
-</li>
-<li>Other<ol>
-<li>Data locality awareness and intelligent scheduling</li>
-<li>Optimizations for data throughput, round-trip latency, etc.</li>
-</ol>
-</li>
-</ol>
-<h5 id="Kube-Batch"><a href="#Kube-Batch" class="headerlink" title="Kube-Batch"></a>Kube-Batch</h5><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/kube-batch.png" alt=""></p>
-<p><code>kube-batch</code>是一个为kubernetes实现批量任务调度的一个调度器，主要用于<code>机器学习</code>，<code>大数据</code>，<code>HPC</code>等场景.</p>
-<p>而Volcano正是构建在Kube-Batch之上的.</p>
-<h5 id="Gang-Scheduler"><a href="#Gang-Scheduler" class="headerlink" title="Gang Scheduler"></a>Gang Scheduler</h5><p><code>gang-schedule</code>是什么概念? 用用户提交一个 batch job, 这个batch job 包含100个任务，要不这100个任务全部调度成功，要么一个都调度不成功。这种<code>all or nothing</code>调度场景，就被称作:<code>gang-schedule</code>，通常用于集群资源不足的场景，比如 AI 场景下调用GPU资源</p>
-<p>Gang Scheduler特别适合机器学习场景, 引入Vocalno和Kube-bath最终目的就是为了引入Gang-Scheduler</p>
-<blockquote>
-<p><a href="https://xigang.github.io/2019/02/17/gang-scheduler/">参考文章</a></p>
-</blockquote>
-<h4 id="Dex"><a href="#Dex" class="headerlink" title="Dex"></a>Dex</h4><p><a href="https://github.com/coreos/dex">dex</a> 是一个统一认证的服务，支持各种认证协议如Ouath2 ldap等，自己可以作为一个identity provider,也可以连到别的id provider(如github)上,dex作为一个中间代理.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/20.png" alt=""></p>
-<p>安装官网给出的推荐案例, 使用dex进行租户认证</p>
-<blockquote>
-<p><a href="https://github.com/dexidp/dex">Github首页</a></p>
-</blockquote>
-<h4 id="Istio"><a href="#Istio" class="headerlink" title="Istio"></a>Istio</h4><p>Istio是钟Service Mesh的实现, Service Mesh这个术语通常用于描述构成这些应用程序的微服务网络以及应用之间的交互。随着规模和复杂性的增长，服务网格越来越难以理解和管理。它的需求包括服务发现、负载均衡、故障恢复、指标收集和监控以及通常更加复杂的运维需求，例如 A/B 测试、金丝雀发布、限流、访问控制和端到端认证等。</p>
-<p>Istio 提供了一个完整的解决方案，通过为整个服务网格提供行为洞察和操作控制来满足微服务应用程序的多样化需求.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/arch.svg" alt=""></p>
-<blockquote>
-<p><a href="https://istio.io/">官网首页</a>以及<a href="https://istio.io/zh/docs/concepts/what-is-istio/">中文官网</a></p>
-</blockquote>
-<h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2><p>今天把kubeflow的一些概念都整理了一下, 除了AI那块不是特别懂, 所以介绍内容比较少,  后面需要再调研一下, 再写介绍文章, 至于工程方面的都基本上算调研好了, 后续深入使用的时候再写文章介绍</p>
-<p>后续至少需要隆重写文章介绍的有:</p>
-<ol>
-<li>Pipeline的文章</li>
-<li>TFJob的文章</li>
-<li>TF-Serving的文章</li>
-<li>Katib的文章</li>
-<li>Istio的文章<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: 写机器学习代码
-op=>operation: 执行训练过程, 并调试
-e=>end: 模型训练完毕, 进行部署
-st->op->e</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><textarea id="flowchart-1-code" style="display: none">st=>start: 写机器学习代码
-op1=>operation: 做镜像
-op2=>operation: 训练并调试
-op3=>operation: 继续做镜像
-e=>end: 进行部署
-st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-1-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-1", options);</script></li>
-</ol>
-
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png" alt></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/14/Kubeflow%E7%B3%BB%E5%88%97-%E6%80%BB%E8%A7%88%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -875,7 +719,7 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
     <div class="post-body" itemprop="articleBody">
           <h2 id="HostPath挂载"><a href="#HostPath挂载" class="headerlink" title="HostPath挂载"></a>HostPath挂载</h2><p>容器启动时, 挂载<code>/var/run/docker.soc</code>k和<code>/usr/bin/docker</code>,即可在容器中执行docker命令。此时docker server仍运行在host机上，docker in docker 实际操作的是宿主机docker。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">docker-in-docker-mount</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">docker-in-docker-mount</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker-socket</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">            <span class="attr">type:</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker-cmd</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/usr/bin/docker</span></span><br><span class="line">            <span class="attr">type:</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">container-0</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">&#x27;ubuntu-docker-in-docker:latest&#x27;</span></span><br><span class="line">          <span class="attr">command:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">/bin/bash</span></span><br><span class="line">          <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;-c&#x27;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;echo hello;docker image ls&#x27;</span></span><br><span class="line">          <span class="attr">volumeMounts:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker-socket</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/var/run/docker.sock</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker-cmd</span></span><br><span class="line">              <span class="attr">mountPath:</span> <span class="string">/usr/bin/docker</span></span><br></pre></td></tr></table></figure>
-<h2 id="docker-dind"><a href="#docker-dind" class="headerlink" title="docker dind"></a>docker dind</h2><p>docker 官方提供了docker in docker镜像: <code>docker pull docker:18.09.7-dind</code>, 直接使用此镜像即可在容器中在运行容器. 但是此种方式运行权限需要为<code>特权容器</code>, 在K8s设置<code>securityContext.privileged</code>为true<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dind-test10</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">dind-test10</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">dind-test10</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">container-0</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">&#x27;docker:18.09.7-dind&#x27;</span></span><br><span class="line">          <span class="attr">command:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">/bin/sh</span></span><br><span class="line">          <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;-c&#x27;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;echo hello;docker image ls&#x27;</span>  </span><br><span class="line">          <span class="attr">securityContext:</span></span><br><span class="line">            <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">            <span class="attr">procMount:</span> <span class="string">Default</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="docker-dind"><a href="#docker-dind" class="headerlink" title="docker dind"></a>docker dind</h2><p>docker 官方提供了docker in docker镜像: <code>docker pull docker:18.09.7-dind</code>, 直接使用此镜像即可在容器中在运行容器. 但是此种方式运行权限需要为<code>特权容器</code>, 在K8s设置<code>securityContext.privileged</code>为true<br></p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dind-test10</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">dind-test10</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">dind-test10</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">container-0</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">&#x27;docker:18.09.7-dind&#x27;</span></span><br><span class="line">          <span class="attr">command:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">/bin/sh</span></span><br><span class="line">          <span class="attr">args:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;-c&#x27;</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">&#x27;echo hello;docker image ls&#x27;</span>  </span><br><span class="line">          <span class="attr">securityContext:</span></span><br><span class="line">            <span class="attr">privileged:</span> <span class="literal">true</span></span><br><span class="line">            <span class="attr">procMount:</span> <span class="string">Default</span></span><br></pre></td></tr></table></figure><p></p>
 <h2 id="两者比较"><a href="#两者比较" class="headerlink" title="两者比较"></a>两者比较</h2><div class="table-container">
 <table>
 <thead>
@@ -904,13 +748,14 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 </tbody>
 </table>
 </div>
-<p>结论: 能用<code>HostPath</code>模式尽量使用:</p>
-<ul>
-<li>如果需要在容器运行<code>UDF</code>, 这两种权限都不能使用, 相对来说<code>HostPath</code>的威胁小一点点</li>
-<li>如果要自定义镜像, 使用<code>HostPath</code></li>
-<li>如果只是调用docker命令, 可以使用<code>Dind</code>, 但还是推荐使用<code>HostPath</code>, 因为<strong>你也许知道权限问题, 但是他人接手你工作的时候, 可能并不清楚</strong></li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/13/Docker-in-docker/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1026,63 +871,14 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 <blockquote>
 <p>我安装的是v0.5版本的kubeflow, 版本升级之后不保证成功</p>
 </blockquote>
-<h2 id="生成配置文件"><a href="#生成配置文件" class="headerlink" title="生成配置文件"></a>生成配置文件</h2><p>执行以下命令生成配置文件, <strong>这个步骤需要在联网环境下执行</strong>, 在华为云上虚拟机就需要绑定弹性IP.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /root/kubeflow</span><br><span class="line"><span class="built_in">cd</span> /root/kubeflow</span><br><span class="line"><span class="built_in">export</span> KFAPP=kubeflow</span><br><span class="line">kfctl init <span class="variable">$&#123;KFAPP&#125;</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;KFAPP&#125;</span></span><br><span class="line">kfctl generate all -V</span><br></pre></td></tr></table></figure>
-<p>完成后,  会在目录下生成如下文件:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow/1.png" alt=""></p>
-<h2 id="替换镜像"><a href="#替换镜像" class="headerlink" title="替换镜像"></a>替换镜像</h2><p>默认生成的配置, 其中的镜像都是GoogleCloud的公开镜像, 在国内网络之中, 肯定无法访问, 需要将这些镜像想办法下载下来传入到华为云的<a href="https://www.huaweicloud.com/product/swr.html">容器镜像服务</a>之内.</p>
-<h3 id="镜像下载上传"><a href="#镜像下载上传" class="headerlink" title="镜像下载上传"></a>镜像下载上传</h3><p>我将我用到的镜像都列举出来, 配置代理之后, 再拉取到本地</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">docker pull  gcr.io/ml-pipeline/api-server:0.1.16</span><br><span class="line">docker pull  gcr.io/ml-pipeline/persistenceagent:0.1.16</span><br><span class="line">docker pull  gcr.io/ml-pipeline/scheduledworkflow:0.1.16</span><br><span class="line">docker pull  gcr.io/ml-pipeline/frontend:0.1.16</span><br><span class="line">docker pull  gcr.io/ml-pipeline/viewer-crd-controller:0.1.16</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/pytorch-operator:v0.5.0</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/studyjob-controller:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/tf_operator:v0.5.0</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/vizier-core:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/vizier-core-rest:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/centraldashboard:v0.5.0</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/katib-ui:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/suggestion-bayesianoptimization:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/suggestion-grid:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/suggestion-hyperband:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  gcr.io/kubeflow-images-public/katib/suggestion-random:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker pull  tensorflow/tensorflow:1.8.0</span><br><span class="line">docker pull  mysql:5.6</span><br><span class="line">docker pull  mysql:8.0.3</span><br><span class="line">docker pull  quay.io/datawire/ambassador:0.37.0</span><br><span class="line">docker pull  argoproj/argoui:v2.2.0</span><br><span class="line">docker pull  argoproj/workflow-controller:v2.2.0</span><br><span class="line">docker pull  metacontroller/metacontroller:v0.3.0</span><br><span class="line">docker pull  minio/minio:RELEASE.2018-02-09T22-40-05Z</span><br></pre></td></tr></table></figure>
-<p>而后再加入SWR的tag</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">docker tag  gcr.io/ml-pipeline/api-server:0.1.16                                                              swr.cn-north-5.myhuaweicloud.com/kubeflow/api-server:0.1.16                                                          </span><br><span class="line">docker tag  gcr.io/ml-pipeline/persistenceagent:0.1.16                                                        swr.cn-north-5.myhuaweicloud.com/kubeflow/persistenceagent:0.1.16                                                    </span><br><span class="line">docker tag  gcr.io/ml-pipeline/scheduledworkflow:0.1.16                                                       swr.cn-north-5.myhuaweicloud.com/kubeflow/scheduledworkflow:0.1.16                                                   </span><br><span class="line">docker tag  gcr.io/ml-pipeline/frontend:0.1.16                                                                swr.cn-north-5.myhuaweicloud.com/kubeflow/frontend:0.1.16                                                            </span><br><span class="line">docker tag  gcr.io/ml-pipeline/viewer-crd-controller:0.1.16                                                   swr.cn-north-5.myhuaweicloud.com/kubeflow/viewer-crd-controller:0.1.16                                               </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4      swr.cn-north-5.myhuaweicloud.com/kubeflow/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4  </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/pytorch-operator:v0.5.0                                             swr.cn-north-5.myhuaweicloud.com/kubeflow/pytorch-operator:v0.5.0                                         </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/studyjob-controller:v0.1.2-alpha-156-g4ab3dbd                 swr.cn-north-5.myhuaweicloud.com/kubeflow/studyjob-controller:v0.1.2-alpha-156-g4ab3dbd             </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/tf_operator:v0.5.0                                                  swr.cn-north-5.myhuaweicloud.com/kubeflow/tf_operator:v0.5.0                                              </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/vizier-core:v0.1.2-alpha-156-g4ab3dbd                         swr.cn-north-5.myhuaweicloud.com/kubeflow/vizier-core:v0.1.2-alpha-156-g4ab3dbd                     </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/vizier-core-rest:v0.1.2-alpha-156-g4ab3dbd                    swr.cn-north-5.myhuaweicloud.com/kubeflow/vizier-core-rest:v0.1.2-alpha-156-g4ab3dbd                </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/centraldashboard:v0.5.0                                             swr.cn-north-5.myhuaweicloud.com/kubeflow/centraldashboard:v0.5.0                                         </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/jupyter-web-app:v0.5.0                                              swr.cn-north-5.myhuaweicloud.com/kubeflow/jupyter-web-app:v0.5.0                                          </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/katib-ui:v0.1.2-alpha-156-g4ab3dbd                            swr.cn-north-5.myhuaweicloud.com/kubeflow/katib-ui:v0.1.2-alpha-156-g4ab3dbd                        </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/suggestion-bayesianoptimization:v0.1.2-alpha-156-g4ab3dbd     swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-bayesianoptimization:v0.1.2-alpha-156-g4ab3dbd </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/suggestion-grid:v0.1.2-alpha-156-g4ab3dbd                     swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-grid:v0.1.2-alpha-156-g4ab3dbd                 </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/suggestion-hyperband:v0.1.2-alpha-156-g4ab3dbd                swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-hyperband:v0.1.2-alpha-156-g4ab3dbd            </span><br><span class="line">docker tag  gcr.io/kubeflow-images-public/katib/suggestion-random:v0.1.2-alpha-156-g4ab3dbd                   swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-random:v0.1.2-alpha-156-g4ab3dbd               </span><br><span class="line">docker tag  tensorflow/tensorflow:1.8.0                                                                       swr.cn-north-5.myhuaweicloud.com/kubeflow/tensorflow:1.8.0                 </span><br><span class="line">docker tag  mysql:5.6                                                                                         swr.cn-north-5.myhuaweicloud.com/kubeflow/mysql:5.6                                   </span><br><span class="line">docker tag  mysql:8.0.3                                                                                       swr.cn-north-5.myhuaweicloud.com/kubeflow/mysql:8.0.3                                 </span><br><span class="line">docker tag  quay.io/datawire/ambassador:0.37.0                                                                swr.cn-north-5.myhuaweicloud.com/kubeflow/ambassador:0.37.0          </span><br><span class="line">docker tag  argoproj/argoui:v2.2.0                                                                            swr.cn-north-5.myhuaweicloud.com/kubeflow/argoui:v2.2.0                      </span><br><span class="line">docker tag  argoproj/workflow-controller:v2.2.0                                                               swr.cn-north-5.myhuaweicloud.com/kubeflow/workflow-controller:v2.2.0         </span><br><span class="line">docker tag  metacontroller/metacontroller:v0.3.0                                                              swr.cn-north-5.myhuaweicloud.com/kubeflow/metacontroller:v0.3.0        </span><br><span class="line">docker tag  minio/minio:RELEASE.2018-02-09T22-40-05Z                                                          swr.cn-north-5.myhuaweicloud.com/kubeflow/minio:RELEASE.2018-02-09T22-40-05Z    </span><br></pre></td></tr></table></figure>
-<p>再推到SWR之中</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/api-server:0.1.16                                                          </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/persistenceagent:0.1.16                                                    </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/scheduledworkflow:0.1.16                                                   </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/frontend:0.1.16                                                            </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/viewer-crd-controller:0.1.16                                               </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4  </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/pytorch-operator:v0.5.0                                         </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/studyjob-controller:v0.1.2-alpha-156-g4ab3dbd             </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/tf_operator:v0.5.0                                              </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/vizier-core:v0.1.2-alpha-156-g4ab3dbd                     </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/vizier-core-rest:v0.1.2-alpha-156-g4ab3dbd                </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/centraldashboard:v0.5.0                                         </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/jupyter-web-app:v0.5.0                                          </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/katib-ui:v0.1.2-alpha-156-g4ab3dbd                        </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-bayesianoptimization:v0.1.2-alpha-156-g4ab3dbd </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-grid:v0.1.2-alpha-156-g4ab3dbd                 </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-hyperband:v0.1.2-alpha-156-g4ab3dbd            </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/suggestion-random:v0.1.2-alpha-156-g4ab3dbd               </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/tensorflow:1.8.0                 </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/mysql:5.6                                   </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/mysql:8.0.3                                 </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/ambassador:0.37.0          </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/argoui:v2.2.0                      </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/workflow-controller:v2.2.0         </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/metacontroller:v0.3.0        </span><br><span class="line">docker push  swr.cn-north-5.myhuaweicloud.com/kubeflow/minio:RELEASE.2018-02-09T22-40-05Z    </span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>华为云有几个限制, 需要你注意:</p>
-<ol>
-<li>路径不能有多级, 即容器名字不能含有<code>/</code></li>
-<li>路径不能含有点号<code>.</code>, 有部分镜像带有版本号, 需要修改原始名称, 但是tag里面又可以存在<code>.</code></li>
-</ol>
-<p>另外这部分镜像可能是不全的, 因为例如<code>model db</code>等组件是没有安装的</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/api-server:0.1.16                                                          </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/persistenceagent:0.1.16                                                    </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/scheduledworkflow:0.1.16                                                   </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/frontend:0.1.16                                                            </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/viewer-crd-controller:0.1.16                                               </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/notebook-controller:v20190401-v0.4.0-rc.1-308-g33618cc9-e3b0c4  </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/pytorch-operator:v0.5.0                                         </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/studyjob-controller:v0.1.2-alpha-156-g4ab3dbd             </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/tf_operator:v0.5.0                                              </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/vizier-core:v0.1.2-alpha-156-g4ab3dbd                     </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/vizier-core-rest:v0.1.2-alpha-156-g4ab3dbd                </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/centraldashboard:v0.5.0                                         </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/jupyter-web-app:v0.5.0                                          </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/katib-ui:v0.1.2-alpha-156-g4ab3dbd                        </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/suggestion-bayesianoptimization:v0.1.2-alpha-156-g4ab3dbd </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/suggestion-grid:v0.1.2-alpha-156-g4ab3dbd                 </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/suggestion-hyperband:v0.1.2-alpha-156-g4ab3dbd            </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/suggestion-random:v0.1.2-alpha-156-g4ab3dbd               </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/tensorflow:1.8.0                 </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/mysql:5.6                                   </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/mysql:8.0.3                                 </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/ambassador:0.37.0          </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/argoui:v2.2.0                      </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/workflow-controller:v2.2.0         </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/metacontroller:v0.3.0        </span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/minio:RELEASE.2018-02-09T22-40-05Z</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/volume-nfs:0.8</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/argoexec:v2.2.0</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/metrics-collector:v0.1.2-alpha-156-g4ab3dbd</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/modeldb-artifact-store:kubeflow</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/modeldb-backend:kubeflow</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/modeldb-backend-proxy:kubeflow</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/mysql:5.7</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/modeldb-frontend:kubeflow</span><br><span class="line">docker push swr.cn-north-1.myhuaweicloud.com/hzw-kubeflow/serving:1.11.1</span><br></pre></td></tr></table></figure>
-<p>这份长的整整有35个镜像之多</p>
-</blockquote>
-<h3 id="镜像替换"><a href="#镜像替换" class="headerlink" title="镜像替换"></a>镜像替换</h3><p>经过最终排查, 发现所有依赖镜像都在以下两个文件之中</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim ks_app/vendor/kubeflow/pipeline/pipeline.libsonnet</span><br><span class="line">vim ks_app/components/params.libsonnet</span><br></pre></td></tr></table></figure>
-<p>使用vim打开这两个文件, 并搜索<code>/Image\c</code>, 忽略大小搜索所有Image, 并将后面的值修改为SWR上的镜像地址</p>
-<h3 id="怎么找到哪些镜像是你需要替换的镜像"><a href="#怎么找到哪些镜像是你需要替换的镜像" class="headerlink" title="怎么找到哪些镜像是你需要替换的镜像"></a>怎么找到哪些镜像是你需要替换的镜像</h3><p>有两种方法: </p>
-<ol>
-<li>搜索上面那两个文件, 获取其中的镜像列表</li>
-<li>先安装容器, 然后再看什么镜像拉取不下来</li>
-</ol>
-<p>实际上使用第一种会更快一点, 基本上也就包含了所有的镜像</p>
-<h2 id="安装kubeflow组件"><a href="#安装kubeflow组件" class="headerlink" title="安装kubeflow组件"></a>安装kubeflow组件</h2><p>执行一下命令, 在k8s里部署<code>kubeflow</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kfctl apply all -V</span><br></pre></td></tr></table></figure>
-<p>至此, 你以为任务已经完成, 但是一到k8s的页面一看, 发现Pod无法启动, 我们再一个一个解决问题.</p>
-<blockquote>
-<p>kubeflow大多数是deployment, 所以工作负载-&gt;无状态页面上可以看到组件状态</p>
-</blockquote>
-<h3 id="镜像拉取权限"><a href="#镜像拉取权限" class="headerlink" title="镜像拉取权限"></a>镜像拉取权限</h3><p>遇到的第一个问题, 发现Pod的镜像一直无法拉取, 查了半天资料才发现华为云还有这么一个坑爹的限制: <a href="https://support.huaweicloud.com/cce_faq/cce_faq_00015.html">必须显式指定imagePullSecrets</a></p>
-<p><strong>那就解决它吧</strong></p>
-<p>首先执行以下命令获取全部的<code>serviceaccount</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get serviceaccount -n kubeflow</span><br></pre></td></tr></table></figure>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow/2.png" alt=""></p>
-<p>其次, 执行以下命令, 给每个<code>serviceaccount</code>添加默认的<code>imagePullSecrets</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kubeflow patch serviceaccount ambassador                             -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span>     </span><br><span class="line">kubectl -n kubeflow patch serviceaccount argo                                   -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span>  </span><br><span class="line">kubectl -n kubeflow patch serviceaccount argo-ui                                -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span>    </span><br><span class="line">kubectl -n kubeflow patch serviceaccount centraldashboard                       -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount default                                -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount jupyter-notebook                       -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount jupyter-web-app                        -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount katib-ui                               -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount meta-controller-service                -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount metrics-collector                      -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount ml-pipeline                            -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount ml-pipeline-persistenceagent           -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount ml-pipeline-scheduledworkflow          -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount ml-pipeline-ui                         -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount ml-pipeline-viewer-crd-service-account -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount notebook-controller                    -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount pipeline-runner                        -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount pytorch-operator                       -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount studyjob-controller                    -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount tf-job-dashboard                       -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount tf-job-operator                        -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br><span class="line">kubectl -n kubeflow patch serviceaccount vizier-core                            -p <span class="string">&#x27;&#123;&quot;imagePullSecrets&quot;: [&#123;&quot;name&quot;: &quot;default-secret&quot;&#125;]&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>删除失败Pod, 过段时间后, 大部分的都正常了, 还有部分有问题.</p>
-<h3 id="创建数据库PVC"><a href="#创建数据库PVC" class="headerlink" title="创建数据库PVC"></a>创建数据库PVC</h3><p>这个时候, 你应该能发现, mysql的相关负载一直是黄, 估计是存储有问题, 用下面命令查看一下pvc状态, 果然如你所料</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pvc -n kubeflow</span><br><span class="line">NAME             STATUS    VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">katib-mysql      Pending                                                      12h</span><br><span class="line">minio-pvc        Pending                                                      12h</span><br><span class="line">mysql-pv-claim   Pending                                                      12h</span><br></pre></td></tr></table></figure>
-<p>那么主动在管理页面上创建三个对应的pvc(图中多了一个notebook的pvc请忽略)</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow/3.png" alt=""></p>
-<p>由于CCE的PVC必然是带有<code>cce-sfs-</code>这类的前缀, 因此实际上PVC的名字发生了改变, 需要修改对应的相应的Deployment的yaml配置项</p>
-<p>这点在华为云的页面上直接可以操作: 点开对应的Deployment的配置项, 找到<code>编辑YAML</code>完成任务修改.</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow/4.png" alt=""></p>
-<p>重启Deployment之后, 这几个负载也变绿了.</p>
-<h3 id="修改vizier-db配置项"><a href="#修改vizier-db配置项" class="headerlink" title="修改vizier-db配置项"></a>修改vizier-db配置项</h3><p>但是还有一个负载顽强跑不起来, 查看事件发现是, <code>readinessProbe</code>有出错, 发现<code>initialDelaySeconds</code>默认为1s, 启动时间太短, 修改为15秒后, 负载正常启动.<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">readinessProbe:</span></span><br><span class="line">  <span class="attr">exec:</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/bin/bash</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;-c&#x27;</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;&quot;&quot;&quot;mysql -D $$MYSQL_DATABASE -p$$MYSQL_ROOT_PASSWORD -e &#x27;</span><span class="string">&#x27;SELECT 1&#x27;</span><span class="string">&#x27;&quot;&quot;&quot;&#x27;</span></span><br><span class="line">  <span class="attr">initialDelaySeconds:</span> <span class="string">**15**</span></span><br><span class="line">  <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">periodSeconds:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">successThreshold:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">failureThreshold:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure></p>
-<p>至此,  所有Deployment都开始正常运行了</p>
-<h2 id="完结撒花"><a href="#完结撒花" class="headerlink" title="完结撒花"></a>完结撒花</h2><p>最后放一张可视化的页面截图</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow/5.png" alt=""></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/07/10/Kubeflow%E7%B3%BB%E5%88%97-Kubeflow%E7%9A%84%E9%83%A8%E7%BD%B2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1198,6 +994,14 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 <li>如果提交速率提高到100个请求/s, 需要分布式化, 请问如何设计</li>
 </ol>
 
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/29/%E9%A2%98%E5%9E%8B%E8%AE%BE%E8%AE%A1-%E5%A4%8D%E6%9D%82%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E8%AE%BE%E8%AE%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1305,33 +1109,15 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 <p>而且通常情况下, 我们会将<code>ENTRYPOINT</code>和<code>CMD</code>联合使用, 类似这样:</p>
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;sh&quot;</span>, <span class="string">&quot;/opt/entrypoint.sh&quot;</span>]</span></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> [<span class="string">&quot;/home&quot;</span>, <span class="string">&quot;/opt&quot;</span>]</span></span><br></pre></td></tr></table></figure>
 <p>这种情况下, <code>DOCKERFILE</code>直接定义的入口脚本为<code>sh /opt/entrypoint.sh</code>, 但脚本的参数有<code>CMD</code>提供, 用户执行<code>docker run</code>的时候可以通过修改输入, 直接改变容器启动命令参数.</p>
-<h2 id="K8s的命令参数"><a href="#K8s的命令参数" class="headerlink" title="K8s的命令参数"></a>K8s的命令参数</h2><p>在K8s之中, 是没有<code>ENTRYPOINT</code>或者<code>CMD</code>的,  来看一组K8s中典型的任务定义:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">command-demo</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">purpose:</span> <span class="string">demonstrate-command</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">command-demo-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">debian</span></span><br><span class="line">    <span class="attr">command:</span> [<span class="string">&quot;printenv&quot;</span>]</span><br><span class="line">    <span class="attr">args:</span> [<span class="string">&quot;HOSTNAME&quot;</span>, <span class="string">&quot;KUBERNETES_PORT&quot;</span>]</span><br></pre></td></tr></table></figure></p>
-<p>在K8s有两个关键的词: <code>command</code>和<code>args</code>, 这两个函数和DockerFile之中的<code>ENTRYPOINT</code>和<code>CMD</code>的关系如下:</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>有args</th>
-<th>无args</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>有command</td>
-<td>覆盖Docker内的ENTRYPOINT和CMD</td>
-<td>覆盖Docker内的ENTRYPOINT和CMD</td>
-</tr>
-<tr>
-<td>无command</td>
-<td>使用Docker内的ENTRYPOINT, 覆盖CMD</td>
-<td>使用Docker默认ENTRYPOINT和CMD</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>推荐使用方式: </strong>  K8s之中不定义<code>command</code>只定义<code>args</code>, 这样做的好处是, K8s层不需要来感知容器内部的入口, 真正的入口由<strong>容器制作者</strong>来确定, 而<code>args</code>则是比较变化的, 就由用户在K8s层输入即可.</p>
-
+<h2 id="K8s的命令参数"><a href="#K8s的命令参数" class="headerlink" title="K8s的命令参数"></a>K8s的命令参数</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/29/K8s%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1455,11 +1241,14 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 </li>
 </ol>
 <p>问题:</p>
-<ol>
-<li>设计一个概念模型来计算字符的相似度, 并说明如何确定匹配阈值, 即达到什么概论, 可以认为没有匹配上.</li>
-<li>设计一个算法能够尽快的计算出所有短序列在长序列之中位置</li>
-</ol>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/15/%E9%A2%98%E5%9E%8B%E8%AE%BE%E8%AE%A1-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9B%B8%E4%BC%BC%E5%BA%A6%E5%8C%B9%E9%85%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1561,10 +1350,10 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
           <h2 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h2><p>之前一直在做Spark相关工作, 主要就是做分布式计算相关的内容, 经常会听到一些<code>BSP</code>或者<code>MPP</code>等分布式模式的术语, 每次看过文章有些了解之后, 但是经常会忘记, 因此写个文章记录这些概念.</p>
 <h2 id="BSP-ASP-SSP"><a href="#BSP-ASP-SSP" class="headerlink" title="BSP/ASP/SSP"></a>BSP/ASP/SSP</h2><p>首先要明确的是, 这三个概念主要是为了处理<code>机器学习领域迭代计算</code>提出来的</p>
 <p><strong>BSP</strong>是指迭代过程之中, 必须等待前一轮的迭代全部才能进行下一轮, 每轮之间的等待,被称之为<code>Barrier</code>,  所以才叫做<code>Barrier Synchronous Parallel</code></p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/002.jpg" alt=""><br>而<code>ASP: Asynchronous Synchronous Parallel</code>是另外一个极端的方式, 任何一轮迭代绝对不会等待前面的迭代结果, 这个当然能解决<code>BSP</code>模型里面<strong>慢节点</strong>的问题, 但是它存在的问题就是<strong>速度不一,导致最后的梯度不收敛</strong></p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/001.jpg" alt=""></p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/002.jpg" alt><br>而<code>ASP: Asynchronous Synchronous Parallel</code>是另外一个极端的方式, 任何一轮迭代绝对不会等待前面的迭代结果, 这个当然能解决<code>BSP</code>模型里面<strong>慢节点</strong>的问题, 但是它存在的问题就是<strong>速度不一,导致最后的梯度不收敛</strong><p></p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/001.jpg" alt><p></p>
 <p>那么<code>SSP: Stale Synchronous Parallel</code>就是这两者的折中, 他有一个超参<code>s</code>, 表示最快的迭代和最慢的迭代之间的代差要小于等于S.</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/003.jpg" alt=""></p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/003.jpg" alt><p></p>
 <p>我们经常听说<code>Spark</code>或者<code>MapReduce</code>是一个BSP模型, 原因在于Spark的实际计算只有一轮迭代, 一轮迭代就需要直接出最终结果, 那么只有BSP才能正确计算完毕.</p>
 <p>所以说, Spark是BSP的一种, 这种说明既对, 他确实有栅栏, 但也不对, 在于它主要描述分布式机器学习流程.</p>
 <p>至于为什么机器学习那种多轮迭代为什么可以进行<code>SSP</code>或者<code>ASP</code>计算, 具体的数学原理可以查看<a href="https://www.zhihu.com/question/264189719">如何理解随机梯度下降</a></p>
@@ -1579,14 +1368,14 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 </li>
 </ul>
 <p>这两个经常在课文里面见到, 大学里面也学过, 大致的体系结构如下图所示:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/004.png" alt=""><br><code>SMP</code>和<code>NUMA</code>都是单机多核, <code>MPP</code>我理解就应该多台机器了</p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/004.png" alt><br><code>SMP</code>和<code>NUMA</code>都是单机多核, <code>MPP</code>我理解就应该多台机器了<p></p>
 <blockquote>
 <p>MPP：和NUMA不同，MPP提供了另外一种进行系统扩展的方式，它由多个SMP服务器通过一定的节点互联网络进行连接，协同工作，完成相同的任务，从用户的角度来看是一个服务器系统。其基本特征是由多个SMP服务器(每个SMP服务器称节点)通过节点互联网络连接而成，每个节点只访问自己的本地资源(内存、存储等)，是一种完全无共享(Share Nothing)结构，因而扩展能力最好，理论上其扩展无限制。</p>
 </blockquote>
 <p>可能的示意图如下所示:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/005.png" alt=""></p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/005.png" alt><p></p>
 <p>除了体系结构, 这三个概念还经常用于描述数据库的不同架构, 例如:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/006.png" alt=""></p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/006.png" alt><p></p>
 <p>SMP是Shared Everthting的方式</p>
 <p>NUMA是Shared Storage的方式</p>
 <p>MPP是Shared Nothing的方式</p>
@@ -1614,7 +1403,7 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 <li>MPP架构目前被并行数据库广泛采用，一般通过scan、sort和merge等操作符实时返回查询结果</li>
 </ul>
 <p><strong>MPP的典型架构</strong></p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/007.png" alt=""></p>
+<p></p><div align="center"><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/007.png" alt><p></p>
 <blockquote>
 <p> 参考<a href="https://www.jianshu.com/p/720df3b85b3a">博客1</a>, <a href="https://blog.csdn.net/baichoufei90/article/details/84328666">博客2</a>, <a href="https://rainforc.iteye.com/blog/2217606">博客3</a></p>
 </blockquote>
@@ -1626,7 +1415,15 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 <p>而在Kafka之中, Push和Poll区别主要在于Consumer是主动获取数据, 还是被动接收数据.</p>
 <p>这个概念还是比较容易理解的.</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>总体的文章有点乱, 概念越看越模糊, 后续再优化吧.</p>
-
+</div></div></div></div></div></div></div>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/14/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1694,19 +1491,13 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -1719,9 +1510,12 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

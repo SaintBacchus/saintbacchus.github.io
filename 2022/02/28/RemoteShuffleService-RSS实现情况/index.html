@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="该文档写于2021年4月, 当时按照设计文档实现了RSS的原型(基于Uber的开源RSS), 但是后续应该人事调整, 我开始从事OLAP工作后,就不在开发RSS了.  Spark Shuffle任务的现状阐述目前公司内部有最大集群规模已经达到8000多台机器, 总共有近45万核, 1.23PB的内存, 其中每天有10万+个Spark的离线任务在运行. 目前团队正在将HiveSQL的任务都迁移到S">
 <meta property="og:type" content="article">
@@ -86,15 +86,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -250,13 +281,13 @@
 <h2 id="Spark-Shuffle任务的现状阐述"><a href="#Spark-Shuffle任务的现状阐述" class="headerlink" title="Spark Shuffle任务的现状阐述"></a>Spark Shuffle任务的现状阐述</h2><p>目前公司内部有最大集群规模已经达到8000多台机器, 总共有近45万核, 1.23PB的内存, 其中每天有10万+个Spark的离线任务在运行.</p>
 <p>目前团队正在将HiveSQL的任务都迁移到Spark引擎之上, 提升整体性能和资源利用率, Spark将承接越来越多的业务压力. </p>
 <p>但随着Spark应用越来越多, 任务的稳定性受到了越来越多的挑战, 尤其是Spark Shuffle这块的问题, 一旦数据量超过一定阈值, 就会出现大量的Shuffle Fetch失败的情况, 由于Spark做了很好的重试机制, 因此有时候依然能跑出来结果, 但大量计算资源浪费在重试步骤之中; 而有时候因为失败太多, 导致整个App失败退出.</p>
-<p>举个真实的案例, 下图是某业务运行的一个UI监控图, 从图中可以看到, 在Failed Stages里面出现了大量的<code>FetchFailedException</code>, 整个程序在不停的Stage重试, 而最后这个case由于失败过多整个APP失败了<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172502068.png" alt="image-20220228172502068"></p>
+<p>举个真实的案例, 下图是某业务运行的一个UI监控图, 从图中可以看到, 在Failed Stages里面出现了大量的<code>FetchFailedException</code>, 整个程序在不停的Stage重试, 而最后这个case由于失败过多整个APP失败了<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172502068.png" alt="image-20220228172502068"></p>
 <blockquote>
 <p>在上图中的19个Failed Stages都是由于<code>FetchFailedException</code>造成的</p>
 </blockquote>
 <h2 id="Spark-Shuffle任务的瓶颈分析"><a href="#Spark-Shuffle任务的瓶颈分析" class="headerlink" title="Spark Shuffle任务的瓶颈分析"></a>Spark Shuffle任务的瓶颈分析</h2><h3 id="监控发现"><a href="#监控发现" class="headerlink" title="监控发现"></a>监控发现</h3><p>在分析这类问题的时候, 我们发现了经典的”三高”现象, 即网络,磁盘, CPU都很高.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172518083.png" alt="image-20220228172518083"><br>如上图所示, 一般出现<code>FetchFailedException</code>时, 此时机器上的监控一般会出现这三者的峰值.<br>磁盘和网络的峰值一般一起出现, 因为Shuffle时会有大量的数据交换<br>CPU出现峰值时有两种情况, 一种<code>Wait</code>比较高(图中黄色部分), 说明CPU忙于处理IO操作,一种<code>Wait</code>不高, 但总体CPU比较高, 这种情况往往是该节点有其他任务运行导致的, <strong>进程之间没做到CPU隔离</strong> 或者一些<strong>热点计算问题</strong>.</p>
-<h3 id="Shuffle原理"><a href="#Shuffle原理" class="headerlink" title="Shuffle原理"></a>Shuffle原理</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172616029.png" alt="image-20220228172616029"><br>从监控看到了, Shuffle过程是个”三高”过程, 同时是IO和CPU密集型的过程, 这一节从Shuffle的原理上, 解释一下为什么Shuffle过程为什么会出现瓶颈.</p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172518083.png" alt="image-20220228172518083"><br>如上图所示, 一般出现<code>FetchFailedException</code>时, 此时机器上的监控一般会出现这三者的峰值.<br>磁盘和网络的峰值一般一起出现, 因为Shuffle时会有大量的数据交换<br>CPU出现峰值时有两种情况, 一种<code>Wait</code>比较高(图中黄色部分), 说明CPU忙于处理IO操作,一种<code>Wait</code>不高, 但总体CPU比较高, 这种情况往往是该节点有其他任务运行导致的, <strong>进程之间没做到CPU隔离</strong> 或者一些<strong>热点计算问题</strong>.</p>
+<h3 id="Shuffle原理"><a href="#Shuffle原理" class="headerlink" title="Shuffle原理"></a>Shuffle原理</h3><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172616029.png" alt="image-20220228172616029"><br>从监控看到了, Shuffle过程是个”三高”过程, 同时是IO和CPU密集型的过程, 这一节从Shuffle的原理上, 解释一下为什么Shuffle过程为什么会出现瓶颈.</p>
 <p>Shuffle本质是一种数据交换机制, 在MR模型中数据是按照(key, value)的元组方式组织的, 经过MapTask之后, Key的数值已经变化了, Shuffle的目标将这些数据重新组合, 相同新Key的数据放到一起处理.</p>
 <p>因此, 如果所示, MapTask按照新Key产生了3个不同的数据块, 每个数据块与Reduce的个数对应, ReduceTask则直接去获取对应的数据块(图中用颜色表示)</p>
 <p>在Spark的实现之中, MapTask将这些数据重排序后, 写入到同一个文件之中, 通过元数据标识数据所在offset和length. 例如在文件的(offset=0, length=512)的数据为P0, (offset=512, length=1024)的数据为P1. Map阶段要写完所有数据, <strong>磁盘吞吐非常大</strong>.</p>
@@ -287,7 +318,7 @@
 <p>为了性能, Spark在Reduce启动的时候, 会尽可能的建立所有的链接</p>
 </blockquote>
 <p>另外一个问题是网络传输的时候小包太多了, 一个分区的平均大小&lt;1MB, 大量的时间消耗在网络连接的创建过程之中, 能不能提前聚合数据, Reduce启动的时候, 直接读取数据就行了.</p>
-<p>对于这两个问题, <strong>Push-Shuffle</strong>可以很好的解决这两个问题<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172633521.png" alt="image-20220228172633521"></p>
+<p>对于这两个问题, <strong>Push-Shuffle</strong>可以很好的解决这两个问题<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172633521.png" alt="image-20220228172633521"></p>
 <p>该方案数据的流程, 并不是由ReduceTask主动Pull, 而是由MapTask主动Push到ShuffleService里.<br>如图所示, 2个MapTask计算完分区数据P0后, 将两者的P0都push到第一个Shuffle Service.<br>ReduceTask启动后, 直接获取第一个Shuffle Service之中P0数据即可.</p>
 <p>回看原来的问题, 该方案的连接个数为(E*S + E), S为RSS的个数, 一般在10-50之间, 远远小于E的个数, 有效减少连接;ShuffleService会合并数据(只要读取的时候, 多读几个块就好), 可以方便的处理小包问题.</p>
 <blockquote>
@@ -296,7 +327,7 @@
 <p>此外<strong>Push-Shuffle</strong>将随机IO变成了顺序IO, 解决了随机IO问题.</p>
 <h4 id="磁盘问题"><a href="#磁盘问题" class="headerlink" title="磁盘问题"></a>磁盘问题</h4><p>磁盘问题一个在于随机读写, <strong>Push-Shuffle</strong>将Reduce阶段的随机读写变成顺序读写<br>另外一个问题就是读写速度, 我们的解决思路就是使用<strong>SSD替换HDD</strong>, 同时SSD对于随机读写也非常友好, 因此硬件加速完全好于预期.<br>那么用Spark原来的External Shuffle Service是否也能上SSD解决这个问题呢?<br>答案是否定的, 原因在于ESS是和Yarn强制绑定的, 代码逻辑在NodeManager的进程之中, 替换全部Yarn集群的磁盘, 成本上根本无法接受. 因此RSS必须是<strong>存储计算分离</strong>的, 也就是需要是个完全<strong>独立服务</strong>.<br>总结来说, 解决磁盘问题方法是: <strong>Push-Shuffle</strong>, <strong>SSD加速</strong> 和 <strong>独立服务</strong></p>
 <h4 id="CPU问题"><a href="#CPU问题" class="headerlink" title="CPU问题"></a>CPU问题</h4><p>如&lt;瓶颈分析&gt;中提到的, CPU问题并不是Shuffle的核心问题, 主要问题在于热点和隔离.<br>为了解决热点问题, 我们引入了<strong>Shuffle 调度器</strong>, 通过监控App里面磁盘网络内存压力, 防止出现单服务器热点, 拖慢计算或者导致失败.<br>对于隔离问题, 我们采用<strong>独立部署</strong>, 解除对Yarn集群的依赖</p>
-<h3 id="Remote-Shuffle-Service方案"><a href="#Remote-Shuffle-Service方案" class="headerlink" title="Remote Shuffle Service方案"></a>Remote Shuffle Service方案</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172650782.png" alt="image-20220228172650782"><br>由上文的铺垫, 整体架构也呼之欲出了, 整体采用典型的Master-Slave模式, 其中Client为Spark App, Master为Remote Shuffle Service Manager(RssManager), Slave为Remote Shuffle Service Server(RssServer), 还有DFS作为数据备份, Zookeeper作为元数据存储.</p>
+<h3 id="Remote-Shuffle-Service方案"><a href="#Remote-Shuffle-Service方案" class="headerlink" title="Remote Shuffle Service方案"></a>Remote Shuffle Service方案</h3><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172650782.png" alt="image-20220228172650782"><br>由上文的铺垫, 整体架构也呼之欲出了, 整体采用典型的Master-Slave模式, 其中Client为Spark App, Master为Remote Shuffle Service Manager(RssManager), Slave为Remote Shuffle Service Server(RssServer), 还有DFS作为数据备份, Zookeeper作为元数据存储.</p>
 <h4 id="Remote-Shuffle-Service-Manager"><a href="#Remote-Shuffle-Service-Manager" class="headerlink" title="Remote Shuffle Service Manager"></a>Remote Shuffle Service Manager</h4><p>作为整个集群的控制节点, 负责整个集群与客户端的任务调度, 元数据管理等主要工作. </p>
 <ul>
 <li>Manager会采用主备方式完成服务高可用, 主备实例会通过Zookeeper进行选主工作</li>
@@ -333,8 +364,8 @@
 </ul>
 <h4 id="DFS"><a href="#DFS" class="headerlink" title="DFS"></a>DFS</h4><p>作为整个集群的数据备份中心, 目前公司内部只有HDFS作为DFS实现, 但是性能堪忧.<br>但当RSS集群也是以HDD磁盘为主时, Reduce任务直接获取DFS上的数据, 是个好的选择.<br>另外DFS方式的稳定性会更加好</p>
 <h3 id="方案效果"><a href="#方案效果" class="headerlink" title="方案效果"></a>方案效果</h3><p>我们选了两个典型的案例: </p>
-<h4 id="业务1"><a href="#业务1" class="headerlink" title="业务1"></a>业务1</h4><p>使用默认的Shuffle方式, 总耗时7.3h, 有23个<code>Failed Stage</code>,错误类型全是<code>FetchFailed</code><br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172706050.png" alt="image-20220228172706050"></p>
-<p>使用RemoteShuffleService模式, 总耗时2.9小时, 无任何失败的Stage, 总Shuffle Write数据量在15TB左右, 最大ShuffleStage为5.6TB<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172721493.png" alt="image-20220228172721493"></p>
+<h4 id="业务1"><a href="#业务1" class="headerlink" title="业务1"></a>业务1</h4><p>使用默认的Shuffle方式, 总耗时7.3h, 有23个<code>Failed Stage</code>,错误类型全是<code>FetchFailed</code><br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172706050.png" alt="image-20220228172706050"></p>
+<p>使用RemoteShuffleService模式, 总耗时2.9小时, 无任何失败的Stage, 总Shuffle Write数据量在15TB左右, 最大ShuffleStage为5.6TB<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172721493.png" alt="image-20220228172721493"></p>
 <h3 id="业务2"><a href="#业务2" class="headerlink" title="业务2"></a>业务2</h3><p>使用默认的Shuffle方式, 总耗时1.6h, 有21个<code>Failed Stage</code></p>
 <p>使用RemoteShuffleService模式, 总耗时38分钟, 无任何失败的Stage, Shuffle Write数据量在8TB左右, 最大ShuffleStage为0.3TB</p>
 <h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><div class="table-container">
@@ -467,19 +498,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -492,9 +517,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

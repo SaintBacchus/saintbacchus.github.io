@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="存在的问题现在CK创建视图有2种初始化数据的方式  在 CREATE 语句中带上 polulate 关键字，会将执行时间点之前的底表的历史数据全部初始化到视图中。执行完成后的底表新数据也会进视图，但是执行过程中的数据会丢失；  在 CREATE 语句中不带 polulate 关键字，会将执行完成后的底表新数据会进视图，但是执行完成之前的数据都不会进视图；如果而后手工执行insert命令, 导入历史">
 <meta property="og:type" content="article">
@@ -83,15 +83,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -250,13 +281,13 @@
 </ol>
 <h2 id="Polulate数据丢失"><a href="#Polulate数据丢失" class="headerlink" title="Polulate数据丢失"></a>Polulate数据丢失</h2><h3 id="根因分析"><a href="#根因分析" class="headerlink" title="根因分析"></a>根因分析</h3><p>先明晰一下MV更新的时候的时序图</p>
 <p>下图中有4个角色: <strong>插入语句执行者, 底表插入数据执行者, MV1插入数据执行者, MV2创建语句执行者</strong> </p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227113952566.png" alt="image-20220227113952566"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227113952566.png" alt="image-20220227113952566"></p>
 <p>首先, 对于底表来说, 第一批写开始时, 因为MV2并没有被创建, 因此对于它来说, 只会给MV1主动推送数据, 相当于这批次的数据全部丢失了.</p>
 <p>其次, 对于MV2创建来说, 由于带有populate字段, 他会主动去拉取历史数据, 但是由于底表没有全部写完, 只写了DP1, 那么DP2和DP3的数据就丢失了.</p>
 <p>因此, 总结来说, <strong>在插入过程之中创建底表会丢失的数据是, 在底表里DataPart没有写完的那些数据, 写完的数据还是会被读取的.</strong></p>
 <p>最后, 看第二批写的情况, 由于检查MV的时候, MV1和MV2已经存在(虽然这个时候, 创建MV2的语句被没有结束, 但是由于CK没有一致性保证, 所以元数据的信息可以被外面捕获到), 此时第二批次的数据, 在正常情况下能够推送给MV2.</p>
 <h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>利用存储的锁机制, 在插入时禁止populate操作</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227114132890.png" alt="image-20220227114132890"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227114132890.png" alt="image-20220227114132890"></p>
 <ol>
 <li>写入时, 加入写入的共享锁, 可以支持同时插入到一个数据表中</li>
 <li>执行create table的元数据创建时, 获取底表的排它锁, 如图中所示, 此时正好在插入, 则会等待插入执行完毕后, 再进场元数据操作</li>
@@ -267,10 +298,10 @@
 <p>目前如果有大型insert的操作的话, 此时会无法完成基于底表的创建视图操作</p>
 </blockquote>
 <h3 id="复制表问题"><a href="#复制表问题" class="headerlink" title="复制表问题"></a>复制表问题</h3><p>目前视图使用create view to table的方式建立的, 如果视图里面带有populate, 就会出现MV多数据的情况, 原因如下图所示</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227114313082.png" alt="image-20220227114313082"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227114313082.png" alt="image-20220227114313082"></p>
 <p><strong>解决方案</strong></p>
 <p>只允许一个节点写入, 跟DLAP-Manager交流, 目前复制表只有一个节点可写, 符合预期</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227114345189.png" alt="image-20220227114345189"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220227114345189.png" alt="image-20220227114345189"></p>
 <p>从上面的分析来看, 整体物化视图的初始化, 比较合适构建在<strong>外部的Manager</strong>中. 但此时就需要处理场景2中数据重复的问题</p>
 <h2 id="Insert数据重复"><a href="#Insert数据重复" class="headerlink" title="Insert数据重复"></a>Insert数据重复</h2><p>Insert数据重复比较好了解, 因为是人工操作, 因此创建完毕物化视图, 和执行insert命令期间, 有可能已经有一些批次的数据写入到物化视图中, 如果此时导入全部的历史数据, 那么数据就会出现重复的情况.</p>
 <blockquote>
@@ -373,19 +404,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -398,9 +423,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

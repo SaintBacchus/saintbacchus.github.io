@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="基数估计通俗的话来讲, 就是求count distinct,  在公司内部有大量UV场景, 因此一款数据库对基数估计的支持是一个非常重要的功能. 一般计算基数, 通过分布式构造Hash表, 进行group by求解, 但该方式非常消耗内存和CPU, 无法满足大型互联网的要求, 因此有以下两个优化方向.  Bitmap对于Long&#x2F;Int型数据, 可以通过Bitmap方式来求解. Bitmap的存储">
 <meta property="og:type" content="article">
@@ -84,15 +84,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -249,24 +280,24 @@
 <p>普通的bitmap为一个巨型数组, 而Roaring Bitmap会分为2级结构, 一级分桶, 总共有65535个(short最大值), 每个桶内则是short类型的bitmap, 可以存储65535个字节.</p>
 <p>对于一个4字节的Int类型, 会分别取高16位和低16位, 也就是一个Int分裂为2个short类型.</p>
 <p>前一个short表示index, 索引到具体的桶内, 后一个short在桶内的bitmap中操作.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/20211225095438.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/20211225095438.png" alt=""></p>
 <p>short类型的bitmap有三种类型:</p>
 <ol>
 <li>array[short]类型</li>
 <li>普通bitmap类型</li>
 <li>RunLength类型</li>
 </ol>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/4a6c83760984e3aa562432eeae79b399.png" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/4a6c83760984e3aa562432eeae79b399.png" alt="img"></p>
 <p>对于String类型数据, 可以通过一个KV字典, 将String转化为Int后再行求解.</p>
 <h3 id="HLL"><a href="#HLL" class="headerlink" title="HLL"></a>HLL</h3><p>以上面方法不同, HLL是一种<strong>近似计算</strong>基数的方式, 它是基于以下概率论的假设</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/82d51483cf2d377d799903748adf5f54.png" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/82d51483cf2d377d799903748adf5f54.png" alt="img"></p>
 <p>在真实求解的时候, HLL构造一个桶列表(byte类型, 图中是64个), 取hash值后6位(64=2^6), 索引对应的桶位置, 然后取第一个除首位1之外1的值,  最后将所有桶的数值, 求取调和平均数. (图中Loglog算法为算数平均数, 误差较大)</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-db5df7bf6a2222ecbdf4f1c6ba357595_1440w.jpg" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-db5df7bf6a2222ecbdf4f1c6ba357595_1440w.jpg" alt="img"></p>
 <h2 id="百分数"><a href="#百分数" class="headerlink" title="百分数"></a>百分数</h2><h3 id="T-Digest"><a href="#T-Digest" class="headerlink" title="T-Digest"></a>T-Digest</h3><p>准确说tdigest并非是百分数计算方法, 而是一种<strong>抽样方式</strong>, 通过引入质心的概念, 完成类似于KNN聚类效果. </p>
 <p>聚类之后, 数据量比原来会小很多,  然后再调用精确计算百分位的函数<code>quantile</code>进行计算.</p>
 <p>T-Digest有两种方式, 一种称为<code>buffer and merge</code>, 另一种称为<code>cluster</code>, 整个算法过程主要在平衡误差和计算效率的结果.</p>
 <p>具体算法就不学习了, 有需要时, 再来看这个<a href="https://blog.bcmeng.com/pdf/TDigest.pdf">pdf</a> </p>
-<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="BloomFilter"><a href="#BloomFilter" class="headerlink" title="BloomFilter"></a>BloomFilter</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/3.7.1.png" alt="bloomfilter"></p>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="BloomFilter"><a href="#BloomFilter" class="headerlink" title="BloomFilter"></a>BloomFilter</h3><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/3.7.1.png" alt="bloomfilter"></p>
 
     </div>
 
@@ -348,19 +379,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -373,9 +398,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

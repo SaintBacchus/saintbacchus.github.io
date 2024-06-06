@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="摘要这篇文章讲记录GATK4.0 Spark流程之中性能点的分析.目前我们团队已经把整个参数调优已经做到了极致, 目前已经识别的这些性能优化点只能优化GATK代码方式去调优了, 这也是我们团队接下来的一个重要工作. 因此, 这篇文章讲包括:  GATK步骤的主要瓶颈点 以及造成该瓶颈的原因 优化建议  这篇文章不包括:  具体的GATK调优的参数 具体的Spark调优的参数 GATK算法相关瓶颈点">
 <meta property="og:type" content="article">
@@ -83,15 +83,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -261,17 +292,17 @@
 <p><strong>现状瓶颈:</strong> fastq.gz的文件解压缩</p>
 <p><strong>瓶颈原因:</strong> <code>FastqToSam</code>调用的是Java的GZip库进行解压的, 因此整个性能和linux gzip命令的性能一样. 而gzip解压缩最大的问题在于是单线程解压的, 因此性能一直不高, 而且机器的CPU利用率也非常低.</p>
 <p><strong>优化建议:</strong> 实际上<code>fastq.gz</code>格式不是linux上那种通用的gzip格式, 而且专门为生物信息领域设计的gzip格式, 因此它实际上可以多线程解压的. 经过测试使用<a href="http://www.htslib.org/download/">bgzip</a>多线程解压, 性能可以从原有的1个小时, 提高到半个小时左右(4线程). 但是目前这个工具似乎只有C语言版本, <code>FastqToSam</code>是用java写的, 如果想利用这个步骤, 可能要用到JNI的技术来实现C语言的加载.</p>
-<h3 id="BwaSpark"><a href="#BwaSpark" class="headerlink" title="BwaSpark"></a>BwaSpark</h3><p>首先看一样,<code>BwaSpark</code>的Spark的任务图<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/BwaSparkJobs.png" alt=""></p>
+<h3 id="BwaSpark"><a href="#BwaSpark" class="headerlink" title="BwaSpark"></a>BwaSpark</h3><p>首先看一样,<code>BwaSpark</code>的Spark的任务图<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/BwaSparkJobs.png" alt=""></p>
 <p>总共有2个长时间的Job组成, 一个是<code>collect</code>,一个是<code>save</code></p>
 <p>分析collect过程, 发现每个Task都很小, 绝大部分的时间加载Ref文件, 由于每个Executor都需要拉取5G左右的Ref文件, 当Executor达到50个以上的时候, 将近有250GB的数据需要在集群交互.</p>
 <p>save过程, 是用BWA软件将每个小的Bam文件进行比对, 这个步骤目前无法优化.</p>
 <p><strong>现状瓶颈:</strong> 获取HDFS数据慢</p>
 <p><strong>瓶颈原因:</strong> 每个Executor都需要拉取5G左右的Ref, HDFS无法承受如此高的资源.</p>
 <p><strong>优化建议:</strong> 提前加载Ref的Image的数据, 让整个流程快速开始计算.</p>
-<h3 id="ReadsPipelineSpark"><a href="#ReadsPipelineSpark" class="headerlink" title="ReadsPipelineSpark"></a>ReadsPipelineSpark</h3><p>看一下, <code>ReadsPipelineSpark</code>的Spark的任务图<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/ReadsPipelineSpark_Jobs.png" alt=""></p>
+<h3 id="ReadsPipelineSpark"><a href="#ReadsPipelineSpark" class="headerlink" title="ReadsPipelineSpark"></a>ReadsPipelineSpark</h3><p>看一下, <code>ReadsPipelineSpark</code>的Spark的任务图<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/ReadsPipelineSpark_Jobs.png" alt=""></p>
 <p>这个时间需要消耗在<code>BaseRecalibratorSpark</code>和<code>VariantsSparkSink</code>,前者是BQSR的计算流程, 后者是<code>HaplotypeCallerSpark</code>的流程.</p>
 <p><code>HaplotypeCallerSpark</code>只消耗了32min符合预期, 但是BQSR流程耗时1.2小时, 时间慢的不正常.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/BQSR_Jobs.png" alt=""><br>打开最慢的那个步骤的日志, 发现加载KnownSites文件将近耗费了25分钟, 整个流程被阻塞近半个小时.<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/BQSR_Logs.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/BQSR_Jobs.png" alt=""><br>打开最慢的那个步骤的日志, 发现加载KnownSites文件将近耗费了25分钟, 整个流程被阻塞近半个小时.<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/gatk_perf/BQSR_Logs.png" alt=""></p>
 <p><strong>现状瓶颈:</strong> KnownSites文件加载过慢</p>
 <p><strong>瓶颈原因:</strong> 每个Exeuctor都要计算并加载整个KnownSites</p>
 <p><strong>优化建议:</strong> 提前加载KnownSites的数据, 让整个流程快速开始计算.</p>
@@ -361,19 +392,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -386,9 +411,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

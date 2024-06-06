@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="众所周知, Clickhouse是没有事务能力的, 对写入数据也不承诺原子性保护,  但在业务使用过程中, 用户往往需要数据量尽量一致, 现在在使用CK时, 用户经常在校对离线和实时数据时, 发现数据行数都不一致. 因此, 我们需要给力CK加上一个原子性写入的保护, 但基于OLAP系统的吞吐量, 给CK加强一致事务保护是不现实的, 所以我们的目标并不是100%的原子性, 而是一个折中. 有个要注意">
 <meta property="og:type" content="article">
@@ -86,15 +86,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -250,7 +281,7 @@
 <blockquote>
 <p>实际上用ACID来评价这个原子性, 并不是很恰当, 例如<code>最终一致性</code>是分布式复制协议里面的概念; 这里只是用数据库的ACID做为评价的指标.</p>
 </blockquote>
-<h2 id="实时数据写入流程"><a href="#实时数据写入流程" class="headerlink" title="实时数据写入流程"></a>实时数据写入流程</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824150229371.png" alt="image-20210824150229371"></p>
+<h2 id="实时数据写入流程"><a href="#实时数据写入流程" class="headerlink" title="实时数据写入流程"></a>实时数据写入流程</h2><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824150229371.png" alt="image-20210824150229371"></p>
 <p>目前实时数据导入的流程大致入上图所示:</p>
 <ol>
 <li><p>数据存储在Kafka中,  数据从Kafka读取, 并流向Flink程序. 由于Flink有比较完善的Checkpoint机制, 只要Source能够<strong>回放</strong>, 就能保证数据是一致的. 因此这个步骤不会丢失数据</p>
@@ -301,14 +332,14 @@
 <li>参与者收到事务提交通知之后执行 commit 操作，然后释放占有的资源；</li>
 <li>参与者向协调者返回事务 commit 结果信息。</li>
 </ol>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KNR.png" alt="2pc-success"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KNR.png" alt="2pc-success"></p>
 <p>对于第 2 和第 3 种情况，协调者均认为参与者无法成功执行事务，为了整个集群数据的一致性，所以要向各个参与者发送事务回滚通知，具体步骤如下：</p>
 <ol>
 <li>协调者向各个参与者发送事务 rollback 通知，请求回滚事务；</li>
 <li>参与者收到事务回滚通知之后执行 rollback 操作，然后释放占有的资源；</li>
 <li>参与者向协调者返回事务 rollback 结果信息。</li>
 </ol>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KOc.png" alt="2pc-failed"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/bV0KOc.png" alt="2pc-failed"></p>
 <p>两阶段提交协议原理简单、易于实现，但是缺点也是显而易见的，包含如下：</p>
 <ul>
 <li><strong>单点问题</strong>: 协调者在整个两阶段提交过程中扮演着举足轻重的作用，一旦协调者所在服务器宕机，就会影响整个数据库集群的正常运行。比如在第二阶段中，如果协调者因为故障不能正常发送事务提交或回滚通知，那么参与者们将一直处于阻塞状态，整个数据库集群将无法提供服务。 <strong>极端情况下, 协调者发出Commmit消息之后宕机</strong>,  整体系统将存储不确定的状态.</li>
@@ -323,18 +354,18 @@
 <p>上文的介绍摘抄自<a href="https://segmentfault.com/a/1190000012534071">参考文档</a></p>
 </blockquote>
 <h2 id="Flink中的两阶段提交"><a href="#Flink中的两阶段提交" class="headerlink" title="Flink中的两阶段提交"></a>Flink中的两阶段提交</h2><p>Flink提供了基于2PC的SinkFunction，名为TwoPhaseCommitSinkFunction，帮助我们做了一些基础的工作。它的第一层类继承关系如下：</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-16e2dc211fae60c8df956546ae465ce6_720w.jpg" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-16e2dc211fae60c8df956546ae465ce6_720w.jpg" alt="img"></p>
 <p>但是TwoPhaseCommitSinkFunction仍然留了以下四个抽象方法待子类来实现：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">abstract</span> TXN <span class="title function_">beginTransaction</span><span class="params">()</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"> <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">preCommit</span><span class="params">(TXN transaction)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line"> <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">commit</span><span class="params">(TXN transaction)</span>;</span><br><span class="line"> <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">abort</span><span class="params">(TXN transaction)</span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>beginTransaction()：开始一个事务，返回事务信息的句柄。</p>
 </li>
 <li><p>preCommit()：预提交（即提交请求）阶段的逻辑, 在snapshotState()方法被调用</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-3d7059f46f5b1557742cf866e10a7e20_720w.jpg" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-3d7059f46f5b1557742cf866e10a7e20_720w.jpg" alt="img"></p>
 <p>每当需要做checkpoint时，JobManager就在数据流中打入一个屏障（barrier），作为检查点的界限。屏障随着算子链向下游传递，每到达一个算子都会触发将状态快照写入状态后端(state BackEnd)的动作。当屏障到达Kafka sink后，触发preCommit(实际上是KafkaProducer.flush())方法刷写消息数据，但还未真正提交。接下来还是需要通过检查点来触发提交阶段。</p>
 </li>
 <li><p>commit()：正式提交阶段的逻辑, 该方法的调用点位于TwoPhaseCommitSinkFunction.notifyCheckpointComplete()方法中</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-e5933278ad5c34eb94e7a712fd61ae90_720w.jpg" alt="img"></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/v2-e5933278ad5c34eb94e7a712fd61ae90_720w.jpg" alt="img"></p>
 <p>可见，只有在所有检查点都成功完成这个前提下，写入才会成功。这符合前文所述2PC的流程，其中JobManager为协调者，各个算子为参与者（不过只有sink一个参与者会执行提交）。一旦有检查点失败，notifyCheckpointComplete()方法就不会执行。如果重试也不成功的话，最终会调用abort()方法回滚事务。</p>
 </li>
 <li><p>abort()：取消事务, 在这里执行Rollback操作</p>
@@ -349,7 +380,7 @@
 <li><p>数据不一致, Flink有Rollback的接口, 再正常情况下能够保证数据最终一致, 但无法保证强一致性. 在单点问题发生时, Flink连最终一致性也无法保证. 而且数据不一致时, 并没有<strong>互询机制</strong>对账.</p>
 </li>
 </ol>
-<h2 id="Clickhouse两阶段写入"><a href="#Clickhouse两阶段写入" class="headerlink" title="Clickhouse两阶段写入"></a>Clickhouse两阶段写入</h2><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824191907998.png" alt="image-20210824191907998" style="zoom:50%;" /></p>
+<h2 id="Clickhouse两阶段写入"><a href="#Clickhouse两阶段写入" class="headerlink" title="Clickhouse两阶段写入"></a>Clickhouse两阶段写入</h2><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20210824191907998.png" alt="image-20210824191907998" style="zoom:50%;" /></p>
 <h3 id="Prepare"><a href="#Prepare" class="headerlink" title="Prepare"></a>Prepare</h3><p>跟现在写tmp文件夹一样, 让DP写入的地方写入到一个叫做<code>draft</code>的文件夹. 类似<code>detach</code>目录, 查询时这些数据不可见, 同时也不会触发<code>Merge</code>以及<code>Mutation</code>操作.</p>
 <p>Prepare过程会设置两个Label标志, 第一个标志Flink的CP编号, 第二个标志插入数据的标志. Label可以由客户端设置, 也可以让系统自动生成.</p>
 <p>Insert语句会包含返回值, 返回的内容为: Host节点名 + Lable_CP名称 + Lable_name名称 </p>
@@ -461,19 +492,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -486,9 +511,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

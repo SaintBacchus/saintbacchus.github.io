@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="缘起之前一直在做Spark相关工作, 主要就是做分布式计算相关的内容, 经常会听到一些BSP或者MPP等分布式模式的术语, 每次看过文章有些了解之后, 但是经常会忘记, 因此写个文章记录这些概念. BSP&#x2F;ASP&#x2F;SSP首先要明确的是, 这三个概念主要是为了处理机器学习领域迭代计算提出来的 BSP是指迭代过程之中, 必须等待前一轮的迭代全部才能进行下一轮, 每轮之间的等待,被称之为Barrier,">
 <meta property="og:type" content="article">
@@ -87,15 +87,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -248,10 +279,10 @@
     <div class="post-body" itemprop="articleBody"><h2 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h2><p>之前一直在做Spark相关工作, 主要就是做分布式计算相关的内容, 经常会听到一些<code>BSP</code>或者<code>MPP</code>等分布式模式的术语, 每次看过文章有些了解之后, 但是经常会忘记, 因此写个文章记录这些概念.</p>
 <h2 id="BSP-ASP-SSP"><a href="#BSP-ASP-SSP" class="headerlink" title="BSP/ASP/SSP"></a>BSP/ASP/SSP</h2><p>首先要明确的是, 这三个概念主要是为了处理<code>机器学习领域迭代计算</code>提出来的</p>
 <p><strong>BSP</strong>是指迭代过程之中, 必须等待前一轮的迭代全部才能进行下一轮, 每轮之间的等待,被称之为<code>Barrier</code>,  所以才叫做<code>Barrier Synchronous Parallel</code></p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/002.jpg" alt=""><br>而<code>ASP: Asynchronous Synchronous Parallel</code>是另外一个极端的方式, 任何一轮迭代绝对不会等待前面的迭代结果, 这个当然能解决<code>BSP</code>模型里面<strong>慢节点</strong>的问题, 但是它存在的问题就是<strong>速度不一,导致最后的梯度不收敛</strong></p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/001.jpg" alt=""></p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/002.jpg" alt=""><br>而<code>ASP: Asynchronous Synchronous Parallel</code>是另外一个极端的方式, 任何一轮迭代绝对不会等待前面的迭代结果, 这个当然能解决<code>BSP</code>模型里面<strong>慢节点</strong>的问题, 但是它存在的问题就是<strong>速度不一,导致最后的梯度不收敛</strong></p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/001.jpg" alt=""></p>
 <p>那么<code>SSP: Stale Synchronous Parallel</code>就是这两者的折中, 他有一个超参<code>s</code>, 表示最快的迭代和最慢的迭代之间的代差要小于等于S.</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/003.jpg" alt=""></p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/003.jpg" alt=""></p>
 <p>我们经常听说<code>Spark</code>或者<code>MapReduce</code>是一个BSP模型, 原因在于Spark的实际计算只有一轮迭代, 一轮迭代就需要直接出最终结果, 那么只有BSP才能正确计算完毕.</p>
 <p>所以说, Spark是BSP的一种, 这种说明既对, 他确实有栅栏, 但也不对, 在于它主要描述分布式机器学习流程.</p>
 <p>至于为什么机器学习那种多轮迭代为什么可以进行<code>SSP</code>或者<code>ASP</code>计算, 具体的数学原理可以查看<a href="https://www.zhihu.com/question/264189719">如何理解随机梯度下降</a></p>
@@ -266,14 +297,14 @@
 </li>
 </ul>
 <p>这两个经常在课文里面见到, 大学里面也学过, 大致的体系结构如下图所示:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/004.png" alt=""><br><code>SMP</code>和<code>NUMA</code>都是单机多核, <code>MPP</code>我理解就应该多台机器了</p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/004.png" alt=""><br><code>SMP</code>和<code>NUMA</code>都是单机多核, <code>MPP</code>我理解就应该多台机器了</p>
 <blockquote>
 <p>MPP：和NUMA不同，MPP提供了另外一种进行系统扩展的方式，它由多个SMP服务器通过一定的节点互联网络进行连接，协同工作，完成相同的任务，从用户的角度来看是一个服务器系统。其基本特征是由多个SMP服务器(每个SMP服务器称节点)通过节点互联网络连接而成，每个节点只访问自己的本地资源(内存、存储等)，是一种完全无共享(Share Nothing)结构，因而扩展能力最好，理论上其扩展无限制。</p>
 </blockquote>
 <p>可能的示意图如下所示:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/005.png" alt=""></p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/005.png" alt=""></p>
 <p>除了体系结构, 这三个概念还经常用于描述数据库的不同架构, 例如:</p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/006.png" alt=""></p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/006.png" alt=""></p>
 <p>SMP是Shared Everthting的方式</p>
 <p>NUMA是Shared Storage的方式</p>
 <p>MPP是Shared Nothing的方式</p>
@@ -301,7 +332,7 @@
 <li>MPP架构目前被并行数据库广泛采用，一般通过scan、sort和merge等操作符实时返回查询结果</li>
 </ul>
 <p><strong>MPP的典型架构</strong></p>
-<p><div align=center><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/007.png" alt=""></p>
+<p><div align=center><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/parallel/007.png" alt=""></p>
 <blockquote>
 <p> 参考<a href="https://www.jianshu.com/p/720df3b85b3a">博客1</a>, <a href="https://blog.csdn.net/baichoufei90/article/details/84328666">博客2</a>, <a href="https://rainforc.iteye.com/blog/2217606">博客3</a></p>
 </blockquote>
@@ -395,19 +426,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -420,9 +445,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

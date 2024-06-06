@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="Shuffle Service设计文档 该文档写于2021年1月  项目背景业务场景目前公司内部有3个集群, 最大集群规模已经达到8000多台机器, 总共有近45万核, 1.23PB的内存.待补完… Spark业务负载目前集群上, 每天有60万个离线任务在运行, 其中Spark任务有10万个. 公司未来整体战略会将所有HiveMR的任务替换Spark任务, 今年将整个数据平台上的SQL任务基本上都">
 <meta property="og:type" content="article">
@@ -89,15 +89,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -284,7 +315,7 @@
 <ul>
 <li>IO敏感型调度, 解决热点问题</li>
 </ul>
-<h2 id="Shuffle-Service顶层设计"><a href="#Shuffle-Service顶层设计" class="headerlink" title="Shuffle Service顶层设计"></a>Shuffle Service顶层设计</h2><h3 id="服务架构图"><a href="#服务架构图" class="headerlink" title="服务架构图"></a>服务架构图</h3><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172007077.png" alt="image-20220228172007077"></p>
+<h2 id="Shuffle-Service顶层设计"><a href="#Shuffle-Service顶层设计" class="headerlink" title="Shuffle Service顶层设计"></a>Shuffle Service顶层设计</h2><h3 id="服务架构图"><a href="#服务架构图" class="headerlink" title="服务架构图"></a>服务架构图</h3><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172007077.png" alt="image-20220228172007077"></p>
 <p>整体架构会采用典型的Master-Slave模式, 其中Client为Spark App, master为Remote Shuffle Service Manager(RssManager), Slave为Remote Shuffle Service Server(RssServer), 还有DFS作为数据备份, Zookeeper作为元数据存储.</p>
 <h4 id="Remote-Shuffle-Service-Manager"><a href="#Remote-Shuffle-Service-Manager" class="headerlink" title="Remote Shuffle Service Manager"></a>Remote Shuffle Service Manager</h4><p>作为整个集群的控制节点, 负责整个集群与客户端的任务调度, 元数据管理等主要工作. </p>
 <ul>
@@ -322,7 +353,7 @@
 </ul>
 <h4 id="DFS"><a href="#DFS" class="headerlink" title="DFS"></a>DFS</h4><p>作为整个集群的数据备份中心, 目前公司内部只有HDFS作为DFS实现, 但是性能堪忧.<br>但当RSS集群也是以HDD磁盘为主时, Reduce任务直接获取DFS上的数据, 是个好的选择.<br>另外DFS方式的稳定性会更加好</p>
 <h3 id="交互图架构图"><a href="#交互图架构图" class="headerlink" title="交互图架构图"></a>交互图架构图</h3><p>下面考虑一下RSS是如何和Spark的各个实例交互的, 先一个Map和Reduce任务是如何进行控制流通信的, 然后再看数据是如何写入的</p>
-<h4 id="控制流图"><a href="#控制流图" class="headerlink" title="控制流图"></a>控制流图</h4><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172021282.png" alt="image-20220228172021282"></p>
+<h4 id="控制流图"><a href="#控制流图" class="headerlink" title="控制流图"></a>控制流图</h4><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172021282.png" alt="image-20220228172021282"></p>
 <ol>
 <li>Spark Driver向Manager发送申请Shuffle资源的请求</li>
 <li>Manager返回结果, 并指明ReduceTaskId对应的Server地址</li>
@@ -334,7 +365,7 @@
 <li>Driver下发Reduce任务(如果也是ShuffleMapTask的话, 依然需要先申请资源)</li>
 <li>ReduceTask向对应的Server拉去数据, Server需要根据TaskId过滤重复数据</li>
 </ol>
-<h4 id="数据流图"><a href="#数据流图" class="headerlink" title="数据流图"></a>数据流图</h4><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172040055.png" alt="image-20220228172040055"></p>
+<h4 id="数据流图"><a href="#数据流图" class="headerlink" title="数据流图"></a>数据流图</h4><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172040055.png" alt="image-20220228172040055"></p>
 <ul>
 <li>MapTask先会将数据完成预聚合, 按照Partition分区</li>
 <li>然后两个MapTask都将将P0,P1的数据推送到第一个Server</li>
@@ -342,7 +373,7 @@
 <li>启动ReduceTask时候, 直接会去对应Server流式拉取数据</li>
 </ul>
 <h2 id="Remote-Shuffle-Service设计要点"><a href="#Remote-Shuffle-Service设计要点" class="headerlink" title="Remote Shuffle Service设计要点"></a>Remote Shuffle Service设计要点</h2><h3 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h3><p>可靠性从三个方面来阐述, 一个是任务可靠性, 指异常发生的整体重试机制, 这里的重试指流程的重试, 而不是消息的重试, 因为RPC消息大多数可以做到幂等, 做不到幂等的就会出现不一致场景, 就是数据一致性问题. 另外一点数据可靠性, 只Shuffle数据文件的备份问题.</p>
-<h4 id="任务可靠性"><a href="#任务可靠性" class="headerlink" title="任务可靠性"></a>任务可靠性</h4><p>首先我们还是回到上面的数据流图, 并标识其中可能失败的场景<br><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172054924.png" alt="image-20220228172054924"><br>下面分别解释一下错误的具体含义:</p>
+<h4 id="任务可靠性"><a href="#任务可靠性" class="headerlink" title="任务可靠性"></a>任务可靠性</h4><p>首先我们还是回到上面的数据流图, 并标识其中可能失败的场景<br><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172054924.png" alt="image-20220228172054924"><br>下面分别解释一下错误的具体含义:</p>
 <ol>
 <li>MapDataPush失败值, MapTask之中单个Partition数据无法推送到对应的Server, 造成的原因一般为网络问题等</li>
 <li>慢节点/坏节点, 当出现这种场景的时候, 是多个MapTask推送到同一个Server时候的出现</li>
@@ -353,7 +384,7 @@
 <li>Server失败重启, 进程级别的重启, 服务多一会时间会恢复</li>
 <li>Server丢失数据, 一般是磁盘问题, 导致数据丢失了</li>
 </ol>
-<h6 id="PushData失败-多次失败"><a href="#PushData失败-多次失败" class="headerlink" title="PushData失败/多次失败"></a>PushData失败/多次失败</h6><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172110777.png" alt="image-20220228172110777"></p>
+<h6 id="PushData失败-多次失败"><a href="#PushData失败-多次失败" class="headerlink" title="PushData失败/多次失败"></a>PushData失败/多次失败</h6><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172110777.png" alt="image-20220228172110777"></p>
 <ol>
 <li>启动MapTask, Task之中携带Reduce对应Server地址, 一个Reduce对应2个地址, 正常情况只会使用前面一个</li>
 <li>MapTask计算Partition任务会将数据写入到临时</li>
@@ -369,7 +400,7 @@
 <blockquote>
 <p>PushData的Block粒度为单个Partition, 如果再小, 那么数据一致性就无法保证了, 这里编程时候需要注意</p>
 </blockquote>
-<h6 id="关于Block重试的详细说明"><a href="#关于Block重试的详细说明" class="headerlink" title="关于Block重试的详细说明"></a>关于Block重试的详细说明</h6><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172158952.png" alt="image-20220228172158952"></p>
+<h6 id="关于Block重试的详细说明"><a href="#关于Block重试的详细说明" class="headerlink" title="关于Block重试的详细说明"></a>关于Block重试的详细说明</h6><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172158952.png" alt="image-20220228172158952"></p>
 <ol>
 <li>网络写失败, 无妨, 重试即可</li>
 <li>写本地失败, 写了一些, 需要Stage失败</li>
@@ -377,7 +408,7 @@
 <li>网络返回失败, Server做到幂等</li>
 </ol>
 <p>2和3的问题, 大致是因为服务节点问题导致的, 这个目前比较难以处理, 先不管了[TODO]<br>如果做到幂等, 需要在元数据信息里面记载对应的taskAttemptId</p>
-<h5 id="数据重复"><a href="#数据重复" class="headerlink" title="数据重复"></a>数据重复</h5><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172216824.png" alt="image-20220228172216824"></p>
+<h5 id="数据重复"><a href="#数据重复" class="headerlink" title="数据重复"></a>数据重复</h5><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172216824.png" alt="image-20220228172216824"></p>
 <ol>
 <li>Driver启动Map任务</li>
 <li>开始写Partition数据, 成功写入P0</li>
@@ -396,7 +427,7 @@
 <p>commitTask下发给RSS的话, 容易造成元数据膨胀问题, 但如果将这些元数据放在Spark里面的话, 就会造成代码耦合程度太大了. 因此先看看编程时候能不能将代码耦合去除, 如果去除的话, 直接在ReduceTask测过滤</p>
 <p>推测执行的难点在于, 两个独立进程写入同一个数据块, 那么在Server端就必须加锁来防止竞争, 但是一旦加锁, 性能就会收到影响</p>
 </blockquote>
-<h5 id="拉取失败"><a href="#拉取失败" class="headerlink" title="拉取失败"></a>拉取失败</h5><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172232885.png" alt="image-20220228172232885"></p>
+<h5 id="拉取失败"><a href="#拉取失败" class="headerlink" title="拉取失败"></a>拉取失败</h5><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172232885.png" alt="image-20220228172232885"></p>
 <ol>
 <li>Driver启动Reduce任务</li>
 <li>ReduceTask开始拉取数据, 但是返回异常</li>
@@ -406,7 +437,7 @@
 <li>下发重试任务到新的Executor</li>
 <li>此时如果一直失败的话, 有两个选择, 一个是直接宣布App失败了, 另外就是重选上一个Stage, 先选第一种</li>
 </ol>
-<h5 id="Server失败"><a href="#Server失败" class="headerlink" title="Server失败"></a>Server失败</h5><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172249213.png" alt="image-20220228172249213"></p>
+<h5 id="Server失败"><a href="#Server失败" class="headerlink" title="Server失败"></a>Server失败</h5><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172249213.png" alt="image-20220228172249213"></p>
 <ol>
 <li>以MapTask为例, ReduceTask其实也类似</li>
 <li>MapTask开始写入数据</li>
@@ -515,7 +546,7 @@
 <h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><h4 id="支持多磁盘写入"><a href="#支持多磁盘写入" class="headerlink" title="支持多磁盘写入"></a>支持多磁盘写入</h4><p>文件磁盘目录, 也需要根据Spark一样规划为多级目录, 同时支持多个SSD目录<br>文件也会根据AppId + ShuffleId + PartitionId的hash值计算出对应的目录路径</p>
 <h4 id="小数据块合并发送"><a href="#小数据块合并发送" class="headerlink" title="小数据块合并发送"></a>小数据块合并发送</h4><p>Map写入, 如果数据块比较小, 且写入同一个Server, 则可以合并发送.</p>
 <h4 id="文件流式读取"><a href="#文件流式读取" class="headerlink" title="文件流式读取"></a>文件流式读取</h4><p>对于Reduce任务, 如果Partition实在太大, 可以根据流式方式读取</p>
-<h4 id="小数据块合并读取"><a href="#小数据块合并读取" class="headerlink" title="小数据块合并读取"></a>小数据块合并读取</h4><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172327830.png" alt="image-20220228172327830"><br>例如上图, 在shuffleRead的时候,需要花费近6个小时, 主要原因在于网络小io太多了</p>
+<h4 id="小数据块合并读取"><a href="#小数据块合并读取" class="headerlink" title="小数据块合并读取"></a>小数据块合并读取</h4><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/img/image-20220228172327830.png" alt="image-20220228172327830"><br>例如上图, 在shuffleRead的时候,需要花费近6个小时, 主要原因在于网络小io太多了</p>
 <h4 id="2GB限制"><a href="#2GB限制" class="headerlink" title="2GB限制"></a>2GB限制</h4><p>Spark在Shuffle的时候, 已经通过<code>DownloadManager</code>, 通过文件的方式解决了2GB的限制, 但目前这儿依然由这个限制.<br>如何解决问题?  仿照<code>Spark</code>的处理方式, 如果发现数据量大于2GB, 则启动文件发送, 服务端需要重新定义<code>handler</code>, 整个数据也写入到临时文件之中, 不要写在原有RSS的数据文件之中.<br><code>ShuffleDataWrapper</code>需要加入一个新的字段, 或者将<code>data_length</code>设置为负值</p>
 
     </div>
@@ -598,19 +629,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -623,9 +648,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

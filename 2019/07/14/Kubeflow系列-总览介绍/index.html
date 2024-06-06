@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="什么是Kubeflow对于官网的定义:  The Kubeflow project is dedicated to making deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. Our goal is not to recreate other services,">
 <meta property="og:type" content="article">
@@ -88,15 +88,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -258,7 +289,7 @@
 <li>Python语言, kubeflow的代码库大多以Python编写</li>
 </ol>
 <h2 id="Kubeflow有什么"><a href="#Kubeflow有什么" class="headerlink" title="Kubeflow有什么"></a>Kubeflow有什么</h2><p><code>Kubeflow</code>有很多的组件,  可以在官网文档的<a href="https://master.kubeflow.org/docs/components/">Components</a>模块之中找到所有能力组件, 我把这些模块整理了一下, 画出脑图, 如下:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.png" alt=""></p>
 <p><strong>左边的一列</strong>为kubeflow面向机器学习领域提供的能力, 包括模型的训练推理以及自动学习的超参调优组件, Kubeflow已经支持了市面上大多数的训练和推理框架, 其中最完善的就是google自己家的<code>TensorFlow</code>.</p>
 <p>当然也是最重要的一个模块, 毕竟Kubeflow的名字有一般来自于它.</p>
 <p><strong>右边的一列</strong>为Kubeflow的基础能力, 主要为pipeline, notebook, fairing以及一些公共的组件, 例如元数据管理等, 这个部分是围绕AI能力外围的基础组件, 主要关注于工程部分, 例如使用pipeline进行编排, 使用notebook进行开发等.</p>
@@ -293,7 +324,7 @@
 </blockquote>
 <h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>这块的目的就是为了编排Kubeflow任务用的, 在<a href="https://saintbacchus.github.io/2019/07/21/Kubeflow-pipleline%E4%BB%8B%E7%BB%8D/">这篇文章</a>之中介绍.</p>
 <h3 id="Jupiter-Notebook"><a href="#Jupiter-Notebook" class="headerlink" title="Jupiter Notebook"></a>Jupiter Notebook</h3><p>Notebook是数据科学家比较喜欢的编程工具, kubeflow已经集成:</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/9.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/9.png" alt=""></p>
 <p>上图是notebook的创建页面,  可以看出来kubeflow的notebook有以下能力:</p>
 <ol>
 <li>自定义镜像</li>
@@ -303,7 +334,7 @@
 </ol>
 <p><strong> 使用notebook提交pipeline</strong></p>
 <p>以官方的<strong>Lightweight Python components - basics</strong>为例子</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/10.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/10.png" alt=""></p>
 <ul>
 <li>上边的cell定了流程算子</li>
 <li>中间的cell编译流程算子, 生成<code>argo</code>的配置文件<code>pipeline.zip</code></li>
@@ -322,11 +353,11 @@
 <h4 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h4><p>元数据模块主要是为了用户能更好的管理和追踪kubeflow的流程,  它后台使用的是Google的<a href="https://github.com/google/ml-metadata/blob/master/g3doc/get_started.md">ML-Metadata</a>来管理, 而且暴露了<a href="https://github.com/kubeflow/metadata/blob/master/api/service.swagger.json">REST API</a>来跟用户调用, 同时也有<a href="https://github.com/kubeflow/metadata/tree/master/sdk/python#python-client">Python SDK</a>远程调用</p>
 <h4 id="kustomize"><a href="#kustomize" class="headerlink" title="kustomize"></a>kustomize</h4><p><code>kustomize</code>并不是kubeflow的一个项目, 而是<a href="https://github.com/kubernetes-sigs/kustomize">kubernetes-sigs</a>的一个子项目, 主要简化部署K8s服务的麻烦.</p>
 <p>他的idea的是这样的: 之前部署k8s需要定义很多的YAML文件, 这些文件都要自己管理, 而kustomize可以将这些文件管理起来, 貌似还有版本管理的能力</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.jpg" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/1.jpg" alt=""></p>
 <p>看一下这个图片示意, 基本上就了解.</p>
 <p><a href="https://github.com/kubernetes-sigs/kustomize">官网地址</a></p>
 <h4 id="Nuclio-functions"><a href="#Nuclio-functions" class="headerlink" title="Nuclio functions"></a>Nuclio functions</h4><p>Nuclio 是开源的一个实时无服务器平台, 支持可插拔的事件源和数据源, 下面是它的整体架构.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/19.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/19.png" alt=""></p>
 <blockquote>
 <p>目前没看出来这个Serverless的框架和Kubeflow有太多的联系, 而且FaaS战场上Nuclio也不是真正的主流, <code>knative</code>是google推的Serverless解决方案, 所以这个部分不多介绍了.  </p>
 </blockquote>
@@ -337,7 +368,7 @@
 <h4 id="Microk8s"><a href="#Microk8s" class="headerlink" title="Microk8s"></a>Microk8s</h4><p>单机K8s测试环境的库,  这个安装起来比<code>Minikube</code>和<code>MiniKF</code>更加方便</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/canonical-labs/kubernetes-tools</span><br><span class="line">sudo kubernetes-tools/setup-microk8s.sh</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/canonical-labs/kubeflow-tools</span><br><span class="line">kubeflow-tools/install-kubeflow.sh</span><br></pre></td></tr></table></figure>
 <h4 id="Volcano’s-scheduler"><a href="#Volcano’s-scheduler" class="headerlink" title="Volcano’s scheduler"></a>Volcano’s scheduler</h4><p>Volcano调度是华为公司贡献给社区的批处理调度器,  支持AI和大数据计算</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/volcano-intro.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/volcano-intro.png" alt=""></p>
 <p>给K8s提供以下能力:</p>
 <ol>
 <li>Job management extensions and improvements, e.g:<ol>
@@ -367,7 +398,7 @@
 </ol>
 </li>
 </ol>
-<h5 id="Kube-Batch"><a href="#Kube-Batch" class="headerlink" title="Kube-Batch"></a>Kube-Batch</h5><p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/kube-batch.png" alt=""></p>
+<h5 id="Kube-Batch"><a href="#Kube-Batch" class="headerlink" title="Kube-Batch"></a>Kube-Batch</h5><p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/kube-batch.png" alt=""></p>
 <p><code>kube-batch</code>是一个为kubernetes实现批量任务调度的一个调度器，主要用于<code>机器学习</code>，<code>大数据</code>，<code>HPC</code>等场景.</p>
 <p>而Volcano正是构建在Kube-Batch之上的.</p>
 <h5 id="Gang-Scheduler"><a href="#Gang-Scheduler" class="headerlink" title="Gang Scheduler"></a>Gang Scheduler</h5><p><code>gang-schedule</code>是什么概念? 用用户提交一个 batch job, 这个batch job 包含100个任务，要不这100个任务全部调度成功，要么一个都调度不成功。这种<code>all or nothing</code>调度场景，就被称作:<code>gang-schedule</code>，通常用于集群资源不足的场景，比如 AI 场景下调用GPU资源</p>
@@ -376,14 +407,14 @@
 <p><a href="https://xigang.github.io/2019/02/17/gang-scheduler/">参考文章</a></p>
 </blockquote>
 <h4 id="Dex"><a href="#Dex" class="headerlink" title="Dex"></a>Dex</h4><p><a href="https://github.com/coreos/dex">dex</a> 是一个统一认证的服务，支持各种认证协议如Ouath2 ldap等，自己可以作为一个identity provider,也可以连到别的id provider(如github)上,dex作为一个中间代理.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/20.png" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/20.png" alt=""></p>
 <p>安装官网给出的推荐案例, 使用dex进行租户认证</p>
 <blockquote>
 <p><a href="https://github.com/dexidp/dex">Github首页</a></p>
 </blockquote>
 <h4 id="Istio"><a href="#Istio" class="headerlink" title="Istio"></a>Istio</h4><p>Istio是钟Service Mesh的实现, Service Mesh这个术语通常用于描述构成这些应用程序的微服务网络以及应用之间的交互。随着规模和复杂性的增长，服务网格越来越难以理解和管理。它的需求包括服务发现、负载均衡、故障恢复、指标收集和监控以及通常更加复杂的运维需求，例如 A/B 测试、金丝雀发布、限流、访问控制和端到端认证等。</p>
 <p>Istio 提供了一个完整的解决方案，通过为整个服务网格提供行为洞察和操作控制来满足微服务应用程序的多样化需求.</p>
-<p><img src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/arch.svg" alt=""></p>
+<p><img data-src="https://carlmartin-pic-1305764798.cos.ap-chengdu.myqcloud.com/hexo/images/kubeflow_introduce/arch.svg" alt=""></p>
 <blockquote>
 <p><a href="https://istio.io/">官网首页</a>以及<a href="https://istio.io/zh/docs/concepts/what-is-istio/">中文官网</a></p>
 </blockquote>
@@ -485,19 +516,13 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -510,9 +535,12 @@ st->op1->op2->op3->e</textarea><textarea id="flowchart-1-options" style="display
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 

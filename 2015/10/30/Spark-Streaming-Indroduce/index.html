@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha256-wiz7ZSCn/btzhjKDQBms9Hx4sSeUYsDrTLg7roPstac=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yoursite.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.19.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="面向人群 精通Java&#x2F;Scala编程 Spark相关使用及编程经验 了解流应用架构   简明介绍Spark Streaming是一种基于微批量(micro-batch)方式计算和处理实时流数据执行框架。Streaming依托于于Spark执行框架，将连续输入数据按批次切分，通过DStream(Discretized stream)来表征，然后按批次组装为Spark任务，放入Spark任务池中执行">
 <meta property="og:type" content="article">
@@ -83,15 +83,46 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
 
+<nav class="site-nav">
+  <ul class="main-menu menu">
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </header>
         
@@ -247,7 +278,7 @@
 <li>了解流应用架构</li>
 </ul>
 <hr>
-<h3 id="简明介绍"><a href="#简明介绍" class="headerlink" title="简明介绍"></a>简明介绍</h3><p>Spark Streaming是一种基于微批量(<em>micro-batch</em>)方式计算和处理实时流数据执行框架。<br>Streaming依托于于Spark执行框架，将连续输入数据按批次切分，通过DStream(Discretized stream)来表征，然后按批次组装为Spark任务，放入Spark任务池中执行。<br><img src="http://spark.apache.org/docs/latest/img/streaming-flow.png" alt=""></p>
+<h3 id="简明介绍"><a href="#简明介绍" class="headerlink" title="简明介绍"></a>简明介绍</h3><p>Spark Streaming是一种基于微批量(<em>micro-batch</em>)方式计算和处理实时流数据执行框架。<br>Streaming依托于于Spark执行框架，将连续输入数据按批次切分，通过DStream(Discretized stream)来表征，然后按批次组装为Spark任务，放入Spark任务池中执行。<br><img data-src="http://spark.apache.org/docs/latest/img/streaming-flow.png" alt=""></p>
 <center>图1 Streaming与Spark关系</center>
 
 <p>因此基于<strong>micro-batch</strong>的Streaming必然会带有以下特征:</p>
@@ -257,12 +288,12 @@
 <li>高可靠性</li>
 <li>高延时性</li>
 </ul>
-<p>目前Streaming已经内置以下多种数据源和输出源的适配器，其中数据源使用比较多的是Kafka和HDFS，输出源一般都为HDFS。<br><img src="http://spark.apache.org/docs/latest/img/streaming-arch.png" alt="Streming输入输出"></p>
+<p>目前Streaming已经内置以下多种数据源和输出源的适配器，其中数据源使用比较多的是Kafka和HDFS，输出源一般都为HDFS。<br><img data-src="http://spark.apache.org/docs/latest/img/streaming-arch.png" alt="Streming输入输出"></p>
 <center>图2 Streming输入输出</center>
 
 <p>Streaming目前使用的案例并不是特别多，<a href="http://www.infoq.com/cn/news/2014/04/spark-streaming-bidding">Sharethrough</a>和<a href="http://www.infoq.com/cn/news/2015/04/pinterest-memsql-spark-streaming">Pinterest</a>是比较明确Streaming的使用者:).</p>
 <h3 id="关键概念"><a href="#关键概念" class="headerlink" title="关键概念"></a>关键概念</h3><!-- 架构层设计 -->
-<h4 id="micro-batch"><a href="#micro-batch" class="headerlink" title="micro-batch"></a>micro-batch</h4><p><img src="http://image.slidesharecdn.com/apachestormvs-140811162542-phpapp01/95/apache-storm-vs-spark-streaming-11-638.jpg?cb=1425908462" alt=""></p>
+<h4 id="micro-batch"><a href="#micro-batch" class="headerlink" title="micro-batch"></a>micro-batch</h4><p><img data-src="http://image.slidesharecdn.com/apachestormvs-140811162542-phpapp01/95/apache-storm-vs-spark-streaming-11-638.jpg?cb=1425908462" alt=""></p>
 <center>图3 micro-batch与流与批的关系</center>
 
 <p>Wiki上并没有关于<code>micro-batch</code>的介绍，甚至在Streaming的paper中也没有提出这个名词，只能从网上别人总结的图来说明。<br>用这个概念能很好的总结Spark Streaming的执行流程，也能很直观的与类似Storm这类<code>Record By Record</code>类型的流系统区别开来。所谓的<code>micro-batch</code>，它的本质是批处理，因此Streaming的执行层是Spark——一个批处理系统：</p>
@@ -280,7 +311,7 @@
 <li>批数据<br>以HDFS接口为代表，本身底层数据系统即是分布式数据，数据不需要组装，可以直接被RDD表征，在Streaming主要包括HDFS文件以及DirectKafkaAPI。</li>
 </ul>
 <h4 id="DStreamGraph"><a href="#DStreamGraph" class="headerlink" title="DStreamGraph"></a>DStreamGraph</h4><p>Streaming的API设计与<code>RDD</code>接口相似，RDD通过<code>dependencies_</code>存储自己的处理逻辑，并通过<code>DAGScheduler</code>分解出RDD整个Spark执行的逻辑，而相对应的<code>DStream</code>需要将自己的逻辑<em>翻译</em>为RDD原语，这个翻译过程被称为<code>DStreamGraph</code>。</p>
-<p><img src="http://images.cnitblog.com/blog/287057/201404/231432212018837.jpg" alt=""></p>
+<p><img data-src="http://images.cnitblog.com/blog/287057/201404/231432212018837.jpg" alt=""></p>
 <center>图4 DStream转化RDD</center>
 
 
@@ -412,19 +443,13 @@
       </span>
     </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
 
     </div>
   </footer>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -437,9 +462,12 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
 
 
 
